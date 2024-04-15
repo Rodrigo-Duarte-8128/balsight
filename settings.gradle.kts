@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FinSight"
+rootProject.name = "PocketSight"
 include(":app")
  

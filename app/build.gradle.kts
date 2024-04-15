@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.finsight"
+    namespace = "com.pocket_sight"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.finsight"
+        applicationId = "com.pocket_sight"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
