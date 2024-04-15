@@ -1,4 +1,4 @@
-package com.example.finsight
+package com.example.pocket_sight
 
 import org.junit.Test
 

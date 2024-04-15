@@ -1,4 +1,4 @@
-package com.example.finsight.ui.home
+package com.pocket_sight.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
