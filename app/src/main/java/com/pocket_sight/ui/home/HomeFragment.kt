@@ -13,6 +13,8 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentHomeBinding
 
@@ -35,28 +37,32 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         val menuHost: MenuHost = requireActivity()
-        val menuProvider = HomeMenuProvider(this.requireContext())
+        val menuProvider = HomeMenuProvider(this.requireContext(), this)
         menuHost.addMenuProvider(menuProvider)
-
         return binding.root
     }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
     }
 }
 
 
 
-class HomeMenuProvider(private val context: Context): MenuProvider {
+class HomeMenuProvider(private val context: Context, private val fragment: Fragment): MenuProvider {
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(R.menu.main_menu, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        Toast.makeText(context,"clicked!", Toast.LENGTH_SHORT).show()
-        return true
+        when (menuItem.itemId) {
+            R.id.action_settings -> Toast.makeText(context,"clicked!", Toast.LENGTH_SHORT).show()
+        }
+        return fragment.onContextItemSelected(menuItem)
     }
 
 
