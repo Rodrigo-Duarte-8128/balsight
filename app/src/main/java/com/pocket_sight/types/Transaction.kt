@@ -8,6 +8,8 @@ import java.time.ZonedDateTime
 
 data class Transaction (
     var transactionId: Long, // this is the currentTimeMillis at the instant the transaction is created
+    var category: String,
+    var value: Double,
     var date: LocalDateTime = convertTimeMillisToLocalDateTime(transactionId)
 )
 

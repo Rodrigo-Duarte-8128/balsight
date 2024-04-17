@@ -14,8 +14,11 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentHomeBinding
+import com.pocket_sight.types.Transaction
 
 class HomeFragment : Fragment() {
 
@@ -38,6 +41,21 @@ class HomeFragment : Fragment() {
         val menuHost: MenuHost = requireActivity()
         val menuProvider = HomeMenuProvider(this.requireContext(), this)
         menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        val layoutManager = LinearLayoutManager(this.context)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        val transaction1 = Transaction(
+            System.currentTimeMillis(),
+            "Transportation",
+            100.56
+        )
+        val adapter = HomeAdapter(this.requireContext(), listOf(transaction1))
+
+        val homeRecyclerView = binding.rvActs
+        homeRecyclerView.adapter = adapter
+        homeRecyclerView.layoutManager = layoutManager
+
         return binding.root
     }
 

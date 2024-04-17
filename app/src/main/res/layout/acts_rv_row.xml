@@ -5,8 +5,38 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/row_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/row_date_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:background="@color/teal_200"
+            android:gravity="center"
+            android:text="Date" />
+
+        <TextView
+            android:id="@+id/row_category_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@color/teal_200"
+            android:gravity="center"
+            android:text="Category" />
+
+
+        <TextView
+            android:id="@+id/row_value_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@color/teal_200"
+            android:layout_weight="0.25"
+            android:text="Value" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
