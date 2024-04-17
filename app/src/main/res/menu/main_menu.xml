@@ -2,8 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_add_transfer"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="Add Transfer"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_change_account"
+        android:title="Change Account" />
+    <item
+        android:id="@+id/action_custom_range"
+        android:title="Custom Range" />
 </menu>
