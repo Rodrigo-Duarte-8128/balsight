@@ -8,6 +8,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -23,10 +25,31 @@ import com.pocket_sight.types.Transaction
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
+    var fabIsExpanded = false
+
+    private val fromBottomFabAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(this.context, R.anim.from_bottom_fab)
+    }
+    private val toBottomFabAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(this.context, R.anim.to_bottom_fab)
+    }
+    private val rotateClockwiseFabAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(this.context, R.anim.rotate_clockwise)
+    }
+    private val rotateAntiClockwiseFabAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(this.context, R.anim.rotate_anti_clockwise)
+    }
+    private val fromBottomBgAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(this.context, R.anim.from_bottom_anim)
+    }
+    private val toBottomBgAnim: Animation by lazy {
+        AnimationUtils.loadAnimation(this.context, R.anim.to_bottom_anim)
+    }
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +79,14 @@ class HomeFragment : Fragment() {
         homeRecyclerView.adapter = adapter
         homeRecyclerView.layoutManager = layoutManager
 
+        // handle fab
+        binding.mainHomeFab.setOnClickListener {
+            when (fabIsExpanded) {
+                true -> shrinkFab()
+                false -> expandFab()
+            }
+        }
+
         return binding.root
     }
 
@@ -66,6 +97,36 @@ class HomeFragment : Fragment() {
         _binding = null
 
     }
+
+    fun shrinkFab() {
+        binding.homeScreenGreyView.startAnimation(toBottomBgAnim)
+        binding.mainHomeFab.startAnimation(rotateAntiClockwiseFabAnim)
+        binding.addExpenseFab.startAnimation(toBottomFabAnim)
+        binding.addIncomeFab.startAnimation(toBottomFabAnim)
+        binding.addTransferFab.startAnimation(toBottomFabAnim)
+        binding.addExpenseTextView.startAnimation(toBottomFabAnim)
+        binding.addIncomeTextView.startAnimation(toBottomFabAnim)
+        binding.addTransferTextView.startAnimation(toBottomFabAnim)
+
+
+        fabIsExpanded = !fabIsExpanded
+    }
+
+    fun expandFab() {
+        binding.homeScreenGreyView.startAnimation(fromBottomBgAnim)
+        binding.mainHomeFab.startAnimation(rotateClockwiseFabAnim)
+        binding.addExpenseFab.startAnimation(fromBottomFabAnim)
+        binding.addIncomeFab.startAnimation(fromBottomFabAnim)
+        binding.addTransferFab.startAnimation(fromBottomFabAnim)
+        binding.addExpenseTextView.startAnimation(fromBottomFabAnim)
+        binding.addIncomeTextView.startAnimation(fromBottomFabAnim)
+        binding.addTransferTextView.startAnimation(fromBottomFabAnim)
+
+
+        fabIsExpanded = !fabIsExpanded
+    }
+
+
 }
 
 
