@@ -1,4 +1,4 @@
-package com.pocket_sight.ui.home
+package com.pocket_sight.fragments.home
 
 import android.content.Context
 import android.os.Bundle

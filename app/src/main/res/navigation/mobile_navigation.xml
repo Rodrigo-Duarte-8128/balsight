@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.pocket_sight.ui.home.HomeFragment"
+        android:name="com.pocket_sight.fragments.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_gallery"
-        android:name="com.pocket_sight.ui.gallery.GalleryFragment"
+        android:name="com.pocket_sight.fragments.stats.StatsFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_slideshow"
-        android:name="com.pocket_sight.ui.slideshow.SlideshowFragment"
+        android:name="com.pocket_sight.fragments.recurring_acts.RecurringActsFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
 </navigation>
