@@ -28,10 +28,12 @@
         app:layout_constraintTop_toBottomOf="@+id/account_displayed_text_view" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/displayed_month_text_view">
+
         <TextView
             android:id="@+id/date_text"
             android:layout_width="0dp"
@@ -39,7 +41,7 @@
             android:layout_weight=".25"
             android:background="@color/purple_200"
             android:text="@string/date"
-            android:textAlignment="center"/>
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/category_text"
@@ -48,7 +50,7 @@
             android:layout_weight="0.5"
             android:background="@color/purple_200"
             android:text="@string/category"
-            android:textAlignment="center"/>
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/value_text"
@@ -57,8 +59,14 @@
             android:layout_weight="0.25"
             android:background="@color/purple_200"
             android:text="@string/value"
-            android:textAlignment="center"/>
+            android:textAlignment="center" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_acts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
