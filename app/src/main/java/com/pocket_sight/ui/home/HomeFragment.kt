@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -38,7 +39,7 @@ class HomeFragment : Fragment() {
 
         val menuHost: MenuHost = requireActivity()
         val menuProvider = HomeMenuProvider(this.requireContext(), this)
-        menuHost.addMenuProvider(menuProvider)
+        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
         return binding.root
     }
 
