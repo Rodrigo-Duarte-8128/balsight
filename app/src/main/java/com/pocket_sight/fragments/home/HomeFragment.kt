@@ -1,11 +1,14 @@
 package com.pocket_sight.fragments.home
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -45,6 +48,8 @@ class HomeFragment : Fragment() {
     private val toBottomBgAnim: Animation by lazy {
         AnimationUtils.loadAnimation(this.context, R.anim.to_bottom_anim)
     }
+
+    var touchCoordinates: Array<Float> = arrayOf(0.0f, 0.0f)
 
 
     // This property is only valid between onCreateView and
@@ -87,6 +92,10 @@ class HomeFragment : Fragment() {
             }
         }
 
+        handleTouchWhenFabExpanded()
+
+
+
         return binding.root
     }
 
@@ -124,6 +133,31 @@ class HomeFragment : Fragment() {
 
 
         fabIsExpanded = !fabIsExpanded
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    fun handleTouchWhenFabExpanded() {
+        val view = binding.homeScreenGreyView
+        val touchListener = View.OnTouchListener { v, event ->
+            if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                touchCoordinates[0] = event.x
+                touchCoordinates[1] = event.y
+            }
+            return@OnTouchListener false
+        }
+
+        val clickListener = View.OnClickListener {
+            if (fabIsExpanded) {
+                val outRect = Rect()
+                binding.fabConstraintLayout.getGlobalVisibleRect(outRect)
+                if (!outRect.contains(touchCoordinates[0].toInt(), touchCoordinates[1].toInt())) {
+                    shrinkFab()
+                }
+            }
+        }
+
+        view.setOnTouchListener(touchListener)
+        view.setOnClickListener(clickListener)
     }
 
 
