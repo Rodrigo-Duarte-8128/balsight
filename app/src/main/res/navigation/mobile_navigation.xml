@@ -3,23 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/home_fragment">
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/home_fragment"
         android:name="com.pocket_sight.fragments.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
+        android:id="@+id/stats_fragment"
         android:name="com.pocket_sight.fragments.stats.StatsFragment"
-        android:label="@string/menu_gallery"
+        android:label="Stats"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/recurring_acts_fragment"
         android:name="com.pocket_sight.fragments.recurring_acts.RecurringActsFragment"
-        android:label="@string/menu_slideshow"
+        android:label="Recurring Acts"
         tools:layout="@layout/fragment_slideshow" />
 </navigation>
