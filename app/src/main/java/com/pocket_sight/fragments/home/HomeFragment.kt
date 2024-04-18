@@ -49,7 +49,7 @@ class HomeFragment : Fragment() {
         AnimationUtils.loadAnimation(this.context, R.anim.to_bottom_anim)
     }
 
-    var touchCoordinates: Array<Float> = arrayOf(0.0f, 0.0f)
+    private var touchCoordinates: Array<Float> = arrayOf(0.0f, 0.0f)
 
 
     // This property is only valid between onCreateView and
@@ -118,11 +118,12 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        fabIsExpanded = false
 
     }
 
     fun shrinkFab() {
-        binding.homeScreenGreyView.startAnimation(toBottomBgAnim)
+        binding.homeScreenGreyView.visibility = View.GONE
         binding.mainHomeFab.startAnimation(rotateAntiClockwiseFabAnim)
         binding.addExpenseFab.startAnimation(toBottomFabAnim)
         binding.addIncomeFab.startAnimation(toBottomFabAnim)
@@ -136,7 +137,7 @@ class HomeFragment : Fragment() {
     }
 
     fun expandFab() {
-        binding.homeScreenGreyView.startAnimation(fromBottomBgAnim)
+        binding.homeScreenGreyView.visibility = View.VISIBLE
         binding.mainHomeFab.startAnimation(rotateClockwiseFabAnim)
         binding.addExpenseFab.startAnimation(fromBottomFabAnim)
         binding.addIncomeFab.startAnimation(fromBottomFabAnim)
@@ -179,19 +180,3 @@ class HomeFragment : Fragment() {
 
 
 
-class HomeMenuProvider(private val context: Context, private val fragment: Fragment): MenuProvider {
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.main_menu, menu)
-    }
-
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
-            //R.id.action_add_transfer -> Toast.makeText(context,"clicked add transfer!", Toast.LENGTH_SHORT).show()
-            R.id.action_change_account-> Toast.makeText(context,"clicked add change account!", Toast.LENGTH_SHORT).show()
-            R.id.action_custom_range-> Toast.makeText(context,"clicked custom range!", Toast.LENGTH_SHORT).show()
-        }
-        return fragment.onContextItemSelected(menuItem)
-    }
-
-
-}

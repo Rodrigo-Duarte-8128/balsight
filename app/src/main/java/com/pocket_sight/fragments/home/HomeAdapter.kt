@@ -40,7 +40,7 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
 
     override fun onBindViewHolder(viewHolder: HomeAdapter.ViewHolder, position: Int) {
         val act = acts[position]
-        viewHolder.dateView.text = "${act.date.hour} ${act.date.dayOfMonth.toString()} ${act.date.month}"
+        viewHolder.dateView.text = "${act.date.hour}:${act.date.minute} ${act.date.dayOfMonth.toString()}/${act.date.month}"
         viewHolder.categoryView.text = act.category
         viewHolder.valueView.text = act.value.toString()
     }
