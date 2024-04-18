@@ -2,9 +2,7 @@ package com.pocket_sight
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.view.Menu
 import android.view.MotionEvent
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,7 +11,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.ui.NavigationUI
 import com.pocket_sight.databinding.ActivityMainBinding
 import com.pocket_sight.fragments.home.HomeFragment
 
@@ -39,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
+                R.id.home_fragment, R.id.stats_fragment, R.id.recurring_acts_fragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -69,16 +66,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         val homeFragment = supportFragmentManager.findFragmentById(R.id.home_fragment)
-
-        if (homeFragment is HomeFragment && ev?.action == MotionEvent.ACTION_DOWN) {
-            if (homeFragment.fabIsExpanded) {
-                val outRect = Rect()
-                homeFragment.binding.fabConstraintLayout.getGlobalVisibleRect(outRect)
-                if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
-                    homeFragment.shrinkFab()
-                }
-            }
-        }
+        //val homeFragment = supportFragmentManager.findFragmentById(R.id.home_fragment) as? HomeFragment
+        println(homeFragment)
+        //if (homeFragment != null && ev?.action == MotionEvent.ACTION_DOWN) {
+        //    if (homeFragment.fabIsExpanded) {
+        //        val outRect = Rect()
+        //        homeFragment.binding.fabConstraintLayout.getGlobalVisibleRect(outRect)
+        //        if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+        //            homeFragment.shrinkFab()
+        //        }
+        //    }
+        //}
 
         return super.dispatchTouchEvent(ev)
     }
