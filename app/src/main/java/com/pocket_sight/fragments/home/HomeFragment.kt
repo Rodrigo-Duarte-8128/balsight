@@ -79,15 +79,29 @@ class HomeFragment : Fragment() {
         homeRecyclerView.adapter = adapter
         homeRecyclerView.layoutManager = layoutManager
 
-        // handle fab
+        // handle fab click
         binding.mainHomeFab.setOnClickListener {
             when (fabIsExpanded) {
                 true -> shrinkFab()
                 false -> expandFab()
             }
         }
+        createSecondaryFabsListeners()
+
 
         return binding.root
+    }
+
+    private fun createSecondaryFabsListeners() {
+        binding.addExpenseFab.setOnClickListener{
+            Toast.makeText(this.context, "Add Expense Clicked", Toast.LENGTH_SHORT).show()
+        }
+        binding.addIncomeFab.setOnClickListener{
+            Toast.makeText(this.context, "Add Income Clicked", Toast.LENGTH_SHORT).show()
+        }
+        binding.addTransferFab.setOnClickListener{
+            Toast.makeText(this.context, "Add Transfer Clicked", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
@@ -138,7 +152,7 @@ class HomeMenuProvider(private val context: Context, private val fragment: Fragm
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.action_add_transfer -> Toast.makeText(context,"clicked add transfer!", Toast.LENGTH_SHORT).show()
+            //R.id.action_add_transfer -> Toast.makeText(context,"clicked add transfer!", Toast.LENGTH_SHORT).show()
             R.id.action_change_account-> Toast.makeText(context,"clicked add change account!", Toast.LENGTH_SHORT).show()
             R.id.action_custom_range-> Toast.makeText(context,"clicked custom range!", Toast.LENGTH_SHORT).show()
         }
