@@ -9,7 +9,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.databinding.ActsRvRowBinding
 import com.pocket_sight.types.Transaction
 
 class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
@@ -17,7 +16,7 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
         val dateView: TextView = itemView.findViewById(R.id.row_date_view)
         val categoryView: TextView = itemView.findViewById(R.id.row_category_button)
         val valueView: TextView = itemView.findViewById(R.id.row_value_view)
-        val rowLayout: LinearLayout = itemView.findViewById(R.id.row_layout)
+        val rowLayout: LinearLayout = itemView.findViewById(R.id.acts_rv_row_layout)
 
         init {
             rowLayout.setOnClickListener {

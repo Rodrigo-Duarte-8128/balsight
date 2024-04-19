@@ -6,9 +6,105 @@
     android:layout_height="match_parent"
     tools:context="com.pocket_sight.fragments.accounts.AccountsFragment">
 
-    <TextView
-        android:id="@+id/accounts_title_text_view"
+    <LinearLayout
+        android:id="@+id/accounts_fragment_first_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/accounts_title_text_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="0.5"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="Accounts" />
+
+        <LinearLayout
+            android:id="@+id/accounts_fragment_second_linear_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/total_wealth_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total Wealth" />
+
+            <TextView
+                android:id="@+id/total_wealth_value_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="10,000.00" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/accounts_fragment_third_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/accounts_fragment_first_linear_layout">
+
+        <TextView
+            android:id="@+id/account_number_text_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:gravity="center"
+            android:background="@color/teal_200"
+            android:text="Number" />
+
+        <TextView
+            android:id="@+id/account_name_text_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:background="@color/teal_200"
+            android:text="Account Name" />
+
+        <TextView
+            android:id="@+id/total_value_text_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:gravity="center"
+            android:background="@color/teal_200"
+            android:text="Total" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_accounts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/accounts_fragment_third_linear_layout"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Accounts" />
+        android:minHeight="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/teal_200"
+            android:layout_marginBottom="12dp"
+            android:layout_marginEnd="12dp"
+            app:tint="@color/white"
+            android:clickable="true"
+            android:src="@drawable/baseline_add_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
