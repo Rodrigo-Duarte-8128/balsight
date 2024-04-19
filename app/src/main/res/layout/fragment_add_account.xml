@@ -4,7 +4,70 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.pocket_sight.fragments.accounts.AddAccountFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="15dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/add_account_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:layout_marginBottom="60dp"
+            android:padding="20dp"
+            android:text="Add Account" />
+
+        <EditText
+            android:id="@+id/account_name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textSize="20sp"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:layout_marginBottom="50dp"
+            android:hint="Enter the Account Name"/>
+
+        <EditText
+            android:id="@+id/account_balance_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:inputType="numberDecimal"
+            android:layout_marginBottom="50dp"
+            android:hint="Enter the Account Balance"/>
+
+        <Switch
+            android:id="@+id/main_account_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:switchPadding="50dp"
+            android:text="Set as Main Account?" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/add_account_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Account"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
 

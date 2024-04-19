@@ -42,6 +42,10 @@
         android:id="@+id/addAccountFragment"
         android:name="com.pocket_sight.fragments.accounts.AddAccountFragment"
         android:label="Add Account"
-        tools:layout="@layout/fragment_add_account" />
+        tools:layout="@layout/fragment_add_account" >
+        <action
+            android:id="@+id/action_addAccountFragment_to_accounts_fragment"
+            app:destination="@id/accounts_fragment" />
+    </fragment>
 
 </navigation>

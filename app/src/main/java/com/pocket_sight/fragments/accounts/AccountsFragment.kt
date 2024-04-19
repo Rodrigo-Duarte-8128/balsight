@@ -1,23 +1,43 @@
 package com.pocket_sight.fragments.accounts
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentAccountsBinding
 import com.pocket_sight.databinding.FragmentHomeBinding
 import com.pocket_sight.fragments.home.HomeAdapter
 import com.pocket_sight.types.Account
+import com.pocket_sight.types.AccountsDao
+import com.pocket_sight.types.AccountsDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.processNextEventInCurrentThread
+import kotlinx.coroutines.withContext
 
 
 class AccountsFragment: Fragment() {
     //private lateinit var binding: FragmentAccountsBinding
     private var _binding: FragmentAccountsBinding? = null
     val binding get() = _binding!!
+
+    val uiScope = CoroutineScope(Dispatchers.Main + Job())
+
+    lateinit var database: AccountsDao
+
+    var accountsList: MutableList<Account> = mutableListOf()
+    lateinit var adapter: AccountsAdapter
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -26,16 +46,20 @@ class AccountsFragment: Fragment() {
 
         _binding = FragmentAccountsBinding.inflate(inflater, container, false)
 
-
-        val account: Account = Account(1, "Current", 2000.0, true)
-
-        val adapter = AccountsAdapter(this.requireContext(), listOf(account))
-        val layoutManager = LinearLayoutManager(this.context)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
-
+        //val database = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
+        database = AccountsDatabase.getInstance(this.requireContext()).accountsDao
         val accountsRecyclerView = binding.rvAccounts
-        accountsRecyclerView.adapter = adapter
-        accountsRecyclerView.layoutManager = layoutManager
+        buildRecyclerView(this.requireContext(), accountsRecyclerView)
+        //val accounts: List<Account> = database.getAllAccounts()
+
+        //val adapter = AccountsAdapter(this.requireContext(), accounts)
+        adapter = AccountsAdapter(this.requireContext(), accountsList)
+
+        //val layoutManager = LinearLayoutManager(this.context)
+        //layoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        //accountsRecyclerView.adapter = adapter
+        //accountsRecyclerView.layoutManager = layoutManager
 
 
         // set click behaviour for fab
@@ -46,6 +70,41 @@ class AccountsFragment: Fragment() {
 
         return binding.root
     }
+
+    private fun buildRecyclerView(context: Context, accountsRecyclerView: RecyclerView) {
+        uiScope.launch {
+            accountsList = getAccountsList()
+            adapter = AccountsAdapter(context, accountsList)
+
+            val layoutManager = LinearLayoutManager(context)
+            layoutManager.orientation = LinearLayoutManager.VERTICAL
+
+            accountsRecyclerView.adapter = adapter
+            accountsRecyclerView.layoutManager = layoutManager
+        }
+    }
+
+    //private fun initializeAccountsList() {
+    //    uiScope.launch {
+    //        accountsList = getAccountsList()
+    //    }
+    //}
+
+    private suspend fun getAccountsList(): MutableList<Account> {
+        return withContext(Dispatchers.IO) {
+            database.getAllAccounts() ?: mutableListOf()
+        }
+    }
+
+    //private fun buildAccountsList(fragment: Fragment) {
+    //   uiScope.launch {
+    //       withContext(Dispatchers.IO) {
+    //           accountsList = database.getAllAccounts()
+    //           adapter = AccountsAdapter(fragment.requireContext(), accountsList)
+    //       }
+    //   }
+    //}
+
 
 
     fun addAccountClicked(view: View) {

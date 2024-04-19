@@ -15,4 +15,14 @@ interface AccountsDao {
 
     @Query("SELECT * from accounts_table WHERE number = :key")
     fun get(key: Int): Account
+
+    @Query("SELECT number from accounts_table ORDER BY number DESC LIMIT 1")
+    fun getMaxNumber(): Int
+
+    @Query("UPDATE accounts_table SET main_account = 0")
+    fun setMainToFalse()
+
+    @Query("SELECT * from accounts_table ORDER BY number")
+    fun getAllAccounts(): MutableList<Account>
 }
+

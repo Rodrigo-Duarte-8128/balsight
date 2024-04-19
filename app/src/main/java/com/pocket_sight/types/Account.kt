@@ -15,8 +15,8 @@ data class Account(
     @ColumnInfo(name="account_balance")
     var balance: Double,
 
-    @ColumnInfo(name="account_balance")
-    var current: Boolean = false
+    @ColumnInfo(name="main_account")
+    var mainAccount: Boolean = false
 )
 
 
