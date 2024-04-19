@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentAccountsBinding
 import com.pocket_sight.databinding.FragmentHomeBinding
 import com.pocket_sight.fragments.home.HomeAdapter
@@ -35,6 +37,18 @@ class AccountsFragment: Fragment() {
         accountsRecyclerView.adapter = adapter
         accountsRecyclerView.layoutManager = layoutManager
 
+
+        // set click behaviour for fab
+        val addAccountFab = binding.addAccountFab
+        addAccountFab.setOnClickListener() {view: View ->
+            addAccountClicked(view)
+        }
+
         return binding.root
+    }
+
+
+    fun addAccountClicked(view: View) {
+        view.findNavController().navigate(R.id.action_accounts_fragment_to_addAccountFragment)
     }
 }

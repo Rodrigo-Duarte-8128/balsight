@@ -27,12 +27,21 @@
         android:id="@+id/accounts_fragment"
         android:name="com.pocket_sight.fragments.accounts.AccountsFragment"
         android:label="Accounts"
-        tools:layout="@layout/fragment_accounts" />
+        tools:layout="@layout/fragment_accounts" >
+        <action
+            android:id="@+id/action_accounts_fragment_to_addAccountFragment"
+            app:destination="@id/addAccountFragment"/>
+    </fragment>
 
     <fragment
         android:id="@+id/categories_fragment"
         android:name="com.pocket_sight.fragments.categories.CategoriesFragment"
         android:label="Categories"
         tools:layout="@layout/fragment_categories"/>
+    <fragment
+        android:id="@+id/addAccountFragment"
+        android:name="com.pocket_sight.fragments.accounts.AddAccountFragment"
+        android:label="Add Account"
+        tools:layout="@layout/fragment_add_account" />
 
 </navigation>
