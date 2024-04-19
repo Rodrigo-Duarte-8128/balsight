@@ -6,15 +6,28 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/home_fragment"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_home"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/stats_fragment"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/baseline_bar_chart_20"
             android:title="@string/stats" />
         <item
             android:id="@+id/recurring_acts_fragment"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/baseline_event_repeat_20"
             android:title="@string/recurring_acts" />
+
+        <item
+            android:id="@+id/accounts_fragment"
+            android:icon="@drawable/baseline_switch_account_24"
+            android:title="Accounts"/>
+
+        <item
+            android:id="@+id/categories_fragment"
+            android:icon="@drawable/baseline_format_list_bulleted_24"
+            android:title="Categories"/>
+
+
     </group>
 </menu>
+

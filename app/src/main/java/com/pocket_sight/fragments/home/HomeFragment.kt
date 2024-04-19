@@ -92,8 +92,6 @@ class HomeFragment : Fragment() {
             }
         }
         createSecondaryFabsListeners()
-
-
         handleTouchWhenFabExpanded()
 
 

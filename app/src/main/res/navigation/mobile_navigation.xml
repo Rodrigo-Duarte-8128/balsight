@@ -22,4 +22,17 @@
         android:name="com.pocket_sight.fragments.recurring_acts.RecurringActsFragment"
         android:label="Recurring Acts"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/accounts_fragment"
+        android:name="com.pocket_sight.fragments.accounts.AccountsFragment"
+        android:label="Accounts"
+        tools:layout="@layout/fragment_accounts" />
+
+    <fragment
+        android:id="@+id/categories_fragment"
+        android:name="com.pocket_sight.fragments.categories.CategoriesFragment"
+        android:label="Categories"
+        tools:layout="@layout/fragment_categories"/>
+
 </navigation>
