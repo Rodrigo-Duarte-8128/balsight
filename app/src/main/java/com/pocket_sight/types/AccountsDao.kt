@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface AccountsDao {
@@ -24,5 +25,10 @@ interface AccountsDao {
 
     @Query("SELECT * from accounts_table ORDER BY number")
     fun getAllAccounts(): MutableList<Account>
+
+    @Query("SELECT COUNT(1) FROM accounts_table WHERE number = :number")
+    fun accountNumberInDatabase(number: Int): Boolean
+
+
 }
 

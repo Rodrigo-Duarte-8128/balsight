@@ -29,6 +29,7 @@ import kotlin.math.max
 class AddAccountFragment: Fragment() {
     private var _binding: FragmentAddAccountBinding? = null
     val binding get() = _binding!!
+
     //val database = AccountsDao()
     lateinit var database: AccountsDao
     var maxNumberInDatabase: Int = 0
@@ -42,7 +43,8 @@ class AddAccountFragment: Fragment() {
     ): View {
 
         _binding = FragmentAddAccountBinding.inflate(inflater, container, false)
-        database = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
+        database =
+            AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
 
         val nameEditText: EditText = binding.accountNameEditText
         val balanceEditText: EditText = binding.accountBalanceEditText
@@ -50,8 +52,9 @@ class AddAccountFragment: Fragment() {
 
 
         val addAccountButton: Button = binding.addAccountButton
-        addAccountButton.setOnClickListener {view: View ->
-            addAccount(nameEditText,
+        addAccountButton.setOnClickListener { view: View ->
+            addAccount(
+                nameEditText,
                 balanceEditText,
                 switch,
                 view
@@ -69,7 +72,7 @@ class AddAccountFragment: Fragment() {
             try {
                 balance = balanceString.toDouble()
                 balance = balance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 balanceEditText.error = "Invalid Account Balance"
                 return@launch
             }
@@ -110,59 +113,4 @@ class AddAccountFragment: Fragment() {
             database.insert(account)
         }
     }
-//    fun addAccount(name: String, balanceString: String,switched: Boolean, view: View) {
-//        // need to query the database to find the highest value for the account number
-//        var balance: Double
-//        try {
-//            balance = balanceString.toDouble()
-//            balance = balance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-//
-//        } catch(e: Exception) {
-//            return
-//        }
-//
-//        if (switched) {
-//            // if switched, then we need to update all accounts to main=false
-//            setMainAttributesToFalse()
-//        }
-//        val accountNumber = maxNumberInDatabase + 1
-//        val newAccount = Account(
-//            accountNumber,
-//            name,
-//            balance,
-//            switched
-//        )
-//
-//        insertAccountInDatabase(newAccount)
-//        view.findNavController().navigate(R.id.action_addAccountFragment_to_accounts_fragment)
-//
-//    }
-
-
-
-    //private fun setMainAttributesToFalse() {
-    //    uiScope.launch {
-    //        withContext(Dispatchers.IO) {
-    //            database.setMainToFalse()
-    //        }
-    //    }
-    //}
-
-//    private fun insertAccountInDatabase(account: Account) {
-//        uiScope.launch {
-//            withContext(Dispatchers.IO) {
-//                database.insert(account)
-//            }
-//        }
-//    }
-
-//    private fun setMaxAccountNumber() {
-//        uiScope.launch {
-//            withContext(Dispatchers.IO) {
-//                val maxNumber = database.getMaxNumber()
-//                Log.i("TAG", "Max Number: $maxNumber")
-//                maxNumberInDatabase = maxNumber
-//            }
-//        }
-//    }
 }

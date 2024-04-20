@@ -12,12 +12,14 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.pocket_sight.databinding.ActivityMainBinding
+import com.pocket_sight.fragments.accounts.RemoveAccountDialogFragment
 import com.pocket_sight.fragments.home.HomeFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
 
     //private lateinit var drawerLayout: DrawerLayout
 
@@ -68,10 +70,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        val homeFragment = supportFragmentManager.findFragmentById(R.id.home_fragment)
+    //override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+     //   val homeFragment = supportFragmentManager.findFragmentById(R.id.home_fragment)
         //val homeFragment = supportFragmentManager.findFragmentById(R.id.home_fragment) as? HomeFragment
-        println(homeFragment)
         //if (homeFragment != null && ev?.action == MotionEvent.ACTION_DOWN) {
         //    if (homeFragment.fabIsExpanded) {
         //        val outRect = Rect()
@@ -82,6 +83,9 @@ class MainActivity : AppCompatActivity() {
         //    }
         //}
 
-        return super.dispatchTouchEvent(ev)
-    }
+      //  return super.dispatchTouchEvent(ev)
+    //}
+
+
+
 }
