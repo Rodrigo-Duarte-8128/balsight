@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.pocket_sight.MainActivity
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentEditAccountBinding
@@ -202,12 +203,18 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
     }
 
     fun showRemoveAccountDialog() {
-
         RemoveAccountDialogFragment(this).show(this.parentFragmentManager, "RemoveAccountDialog")
     }
 
     override fun onRemoveAccountDialogPositiveClick(dialog: DialogFragment) {
-        Toast.makeText(this.context, "Remove account here", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this.context, "Account Removed. Need also to remove related transactions...", Toast.LENGTH_SHORT).show()
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                database.delete(account)
+            }
+        }
+        dialog.findNavController().navigate(R.id.accounts_fragment)
+        dialog.dismiss()
     }
 
 
