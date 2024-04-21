@@ -6,7 +6,7 @@
     <LinearLayout
         android:id="@+id/accounts_rv_row_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="75dp"
         android:orientation="horizontal"
         android:padding="5dp">
 
@@ -16,6 +16,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.25"
             android:gravity="center"
+            android:textSize="17sp"
             android:background="@color/secondary"
             android:textColor="@color/on_secondary"
             android:text="number" />
@@ -25,6 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
+            android:textSize="17sp"
             android:background="@color/secondary"
             android:textColor="@color/on_secondary"
             android:gravity="center"
@@ -35,9 +37,10 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
+            android:textSize="17sp"
             android:background="@color/secondary"
             android:textColor="@color/on_secondary"
             android:gravity="center"
-            android:text="TextView" />
+            android:text="total" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

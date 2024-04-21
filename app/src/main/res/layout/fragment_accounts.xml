@@ -13,34 +13,36 @@
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/accounts_title_text_view"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_weight="0.5"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:text="Accounts" />
+
 
         <LinearLayout
             android:id="@+id/accounts_fragment_second_linear_layout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:orientation="vertical">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/total_wealth_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
                 android:text="Total Wealth" />
 
             <TextView
                 android:id="@+id/total_wealth_value_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="10,000.00" />
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="N/A" />
         </LinearLayout>
     </LinearLayout>
 
@@ -57,6 +59,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.25"
             android:gravity="center"
+            android:textSize="20sp"
             android:background="@color/primary"
             android:textColor="@color/on_primary"
             android:text="Number" />
@@ -67,6 +70,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:gravity="center"
+            android:textSize="20sp"
             android:background="@color/primary"
             android:textColor="@color/on_primary"
             android:text="Account Name" />
@@ -77,6 +81,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.25"
             android:gravity="center"
+            android:textSize="20sp"
             android:background="@color/primary"
             android:textColor="@color/on_primary"
             android:text="Total" />

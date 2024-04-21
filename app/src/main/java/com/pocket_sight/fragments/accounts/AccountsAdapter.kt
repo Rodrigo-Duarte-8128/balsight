@@ -67,10 +67,15 @@ class AccountsAdapter(val context: Context, val accounts: List<Account>): Recycl
     }
 
     override fun onBindViewHolder(viewHolder: AccountsAdapter.ViewHolder, position: Int) {
+        Log.i("TAG", "Accounts List: $accounts")
         val account = accounts[position]
         viewHolder.numberView.text = "${account.number}"
         viewHolder.accountNameView.text = account.name
-        viewHolder.accountTotalView.text = account.balance.toString()
+        if (account.balance == account.balance.toInt().toDouble()) {
+            viewHolder.accountTotalView.text = "\u20ac ${account.balance.toInt()}"
+        } else {
+            viewHolder.accountTotalView.text = "\u20ac ${account.balance}"
+        }
     }
 
 }
