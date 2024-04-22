@@ -99,15 +99,39 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
         switch: Switch
         ) {
         uiScope.launch {
+            var main: Boolean
             withContext(Dispatchers.IO) {
                 account = database.get(accountNumber)
-                accountNumberEditText.setText(accountNumber.toString())
-                nameEditText.setText(account.name)
-                balanceEditText.setText(account.balance.toString())
-                Log.i("TAG", account.mainAccount.toString())
-                setSwitch(switch, account.mainAccount)
-                //switch.setChecked(account.mainAccount)
+                //accountNumberEditText.setText(accountNumber.toString())
+                //nameEditText.setText(account.name)
+                //balanceEditText.setText(account.balance.toString())
+                //main = account.mainAccount
+                //setSwitch(switch, account.mainAccount)
             }
+            setInfo(
+                account,
+                accountNumberEditText,
+                nameEditText,
+                balanceEditText,
+                switch
+            )
+            //setSwitch(switch, main)
+        }
+    }
+
+    private suspend fun setInfo(
+        account: Account,
+        accountNumberEditText: EditText,
+        nameEditText: EditText,
+        balanceEditText: EditText,
+        switch: Switch
+
+    ) {
+        withContext(Dispatchers.Main) {
+            accountNumberEditText.setText(account.number.toString())
+            nameEditText.setText(account.name)
+            balanceEditText.setText(account.balance.toString())
+            switch.setChecked(account.mainAccount)
         }
     }
 
