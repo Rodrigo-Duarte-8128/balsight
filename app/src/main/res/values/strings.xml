@@ -15,4 +15,13 @@
     <string name="date">Date</string>
     <string name="category">Category</string>
     <string name="value">Value</string>
+
+
+    <string-array name="kinds_array">
+        <item>Expense</item>
+        <item>Income</item>
+    </string-array>
+
+
+
 </resources>

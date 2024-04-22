@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentCategoriesBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +26,11 @@ class CategoriesFragment: Fragment() {
     ): View {
 
         _binding = FragmentCategoriesBinding.inflate(inflater, container, false)
+
+        val addCategoryButton = binding.addCategoryFab
+        addCategoryButton.setOnClickListener {view: View ->
+            view.findNavController().navigate(R.id.add_category_fragment)
+        }
 
         return binding.root
     }

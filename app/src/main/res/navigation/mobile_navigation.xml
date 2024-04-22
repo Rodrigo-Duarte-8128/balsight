@@ -40,7 +40,11 @@
         android:id="@+id/categories_fragment"
         android:name="com.pocket_sight.fragments.categories.CategoriesFragment"
         android:label="Categories"
-        tools:layout="@layout/fragment_categories"/>
+        tools:layout="@layout/fragment_categories">
+        <action
+            android:id="@+id/action_categories_fragment_to_addCategoryFragment"
+            app:destination="@id/add_category_fragment" />
+    </fragment>
     <fragment
         android:id="@+id/add_account_fragment"
         android:name="com.pocket_sight.fragments.accounts.AddAccountFragment"
@@ -61,6 +65,14 @@
         <argument
             android:name="account_id"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/add_category_fragment"
+        android:name="com.pocket_sight.fragments.categories.AddCategoryFragment"
+        android:label="Add Category" >
+        <action
+            android:id="@+id/action_addCategoryFragment_to_categories_fragment"
+            app:destination="@id/categories_fragment" />
     </fragment>
 
 </navigation>
