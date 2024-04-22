@@ -19,6 +19,7 @@ import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
+import com.pocket_sight.types.categories.Category
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -58,18 +59,45 @@ class AddCategoryFragment: Fragment() {
             kindSpinner.adapter = adapter
         }
 
-        //val addAccountButton: Button = binding.addAccountButton
-        //addAccountButton.setOnClickListener { view: View ->
-        //    addAccount(
-        //        nameEditText,
-        //        balanceEditText,
-        //        switch,
-        //        view
-        //    )
-        //}
+
+        val addCategoryButton = binding.addCategoryButton
+        addCategoryButton.setOnClickListener {view: View ->
+            addCategoryClicked(
+                view,
+                nameEditText,
+                kindSpinner
+            )
+        }
 
 
         return binding.root
+    }
+
+
+    private fun addCategoryClicked(view: View, nameEditText: EditText, kindSpinner: Spinner) {
+        uiScope.launch {
+            val categoryName = nameEditText.text.toString()
+            val categoryKind = kindSpinner.selectedItem.toString()
+            val accountNumber = getMaxAccountNumber() + 1
+
+            val newCategory = Category(accountNumber, categoryName, categoryKind)
+
+            insertInDatabase(newCategory)
+
+            view.findNavController().navigate(R.id.categories_fragment)
+        }
+    }
+
+    private suspend fun insertInDatabase(category: Category) {
+        withContext(Dispatchers.IO) {
+            database.insert(category)
+        }
+    }
+
+    private suspend fun getMaxAccountNumber(): Int {
+        return withContext(Dispatchers.IO) {
+            database.getMaxNumber()
+        }
     }
 
 }
