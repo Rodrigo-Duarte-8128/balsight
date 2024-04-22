@@ -90,7 +90,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_accounts"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingBottom="75dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@+id/accounts_fragment_third_linear_layout"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,7 +1,6 @@
 package com.pocket_sight.fragments.accounts
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,10 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.pocket_sight.MainActivity
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentEditAccountBinding
-import com.pocket_sight.fragments.home.HomeMenuProvider
 import com.pocket_sight.types.Account
 import com.pocket_sight.types.AccountsDao
 import com.pocket_sight.types.AccountsDatabase
@@ -31,15 +28,12 @@ import java.math.RoundingMode
 
 class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccountDialogListener {
 
-
     private lateinit var account: Account
-
 
     private var _binding: FragmentEditAccountBinding? = null
     val binding get() = _binding!!
 
     lateinit var database: AccountsDao
-    var maxNumberInDatabase: Int = 0
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -99,14 +93,8 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
         switch: Switch
         ) {
         uiScope.launch {
-            var main: Boolean
             withContext(Dispatchers.IO) {
                 account = database.get(accountNumber)
-                //accountNumberEditText.setText(accountNumber.toString())
-                //nameEditText.setText(account.name)
-                //balanceEditText.setText(account.balance.toString())
-                //main = account.mainAccount
-                //setSwitch(switch, account.mainAccount)
             }
             setInfo(
                 account,
@@ -115,7 +103,6 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
                 balanceEditText,
                 switch
             )
-            //setSwitch(switch, main)
         }
     }
 
@@ -132,12 +119,6 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
             nameEditText.setText(account.name)
             balanceEditText.setText(account.balance.toString())
             switch.setChecked(account.mainAccount)
-        }
-    }
-
-    private suspend fun setSwitch(switch: Switch, bool: Boolean) {
-        withContext(Dispatchers.Main) {
-            switch.setChecked(bool)
         }
     }
 
