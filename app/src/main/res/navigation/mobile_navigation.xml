@@ -44,6 +44,9 @@
         <action
             android:id="@+id/action_categories_fragment_to_addCategoryFragment"
             app:destination="@id/add_category_fragment" />
+        <action
+            android:id="@+id/action_categories_fragment_to_editCategoryFragment"
+            app:destination="@id/edit_category_fragment" />
     </fragment>
     <fragment
         android:id="@+id/add_account_fragment"
@@ -69,10 +72,38 @@
     <fragment
         android:id="@+id/add_category_fragment"
         android:name="com.pocket_sight.fragments.categories.AddCategoryFragment"
-        android:label="Add Category" >
+        android:label="Add Category"
+        tools:layout="@layout/fragment_add_category">
         <action
             android:id="@+id/action_addCategoryFragment_to_categories_fragment"
             app:destination="@id/categories_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/edit_category_fragment"
+        android:name="com.pocket_sight.fragments.categories.EditCategoryFragment"
+        android:label="Edit Category"
+        tools:layout="@layout/fragment_edit_category">
+        <action
+            android:id="@+id/action_editCategoryFragment_to_categories_fragment"
+            app:destination="@id/categories_fragment" />
+        <argument
+            android:name="category_number"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_edit_category_fragment_to_addSubcategoryFragment"
+            app:destination="@id/addSubcategoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addSubcategoryFragment"
+        android:name="com.pocket_sight.fragments.categories.AddSubcategoryFragment"
+        android:label="fragment_add_subcategory"
+        tools:layout="@layout/fragment_add_subcategory" >
+        <action
+            android:id="@+id/action_addSubcategoryFragment_to_edit_category_fragment"
+            app:destination="@id/edit_category_fragment" />
+        <argument
+            android:name="parent_category_number"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

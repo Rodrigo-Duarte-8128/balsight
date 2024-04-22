@@ -33,9 +33,9 @@ class CategoriesAdapter(val context: Context, val categories: List<Category>): R
             rowLayout.setOnClickListener() {
                 val position = adapterPosition
                 val categoryNumber: Int = categories[position].number
-                //itemView.findNavController().navigate(
-                    //CategoriesFragmentDirections.actionAccountsFragmentToEditAccountFragment(accountNumber)
-                //)
+                itemView.findNavController().navigate(
+                    CategoriesFragmentDirections.actionCategoriesFragmentToEditCategoryFragment(categoryNumber)
+                )
             }
         }
 

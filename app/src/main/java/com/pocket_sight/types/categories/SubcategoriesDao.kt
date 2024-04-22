@@ -21,5 +21,8 @@ interface SubcategoriesDao {
 
     @Query("SELECT * from subcategories_table ORDER BY number")
     fun getAllSubcategories(): MutableList<Subcategory>
+
+    @Query("SELECT * from subcategories_table WHERE parent_category_number = :parentKey")
+    fun getSubcategoriesWithParent(parentKey: Int): List<Subcategory>
 }
 

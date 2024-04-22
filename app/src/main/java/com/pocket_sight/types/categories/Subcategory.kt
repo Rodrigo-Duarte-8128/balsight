@@ -13,7 +13,7 @@ data class Subcategory(
     @ColumnInfo(name = "subcategory_name")
     var name: String,
 
-    @ColumnInfo(name="parent_category")
+    @ColumnInfo(name="parent_category_number")
     var parentNumber: Int
 )
 

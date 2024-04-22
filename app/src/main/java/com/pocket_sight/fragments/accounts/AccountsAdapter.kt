@@ -42,14 +42,12 @@ class AccountsAdapter(val context: Context, val accounts: List<Account>): Recycl
         init {
             rowLayout.setOnClickListener() {
                 val position = adapterPosition
-                Log.i("TAG", "Position on click: $position")
                 accountNumber = accounts[position].number
                 itemView.findNavController().navigate(
                     AccountsFragmentDirections.actionAccountsFragmentToEditAccountFragment(accountNumber)
                 )
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -64,8 +62,6 @@ class AccountsAdapter(val context: Context, val accounts: List<Account>): Recycl
     }
 
     override fun onBindViewHolder(viewHolder: AccountsAdapter.ViewHolder, position: Int) {
-        Log.i("TAG", "Accounts List: $accounts")
-        Log.i("TAG", "Position: $position")
         val account = accounts[position]
         viewHolder.numberView.text = "${account.number}"
         viewHolder.accountNameView.text = account.name
