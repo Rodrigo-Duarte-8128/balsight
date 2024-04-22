@@ -16,9 +16,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentEditAccountBinding
-import com.pocket_sight.types.Account
-import com.pocket_sight.types.AccountsDao
-import com.pocket_sight.types.AccountsDatabase
+import com.pocket_sight.types.accounts.Account
+import com.pocket_sight.types.accounts.AccountsDao
+import com.pocket_sight.types.accounts.AccountsDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

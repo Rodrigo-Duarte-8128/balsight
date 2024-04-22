@@ -1,4 +1,4 @@
-package com.pocket_sight.types
+package com.pocket_sight.types.accounts
 
 import android.content.Context
 import androidx.room.Database

@@ -1,7 +1,6 @@
 package com.pocket_sight.fragments.accounts
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,21 +9,18 @@ import android.widget.EditText
 import android.widget.Switch
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.pocket_sight.R
-import com.pocket_sight.databinding.FragmentAccountsBinding
-import com.pocket_sight.types.Account
+import com.pocket_sight.types.accounts.Account
 
 import com.pocket_sight.databinding.FragmentAddAccountBinding
-import com.pocket_sight.types.AccountsDao
-import com.pocket_sight.types.AccountsDatabase
+import com.pocket_sight.types.accounts.AccountsDao
+import com.pocket_sight.types.accounts.AccountsDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.math.RoundingMode
-import kotlin.math.max
 
 class AddAccountFragment: Fragment() {
     private var _binding: FragmentAddAccountBinding? = null

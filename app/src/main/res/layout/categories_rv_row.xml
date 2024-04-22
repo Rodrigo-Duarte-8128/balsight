@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+
+<LinearLayout
+    android:id="@+id/categories_rv_row_layout"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+
+    <TextView
+        android:id="@+id/row_category_name_text_view"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.75"
+        android:textSize="17sp"
+        android:background="@color/secondary"
+        android:textColor="@color/on_secondary"
+        android:gravity="center"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/row_category_kind_text_view"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.25"
+        android:textSize="17sp"
+        android:background="@color/secondary"
+        android:textColor="@color/on_secondary"
+        android:gravity="center"
+        android:text="kind" />
+</LinearLayout>
+</androidx.cardview.widget.CardView>

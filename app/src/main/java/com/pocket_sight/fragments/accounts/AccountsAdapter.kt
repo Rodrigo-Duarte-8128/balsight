@@ -7,18 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.types.Account
-import com.pocket_sight.types.AccountsDatabase
+import com.pocket_sight.types.accounts.Account
+import com.pocket_sight.types.accounts.AccountsDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.properties.Delegates
 
 
 class AccountsAdapter(val context: Context, val accounts: List<Account>): RecyclerView.Adapter<AccountsAdapter.ViewHolder>() {

@@ -1,10 +1,10 @@
-package com.pocket_sight.types
+package com.pocket_sight.types.accounts
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
+import com.pocket_sight.types.accounts.Account
 
 @Dao
 interface AccountsDao {
