@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
@@ -56,5 +57,10 @@ class CategoriesAdapter(val context: Context, val categories: List<Category>): R
         val category = categories[position]
         viewHolder.categoryNameView.text = category.name
         viewHolder.categoryKindView.text = category.kind
+        if (category.kind == "Expense") {
+            viewHolder.categoryKindView.setTextColor(ContextCompat.getColor(context, R.color.red))
+        } else {
+            viewHolder.categoryKindView.setTextColor(ContextCompat.getColor(context, R.color.green))
+        }
     }
 }

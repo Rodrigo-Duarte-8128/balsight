@@ -7,15 +7,19 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.types.Transaction
+import com.pocket_sight.convertMonthIntToString
+import com.pocket_sight.types.transactions.Transaction
 
 class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val dateView: TextView = itemView.findViewById(R.id.row_date_view)
-        val categoryView: TextView = itemView.findViewById(R.id.row_category_button)
-        val valueView: TextView = itemView.findViewById(R.id.row_value_view)
+        val dayMonthTextView: TextView = itemView.findViewById(R.id.row_act_day_month_text_view)
+        val timeTextView: TextView = itemView.findViewById(R.id.row_act_time_text_view)
+        val categoryView: TextView = itemView.findViewById(R.id.row_act_category_text_view)
+        val noteView: TextView = itemView.findViewById(R.id.row_act_note_text_view)
+        val valueView: TextView = itemView.findViewById(R.id.row_act_value_text_view)
         val rowLayout: LinearLayout = itemView.findViewById(R.id.acts_rv_row_layout)
 
         init {
@@ -39,8 +43,27 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
 
     override fun onBindViewHolder(viewHolder: HomeAdapter.ViewHolder, position: Int) {
         val act = acts[position]
-        viewHolder.dateView.text = "${act.date.hour}:${act.date.minute} ${act.date.dayOfMonth.toString()}/${act.date.month}"
-        viewHolder.categoryView.text = act.category
-        viewHolder.valueView.text = act.value.toString()
+
+        viewHolder.dayMonthTextView.text = "${act.day} ${convertMonthIntToString(act.month)}"
+        viewHolder.timeTextView.text = "${act.hour}:${act.minutes}"
+        viewHolder.categoryView.text = ""
+        viewHolder.noteView.text = act.note
+        val value = act.value
+        val valueString = if (value >= 0) {
+            viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.green))
+            if (value == value.toInt().toDouble()) {
+                "+ ${act.value.toInt()} \u20ac"
+            } else {
+                "+ ${act.value} \u20ac"
+            }
+        } else {
+            viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.red))
+            if (value == value.toInt().toDouble()) {
+                "- ${act.value.toInt()} \u20ac"
+            } else {
+                "- ${act.value} \u20ac"
+            }
+        }
+        viewHolder.valueView.text = valueString
     }
 }

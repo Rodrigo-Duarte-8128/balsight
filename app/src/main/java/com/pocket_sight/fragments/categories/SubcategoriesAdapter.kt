@@ -34,10 +34,13 @@ class SubcategoriesAdapter(val context: Context, val subcategories: List<Provisi
         init {
             rowLayout.setOnClickListener() {
                 val position = adapterPosition
-                val subcategoryNumber: Int = subcategories[position].number
-                //itemView.findNavController().navigate(
-                //    CategoriesFragmentDirections.actionCategoriesFragmentToEditCategoryFragment(categoryNumber)
-                //)
+                val subcategory = subcategories[position]
+                itemView.findNavController().navigate(
+                    EditCategoryFragmentDirections.actionEditCategoryFragmentToEditSubcategoryFragment(
+                        subcategory.number,
+                        subcategory.parentNumber
+                    )
+                )
             }
         }
 

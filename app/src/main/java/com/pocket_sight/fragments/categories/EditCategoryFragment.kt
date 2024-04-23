@@ -11,11 +11,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Switch
+import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
@@ -112,7 +115,14 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
             kindSpinner
         )
 
-
+        val confirmEditCategoryButton: Button = binding.confirmEditCategoryButton
+        confirmEditCategoryButton.setOnClickListener {view: View ->
+            handleConfirmChanges(
+                view,
+                editNameEditText,
+                kindSpinner
+            )
+        }
 
 //        val confirmEditAccountButton: Button = binding.confirmEditAccountButton
 //        confirmEditAccountButton.setOnClickListener { view: View ->
@@ -187,8 +197,54 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
         }
     }
 
-    private fun handleConfirmChanges() {
+    private fun handleConfirmChanges(
+        view: View,
+        editNameEditText: EditText,
+        kindSpinner: Spinner
+    ) {
+        uiScope.launch {
+            var newCategoryNameInDatabase: Boolean
+            val newName = editNameEditText.text.toString()
+            withContext(Dispatchers.IO) {
+                newCategoryNameInDatabase = categoriesDatabase.nameInDatabase(newName)
+            }
 
+            if (newCategoryNameInDatabase && newName != category.name) {
+                editNameEditText.error = "Category Name Already Exists"
+                return@launch
+            }
+
+            // update subcategories database
+            withContext(Dispatchers.IO) {
+                subcategoriesDatabase.clearSubcategoriesWithParent(category.number)
+                for (provisionalSubcategory in provisionalSubcategoriesList) {
+                    val newSubcategory = Subcategory(
+                        subcategoriesDatabase.getMaxNumber() + 1,
+                        provisionalSubcategory.name,
+                        provisionalSubcategory.parentNumber
+                    )
+                    subcategoriesDatabase.insert(newSubcategory)
+                }
+                // clear provisional subcategories
+                provisionalSubcategoriesDatabase.clearProvisionalSubcategories()
+            }
+
+            // update category database
+            withContext(Dispatchers.IO) {
+                categoriesDatabase.delete(category)
+                val newCategory = Category(
+                    categoriesDatabase.getMaxNumber() + 1,
+                    editNameEditText.text.toString(),
+                    kindSpinner.selectedItem.toString()
+                )
+                categoriesDatabase.insert(newCategory)
+            }
+
+            // move fragment
+            view.findNavController().navigate(
+                EditCategoryFragmentDirections.actionEditCategoryFragmentToCategoriesFragment()
+            )
+        }
     }
 
 
@@ -197,10 +253,24 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
     }
 
     fun showRemoveCategoryDialog() {
-
+        RemoveCategoryDialogFragment(this).show(this.parentFragmentManager, "RemoveCategoryDialog")
     }
 
     override fun onRemoveCategoryDialogPositiveClick(dialog: DialogFragment) {
-        TODO("Not yet implemented")
+        Toast.makeText(
+            this.context,
+            "Category Removed. Need also to update associated transactions...",
+            Toast.LENGTH_SHORT
+        ).show()
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                categoriesDatabase.delete(category)
+                subcategoriesDatabase.clearSubcategoriesWithParent(category.number)
+                provisionalSubcategoriesDatabase.clearProvisionalSubcategories()
+            }
+        }
+        dialog.findNavController().navigate(R.id.categories_fragment)
+        dialog.dismiss()
     }
+
 }

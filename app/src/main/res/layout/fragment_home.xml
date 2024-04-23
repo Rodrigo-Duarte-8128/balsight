@@ -8,40 +8,63 @@
     android:layout_height="match_parent"
     tools:context="com.pocket_sight.fragments.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/account_displayed_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:background="@color/teal_200"
-        android:text="Current Account"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/displayed_month_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="Displayed Month"
-        android:background="@color/teal_200"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/account_displayed_text_view" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/home_fragment_first_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/displayed_account_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:backgroundTint="@color/accent"
+                android:textAlignment="center"
+                android:text="Current" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/displayed_month_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/accent"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:text="Apr 2024" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/home_fragment_second_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/displayed_month_text_view">
+        app:layout_constraintTop_toBottomOf="@+id/home_fragment_first_linear_layout">
 
         <TextView
             android:id="@+id/date_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".25"
-            android:background="@color/purple_200"
+            android:textSize="20sp"
+            android:background="@color/primary"
+            android:textColor="@color/on_primary"
             android:text="@string/date"
             android:textAlignment="center" />
 
@@ -50,7 +73,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:background="@color/purple_200"
+            android:textSize="20sp"
+            android:background="@color/primary"
+            android:textColor="@color/on_primary"
             android:text="@string/category"
             android:textAlignment="center" />
 
@@ -59,7 +84,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.25"
-            android:background="@color/purple_200"
+            android:textSize="20sp"
+            android:background="@color/primary"
+            android:textColor="@color/on_primary"
             android:text="@string/value"
             android:textAlignment="center" />
     </LinearLayout>
@@ -67,9 +94,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_acts"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"/>
-    
+        android:layout_height="0dp"
+        android:paddingBottom="75dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/home_fragment_second_linear_layout"/>
+
     
     <View
         android:id="@+id/home_screen_grey_view"
@@ -102,7 +132,7 @@
             app:srcCompat="@drawable/baseline_add_24"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="12dp"
-            app:backgroundTint="@color/teal_200"
+            app:backgroundTint="@color/accent"
             app:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -115,7 +145,7 @@
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/baseline_add_24"
             android:layout_marginBottom="12dp"
-            app:backgroundTint="@color/teal_200"
+            app:backgroundTint="@color/red"
             android:visibility="invisible"
             app:tint="@color/white"
             app:layout_constraintBottom_toTopOf="@id/main_home_fab"
@@ -146,7 +176,7 @@
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/baseline_add_24"
             android:layout_marginBottom="12dp"
-            app:backgroundTint="@color/teal_200"
+            app:backgroundTint="@color/green"
             android:visibility="invisible"
             app:tint="@color/white"
             app:layout_constraintBottom_toTopOf="@id/add_expense_fab"
@@ -177,7 +207,7 @@
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/baseline_add_24"
             android:layout_marginBottom="12dp"
-            app:backgroundTint="@color/teal_200"
+            app:backgroundTint="@color/secondary_variant"
             android:visibility="invisible"
             app:tint="@color/white"
             app:layout_constraintBottom_toTopOf="@id/add_income_fab"

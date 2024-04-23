@@ -5,30 +5,48 @@ import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentHomeBinding
-import com.pocket_sight.types.Transaction
+import com.pocket_sight.fragments.categories.CategoriesAdapter
+import com.pocket_sight.parseMonthYearText
+import com.pocket_sight.types.categories.CategoriesDao
+import com.pocket_sight.types.categories.CategoriesDatabase
+import com.pocket_sight.types.transactions.Transaction
+import com.pocket_sight.types.transactions.TransactionsDao
+import com.pocket_sight.types.transactions.TransactionsDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
     var fabIsExpanded = false
+
+    lateinit var transactionsDatabase: TransactionsDao
+
+    lateinit var adapter: HomeAdapter
+
+    val uiScope = CoroutineScope(Dispatchers.Main + Job())
+
+    var displayedMonthYear: Array<Int>? = null
 
     private val fromBottomFabAnim: Animation by lazy {
         AnimationUtils.loadAnimation(this.context, R.anim.from_bottom_fab)
@@ -52,10 +70,6 @@ class HomeFragment : Fragment() {
     private var touchCoordinates: Array<Float> = arrayOf(0.0f, 0.0f)
 
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -66,23 +80,22 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        val displayedMonthYearButton: Button = binding.displayedMonthButton
+        val monthYearText = displayedMonthYearButton.text.toString()
+        if (monthYearText != "None") {
+            displayedMonthYear = parseMonthYearText(monthYearText)
+        }
+
+        transactionsDatabase = TransactionsDatabase.getInstance(this.requireContext()).transactionsDao
+        val actsRV = binding.rvActs
+        buildFragmentInfo(this.requireContext(), actsRV)
+
+
         val menuHost: MenuHost = requireActivity()
         val menuProvider = HomeMenuProvider(this.requireContext(), this)
         menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        val layoutManager = LinearLayoutManager(this.context)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        val transaction1 = Transaction(
-            System.currentTimeMillis(),
-            "Transportation",
-            100.56
-        )
-        val adapter = HomeAdapter(this.requireContext(), listOf(transaction1))
-
-        val homeRecyclerView = binding.rvActs
-        homeRecyclerView.adapter = adapter
-        homeRecyclerView.layoutManager = layoutManager
 
         // handle fab click
         binding.mainHomeFab.setOnClickListener {
@@ -98,6 +111,32 @@ class HomeFragment : Fragment() {
 
         return binding.root
     }
+
+    private fun buildFragmentInfo(context: Context, actsRV: RecyclerView) {
+        uiScope.launch {
+            if (displayedMonthYear == null) {
+                adapter = HomeAdapter(context, listOf())
+                return@launch
+            }
+
+            val transactionsList = withContext(Dispatchers.IO) {
+                transactionsDatabase.getTransactionsFromMonthYear(
+                    displayedMonthYear!![0],
+                    displayedMonthYear!![1]
+                )
+            }
+
+
+            adapter = HomeAdapter(context, transactionsList)
+
+            val layoutManager = LinearLayoutManager(context)
+            layoutManager.orientation = LinearLayoutManager.VERTICAL
+
+            actsRV.adapter = adapter
+            actsRV.layoutManager = layoutManager
+        }
+    }
+
 
     private fun createSecondaryFabsListeners() {
         binding.addExpenseFab.setOnClickListener{

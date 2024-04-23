@@ -95,6 +95,9 @@
         <argument
             android:name="from_categories_fragment"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_edit_category_fragment_to_editSubcategoryFragment"
+            app:destination="@id/edit_subcategory_fragment" />
     </fragment>
     <fragment
         android:id="@+id/add_subcategory_fragment"
@@ -105,6 +108,22 @@
             android:id="@+id/action_addSubcategoryFragment_to_edit_category_fragment"
             app:destination="@id/edit_category_fragment"
             app:popUpTo="@id/categories_fragment" />
+        <argument
+            android:name="parent_category_number"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/edit_subcategory_fragment"
+        android:name="com.pocket_sight.fragments.categories.EditSubcategoryFragment"
+        android:label="Edit Subcategory"
+        tools:layout="@layout/fragment_edit_subcategory" >
+        <action
+            android:id="@+id/action_editSubcategoryFragment_to_edit_category_fragment"
+            app:destination="@id/edit_category_fragment"
+            app:popUpTo="@id/categories_fragment" />
+        <argument
+            android:name="provisional_subcategory_number"
+            app:argType="integer" />
         <argument
             android:name="parent_category_number"
             app:argType="integer" />

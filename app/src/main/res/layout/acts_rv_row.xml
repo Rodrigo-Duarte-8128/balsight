@@ -7,35 +7,80 @@
     <LinearLayout
         android:id="@+id/acts_rv_row_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="75dp"
+        android:weightSum="1"
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <TextView
-            android:id="@+id/row_date_view"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
-            android:background="@color/teal_200"
-            android:gravity="center"
-            android:text="Date" />
+            android:weightSum="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/row_category_button"
+            <TextView
+                android:id="@+id/row_act_day_month_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:background="@color/secondary"
+                android:gravity="center"
+                android:text="Day Month"
+                android:textColor="@color/on_secondary"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/row_act_time_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:background="@color/secondary"
+                android:textColor="@color/on_secondary"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:text="HH:MM" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:background="@color/teal_200"
-            android:gravity="center"
-            android:text="Category" />
+            android:weightSum="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/row_act_category_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.6"
+                android:background="@color/secondary"
+                android:gravity="center"
+                android:text="Category"
+                android:textColor="@color/on_secondary"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/row_act_note_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.4"
+                android:background="@color/secondary"
+                android:textColor="@color/on_secondary"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:text="TextView" />
+        </LinearLayout>
 
 
         <TextView
-            android:id="@+id/row_value_view"
+            android:id="@+id/row_act_value_text_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:background="@color/teal_200"
+            android:textSize="17sp"
+            android:background="@color/secondary"
+            android:textColor="@color/on_secondary"
             android:layout_weight="0.25"
             android:text="Value" />
     </LinearLayout>
