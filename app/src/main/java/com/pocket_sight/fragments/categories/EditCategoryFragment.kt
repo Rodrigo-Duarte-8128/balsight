@@ -30,6 +30,9 @@ import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.Category
+import com.pocket_sight.types.categories.ProvisionalSubcategoriesDao
+import com.pocket_sight.types.categories.ProvisionalSubcategoriesDatabase
+import com.pocket_sight.types.categories.ProvisionalSubcategory
 import com.pocket_sight.types.categories.SubcategoriesDao
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.categories.Subcategory
@@ -46,11 +49,14 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
 
     private lateinit var subcategoriesList: List<Subcategory>
 
+    private lateinit var provisionalSubcategoriesList: List<ProvisionalSubcategory>
+
     private var _binding: FragmentEditCategoryBinding? = null
     val binding get() = _binding!!
 
     private lateinit var categoriesDatabase: CategoriesDao
     private lateinit var subcategoriesDatabase: SubcategoriesDao
+    private lateinit var provisionalSubcategoriesDatabase: ProvisionalSubcategoriesDao
 
     private lateinit var adapter: SubcategoriesAdapter
 
@@ -64,12 +70,15 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
 
         val args = EditCategoryFragmentArgs.fromBundle(requireArguments())
         val categoryNumber: Int = args.categoryNumber
+        val fromCategoriesFragment: Boolean = args.fromCategoriesFragment
 
         _binding = FragmentEditCategoryBinding.inflate(inflater, container, false)
         categoriesDatabase=
             CategoriesDatabase.getInstance(requireNotNull(this.activity).application).categoriesDatabaseDao
         subcategoriesDatabase=
             SubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).subcategoriesDatabaseDao
+        provisionalSubcategoriesDatabase=
+            ProvisionalSubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).provisionalSubcategoriesDatabaseDao
 
         val subCategoriesRecyclerView = binding.rvSubcategories
 
@@ -96,6 +105,7 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
 
         setCategoryInfo(
             this.requireContext(),
+            fromCategoriesFragment,
             subCategoriesRecyclerView,
             categoryNumber,
             editNameEditText,
@@ -121,6 +131,7 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
 
     private fun setCategoryInfo(
         context: Context,
+        fromCategoriesFragment: Boolean,
         subcategoriesRecyclerView: RecyclerView,
         categoryNumber: Int,
         editNameEditText: EditText,
@@ -138,9 +149,21 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
 
             withContext(Dispatchers.IO) {
                 subcategoriesList = subcategoriesDatabase.getSubcategoriesWithParent(categoryNumber)
+                if (fromCategoriesFragment) {
+                    provisionalSubcategoriesDatabase.clearProvisionalSubcategories()
+                    for (subcategory in subcategoriesList) {
+                        val provisionalSubcategory = ProvisionalSubcategory(
+                            provisionalSubcategoriesDatabase.getMaxNumber() + 1,
+                            subcategory.name,
+                            subcategory.parentNumber
+                        )
+                        provisionalSubcategoriesDatabase.insert(provisionalSubcategory)
+                    }
+                }
+                provisionalSubcategoriesList = provisionalSubcategoriesDatabase.getAllProvisionalSubcategories()
             }
 
-            adapter = SubcategoriesAdapter(context, subcategoriesList)
+            adapter = SubcategoriesAdapter(context, provisionalSubcategoriesList)
 
             val layoutManager = LinearLayoutManager(context)
             layoutManager.orientation = LinearLayoutManager.VERTICAL

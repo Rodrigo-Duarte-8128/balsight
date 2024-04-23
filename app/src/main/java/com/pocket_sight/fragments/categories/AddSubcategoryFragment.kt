@@ -15,6 +15,9 @@ import com.pocket_sight.databinding.FragmentAddSubcategoryBinding
 import com.pocket_sight.fragments.accounts.EditAccountFragmentArgs
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
+import com.pocket_sight.types.categories.ProvisionalSubcategoriesDao
+import com.pocket_sight.types.categories.ProvisionalSubcategoriesDatabase
+import com.pocket_sight.types.categories.ProvisionalSubcategory
 import com.pocket_sight.types.categories.SubcategoriesDao
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.categories.Subcategory
@@ -29,7 +32,7 @@ class AddSubcategoryFragment: Fragment() {
     private var _binding: FragmentAddSubcategoryBinding? = null
     val binding get() = _binding!!
 
-    lateinit var database: SubcategoriesDao
+    lateinit var database: ProvisionalSubcategoriesDao
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -40,7 +43,7 @@ class AddSubcategoryFragment: Fragment() {
     ): View {
 
         _binding = FragmentAddSubcategoryBinding.inflate(inflater, container, false)
-        database = SubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).subcategoriesDatabaseDao
+        database = ProvisionalSubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).provisionalSubcategoriesDatabaseDao
 
 
         val args = AddSubcategoryFragmentArgs.fromBundle(requireArguments())
@@ -62,16 +65,30 @@ class AddSubcategoryFragment: Fragment() {
 
     private fun addSubcategoryClicked(view: View, nameEditText: EditText, parentCategoryNumber: Int) {
         uiScope.launch {
+            var nameInDatabase = false
             withContext(Dispatchers.IO) {
-                val subcategoryNumber: Int = database.getMaxNumber() + 1
-                val newSubcategory: Subcategory = Subcategory(
-                    subcategoryNumber,
+                nameInDatabase = database.nameInDatabase(nameEditText.text.toString())
+            }
+            if (nameInDatabase) {
+                nameEditText.error = "Subcategory Name Already Exists"
+                return@launch
+            }
+
+            withContext(Dispatchers.IO) {
+                val provisionalSubcategoryNumber: Int = database.getMaxNumber() + 1
+                val newProvisionalSubcategory = ProvisionalSubcategory(
+                    provisionalSubcategoryNumber,
                     nameEditText.text.toString(),
                     parentCategoryNumber
                 )
-                database.insert(newSubcategory)
+                database.insert(newProvisionalSubcategory)
             }
-            view.findNavController().navigate(AddSubcategoryFragmentDirections.actionAddSubcategoryFragmentToEditCategoryFragment(parentCategoryNumber))
+            view.findNavController().navigate(
+                AddSubcategoryFragmentDirections.actionAddSubcategoryFragmentToEditCategoryFragment(
+                    categoryNumber = parentCategoryNumber,
+                    fromCategoriesFragment = false
+                )
+            )
         }
 
     }

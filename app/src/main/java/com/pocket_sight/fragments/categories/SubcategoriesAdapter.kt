@@ -14,6 +14,7 @@ import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.Category
+import com.pocket_sight.types.categories.ProvisionalSubcategory
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.categories.Subcategory
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 
 
-class SubcategoriesAdapter(val context: Context, val subcategories: List<Subcategory>): RecyclerView.Adapter<SubcategoriesAdapter.ViewHolder>() {
+class SubcategoriesAdapter(val context: Context, val subcategories: List<ProvisionalSubcategory>): RecyclerView.Adapter<SubcategoriesAdapter.ViewHolder>() {
 
     private val database = SubcategoriesDatabase.getInstance(context).subcategoriesDatabaseDao
     val uiScope = CoroutineScope(Dispatchers.Main + Job())

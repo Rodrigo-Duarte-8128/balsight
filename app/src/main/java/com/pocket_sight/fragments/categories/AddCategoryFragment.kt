@@ -80,6 +80,17 @@ class AddCategoryFragment: Fragment() {
             val categoryKind = kindSpinner.selectedItem.toString()
             val accountNumber = getMaxAccountNumber() + 1
 
+            var nameInDatabase: Boolean = false
+
+            nameInDatabase = withContext(Dispatchers.IO) {
+                database.nameInDatabase(categoryName)
+            }
+
+            if (nameInDatabase) {
+                nameEditText.error = "Category Name Already Exists"
+                return@launch
+            }
+
             val newCategory = Category(accountNumber, categoryName, categoryKind)
 
             insertInDatabase(newCategory)

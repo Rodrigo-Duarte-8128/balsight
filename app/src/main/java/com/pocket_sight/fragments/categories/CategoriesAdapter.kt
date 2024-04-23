@@ -34,7 +34,7 @@ class CategoriesAdapter(val context: Context, val categories: List<Category>): R
                 val position = adapterPosition
                 val categoryNumber: Int = categories[position].number
                 itemView.findNavController().navigate(
-                    CategoriesFragmentDirections.actionCategoriesFragmentToEditCategoryFragment(categoryNumber)
+                    CategoriesFragmentDirections.actionCategoriesFragmentToEditCategoryFragment(categoryNumber = categoryNumber, fromCategoriesFragment = true)
                 )
             }
         }

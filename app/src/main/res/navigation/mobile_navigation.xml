@@ -91,16 +91,20 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_edit_category_fragment_to_addSubcategoryFragment"
-            app:destination="@id/addSubcategoryFragment" />
+            app:destination="@id/add_subcategory_fragment" />
+        <argument
+            android:name="from_categories_fragment"
+            app:argType="boolean" />
     </fragment>
     <fragment
-        android:id="@+id/addSubcategoryFragment"
+        android:id="@+id/add_subcategory_fragment"
         android:name="com.pocket_sight.fragments.categories.AddSubcategoryFragment"
-        android:label="fragment_add_subcategory"
+        android:label="Add Subcategory"
         tools:layout="@layout/fragment_add_subcategory" >
         <action
             android:id="@+id/action_addSubcategoryFragment_to_edit_category_fragment"
-            app:destination="@id/edit_category_fragment" />
+            app:destination="@id/edit_category_fragment"
+            app:popUpTo="@id/categories_fragment" />
         <argument
             android:name="parent_category_number"
             app:argType="integer" />

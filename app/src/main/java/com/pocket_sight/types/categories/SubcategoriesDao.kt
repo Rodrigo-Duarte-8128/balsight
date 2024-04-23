@@ -24,5 +24,8 @@ interface SubcategoriesDao {
 
     @Query("SELECT * from subcategories_table WHERE parent_category_number = :parentKey")
     fun getSubcategoriesWithParent(parentKey: Int): List<Subcategory>
+
+    @Query("DELETE from subcategories_table WHERE parent_category_number = :parentNumber")
+    fun clearSubcategoriesWithParent(parentNumber: Int)
 }
 

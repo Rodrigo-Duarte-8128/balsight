@@ -21,5 +21,8 @@ interface CategoriesDao {
 
     @Query("SELECT * from categories_table ORDER BY number")
     fun getAllCategories(): MutableList<Category>
+
+    @Query("SELECT COUNT(1) FROM categories_table WHERE category_name = :name")
+    fun nameInDatabase(name: String): Boolean
 }
 
