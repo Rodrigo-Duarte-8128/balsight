@@ -18,7 +18,7 @@ class HomeMenuProvider(private val context: Context, private val fragment: Fragm
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             //R.id.action_add_transfer -> Toast.makeText(context,"clicked add transfer!", Toast.LENGTH_SHORT).show()
-            R.id.action_change_account-> Toast.makeText(context,"clicked add change account!", Toast.LENGTH_SHORT).show()
+            //R.id.action_change_account-> Toast.makeText(context,"clicked add change account!", Toast.LENGTH_SHORT).show()
             R.id.action_custom_range-> Toast.makeText(context,"clicked custom range!", Toast.LENGTH_SHORT).show()
         }
         return fragment.onContextItemSelected(menuItem)
