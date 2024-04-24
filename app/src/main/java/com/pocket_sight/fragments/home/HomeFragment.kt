@@ -16,14 +16,21 @@ import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentHomeBinding
 import com.pocket_sight.fragments.categories.CategoriesAdapter
+import com.pocket_sight.parseMonthYearArrayToText
 import com.pocket_sight.parseMonthYearText
+import com.pocket_sight.types.accounts.AccountsDao
+import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
+import com.pocket_sight.types.displayed.DisplayedAccount
+import com.pocket_sight.types.displayed.DisplayedAccountDao
+import com.pocket_sight.types.displayed.DisplayedAccountDatabase
 import com.pocket_sight.types.displayed.DisplayedMonthYearDao
 import com.pocket_sight.types.displayed.DisplayedMonthYearDatabase
 import com.pocket_sight.types.transactions.Transaction
@@ -45,6 +52,8 @@ class HomeFragment : Fragment() {
 
     lateinit var transactionsDatabase: TransactionsDao
     lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
+    lateinit var accountsDatabase: AccountsDao
+    lateinit var displayedAccountDatabase: DisplayedAccountDao
 
     lateinit var adapter: HomeAdapter
 
@@ -85,19 +94,23 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        // get displayedMonthYear
-        val displayedMonthYearButton: Button = binding.displayedMonthButton
-        val monthYearText = displayedMonthYearButton.text.toString()
-        if (monthYearText != "None") {
-            displayedMonthYear = parseMonthYearText(monthYearText)
-        }
 
-        // get displayedAccount
 
         transactionsDatabase = TransactionsDatabase.getInstance(this.requireContext()).transactionsDao
         displayedMonthYearDatabase = DisplayedMonthYearDatabase.getInstance(this.requireContext()).monthYearDao
+        accountsDatabase = AccountsDatabase.getInstance(this.requireContext()).accountsDao
+        displayedAccountDatabase = DisplayedAccountDatabase.getInstance(this.requireContext()).displayedAccountDao
+
+
         val actsRV = binding.rvActs
-        buildFragmentInfo(this.requireContext(), actsRV)
+        val displayedMonthYearButton: Button = binding.displayedMonthButton
+        val displayedAccountButton: Button = binding.displayedAccountButton
+        buildFragmentInfo(
+            this.requireContext(),
+            actsRV,
+            displayedMonthYearButton,
+            displayedAccountButton
+        )
 
 
         val menuHost: MenuHost = requireActivity()
@@ -121,7 +134,12 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    private fun buildFragmentInfo(context: Context, actsRV: RecyclerView) {
+    private fun buildFragmentInfo(
+        context: Context,
+        actsRV: RecyclerView,
+        displayedMonthYearButton: Button,
+        displayedAccountButton: Button
+    ) {
         uiScope.launch {
 
             var displayedMonthYearArray = arrayOf(
@@ -140,12 +158,46 @@ class HomeFragment : Fragment() {
                 )
             }
 
+            //var displayedAccountNumber: Int? = null
+
+            var mainAccountNumber: Int? = withContext(Dispatchers.IO) {
+                accountsDatabase.getMainAccountNumber()
+            }
+
+            var displayedAccountList: List<DisplayedAccount> = withContext(Dispatchers.IO) {
+                displayedAccountDatabase.getAllDisplayedAccount()
+            }
+
+            if (displayedAccountList.isEmpty() && mainAccountNumber != null) {
+                displayedAccountNumber = mainAccountNumber
+            }
+
+            if (displayedAccountList.isNotEmpty()) {
+                displayedAccountNumber = displayedAccountList[0].displayedAccountNumber
+            } else if (mainAccountNumber != null) {
+                displayedAccountNumber = mainAccountNumber
+            }
+
+            val accountNumber = displayedAccountNumber
+            if (accountNumber == null) {
+                displayedAccountButton.text = "None"
+                //adapter = HomeAdapter(context, listOf())
+                return@launch
+            }
+
+            // set buttons with correct info
+            val displayedAccountName = withContext(Dispatchers.IO) {
+                accountsDatabase.getNameFromAccountNumber(accountNumber)
+            }
+            displayedAccountButton.text = displayedAccountName
+            displayedMonthYearButton.text = parseMonthYearArrayToText(displayedMonthYearArray)
 
 
             val transactionsList = withContext(Dispatchers.IO) {
                 transactionsDatabase.getTransactionsFromMonthYear(
                     displayedMonthYearArray[0],
-                    displayedMonthYearArray[1]
+                    displayedMonthYearArray[1],
+                    accountNumber
                 )
             }
 
@@ -162,9 +214,21 @@ class HomeFragment : Fragment() {
 
 
     private fun createSecondaryFabsListeners() {
-        binding.addExpenseFab.setOnClickListener{
-            Toast.makeText(this.context, "Add Expense Clicked", Toast.LENGTH_SHORT).show()
+        binding.addExpenseFab.setOnClickListener{view: View ->
+            val accountNumber = displayedAccountNumber
+            if (accountNumber == null) {
+                Toast.makeText(this.context, "No Account Selected", Toast.LENGTH_SHORT).show()
+            } else {
+                view.findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToAddExpenseFragment(
+                        accountNumber,
+                        System.currentTimeMillis(),
+                        ""
+                    )
+                )
+            }
         }
+
         binding.addIncomeFab.setOnClickListener{
             Toast.makeText(this.context, "Add Income Clicked", Toast.LENGTH_SHORT).show()
         }

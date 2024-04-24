@@ -16,7 +16,7 @@ interface TransactionsDao {
     @Query("SELECT * from transactions_table WHERE transactionId = :key")
     fun get(key: Int): Transaction
 
-    @Query("SELECT * from transactions_table WHERE transaction_month_int = :month and transaction_year_int = :year ORDER BY transactionId DESC")
-    fun getTransactionsFromMonthYear(month: Int, year: Int): List<Transaction>
+    @Query("SELECT * from transactions_table WHERE transaction_month_int = :month and transaction_year_int = :year and transaction_account_number = :accountNumber ORDER BY transactionId DESC")
+    fun getTransactionsFromMonthYear(month: Int, year: Int, accountNumber: Int): List<Transaction>
 }
 

@@ -11,9 +11,22 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.convertMonthIntToString
+import com.pocket_sight.types.categories.CategoriesDao
+import com.pocket_sight.types.categories.CategoriesDatabase
+import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.transactions.Transaction
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+
+    private val categoriesDatabase = CategoriesDatabase.getInstance(context).categoriesDatabaseDao
+    private val subcategoriesDatabase = SubcategoriesDatabase.getInstance(context).subcategoriesDatabaseDao
+    val uiScope = CoroutineScope(Dispatchers.Main + Job())
+
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val dayMonthTextView: TextView = itemView.findViewById(R.id.row_act_day_month_text_view)
         val timeTextView: TextView = itemView.findViewById(R.id.row_act_time_text_view)
@@ -46,7 +59,6 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
 
         viewHolder.dayMonthTextView.text = "${act.day} ${convertMonthIntToString(act.month)}"
         viewHolder.timeTextView.text = "${act.hour}:${act.minutes}"
-        viewHolder.categoryView.text = ""
         viewHolder.noteView.text = act.note
         val value = act.value
         val valueString = if (value >= 0) {
@@ -57,13 +69,28 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
                 "+ ${act.value} \u20ac"
             }
         } else {
+            val positiveValue = -value
             viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.red))
-            if (value == value.toInt().toDouble()) {
-                "- ${act.value.toInt()} \u20ac"
+            if (positiveValue == positiveValue.toInt().toDouble()) {
+                "- ${positiveValue.toInt()} \u20ac"
             } else {
-                "- ${act.value} \u20ac"
+                "- ${positiveValue} \u20ac"
             }
         }
         viewHolder.valueView.text = valueString
+
+        uiScope.launch {
+            val categoryName = withContext(Dispatchers.IO) {
+                categoriesDatabase.get(act.categoryNumber!!).name
+            }
+            var subcategoryNumber: Int? = act.subcategory
+            var subcategoryName = ""
+            if (subcategoryNumber != null) {
+                subcategoryName = withContext(Dispatchers.IO) {
+                    subcategoriesDatabase.get(subcategoryNumber).name
+                }
+            }
+            viewHolder.categoryView.text = "$categoryName / $subcategoryName"
+        }
     }
 }

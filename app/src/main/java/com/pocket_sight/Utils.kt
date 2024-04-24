@@ -27,6 +27,14 @@ fun convertMonthIntToString(monthInt: Int): String {
     }
 }
 
+fun parseMonthYearArrayToText(monthYearArray: Array<Int>): String {
+    val monthInt = monthYearArray[0]
+    val yearInt = monthYearArray[1]
+
+    val monthString = convertMonthIntToString(monthInt)
+    return "$monthString $yearInt"
+}
+
 fun parseMonthYearText(monthYearString: String): Array<Int> {
     val monthString = monthYearString.slice(1..3)
     val yearString = monthYearString.slice(5..<monthYearString.length)

@@ -73,6 +73,8 @@ class AddAccountFragment: Fragment() {
                 return@launch
             }
 
+
+
             if (switch.isChecked) {
                 setMainAttributesToFalse()
             }

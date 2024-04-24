@@ -233,7 +233,8 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
             withContext(Dispatchers.IO) {
                 categoriesDatabase.delete(category)
                 val newCategory = Category(
-                    categoriesDatabase.getMaxNumber() + 1,
+                    //categoriesDatabase.getMaxNumber() + 1,
+                    category.number,
                     editNameEditText.text.toString(),
                     kindSpinner.selectedItem.toString()
                 )

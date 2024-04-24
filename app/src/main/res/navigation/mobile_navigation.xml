@@ -9,7 +9,11 @@
         android:id="@+id/home_fragment"
         android:name="com.pocket_sight.fragments.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_fragment_to_addExpenseFragment"
+            app:destination="@id/add_expense_fragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/stats_fragment"
@@ -126,6 +130,42 @@
             app:argType="integer" />
         <argument
             android:name="parent_category_number"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/add_expense_fragment"
+        android:name="com.pocket_sight.fragments.home.AddExpenseFragment"
+        android:label="Add Expense"
+        tools:layout="@layout/fragment_add_expense" >
+        <action
+            android:id="@+id/action_addExpenseFragment_to_home_fragment"
+            app:destination="@id/home_fragment" />
+        <argument
+            android:name="account_number"
+            app:argType="integer" />
+        <argument
+            android:name="timeMillis"
+            app:argType="long" />
+        <argument
+            android:name="note"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_add_expense_fragment_to_moreOptionsFragment"
+            app:destination="@id/more_options_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/more_options_fragment"
+        android:name="com.pocket_sight.fragments.home.MoreOptionsFragment"
+        android:label="More Options" >
+        <action
+            android:id="@+id/action_moreOptionsFragment_to_add_expense_fragment"
+            app:destination="@id/add_expense_fragment"
+            app:popUpTo="@id/home_fragment" />
+        <argument
+            android:name="timeMillis"
+            app:argType="long" />
+        <argument
+            android:name="account_number"
             app:argType="integer" />
     </fragment>
 
