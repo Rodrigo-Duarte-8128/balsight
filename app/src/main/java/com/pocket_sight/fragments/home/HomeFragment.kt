@@ -24,6 +24,8 @@ import com.pocket_sight.fragments.categories.CategoriesAdapter
 import com.pocket_sight.parseMonthYearText
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
+import com.pocket_sight.types.displayed.DisplayedMonthYearDao
+import com.pocket_sight.types.displayed.DisplayedMonthYearDatabase
 import com.pocket_sight.types.transactions.Transaction
 import com.pocket_sight.types.transactions.TransactionsDao
 import com.pocket_sight.types.transactions.TransactionsDatabase
@@ -32,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 
 class HomeFragment : Fragment() {
 
@@ -41,12 +44,14 @@ class HomeFragment : Fragment() {
     var fabIsExpanded = false
 
     lateinit var transactionsDatabase: TransactionsDao
+    lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
 
     lateinit var adapter: HomeAdapter
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
     var displayedMonthYear: Array<Int>? = null
+    var displayedAccountNumber: Int? = null
 
     private val fromBottomFabAnim: Animation by lazy {
         AnimationUtils.loadAnimation(this.context, R.anim.from_bottom_fab)
@@ -80,13 +85,17 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        // get displayedMonthYear
         val displayedMonthYearButton: Button = binding.displayedMonthButton
         val monthYearText = displayedMonthYearButton.text.toString()
         if (monthYearText != "None") {
             displayedMonthYear = parseMonthYearText(monthYearText)
         }
 
+        // get displayedAccount
+
         transactionsDatabase = TransactionsDatabase.getInstance(this.requireContext()).transactionsDao
+        displayedMonthYearDatabase = DisplayedMonthYearDatabase.getInstance(this.requireContext()).monthYearDao
         val actsRV = binding.rvActs
         buildFragmentInfo(this.requireContext(), actsRV)
 
@@ -114,15 +123,29 @@ class HomeFragment : Fragment() {
 
     private fun buildFragmentInfo(context: Context, actsRV: RecyclerView) {
         uiScope.launch {
-            if (displayedMonthYear == null) {
-                adapter = HomeAdapter(context, listOf())
-                return@launch
+
+            var displayedMonthYearArray = arrayOf(
+                LocalDateTime.now().monthValue,
+                LocalDateTime.now().year
+            )  //default to current month year
+
+            val displayedMonthYearList = withContext(Dispatchers.IO) {
+                displayedMonthYearDatabase.getAllDisplayedMonthYear()
             }
+
+            if (displayedMonthYearList.isNotEmpty()) {
+                displayedMonthYearArray = arrayOf(
+                    displayedMonthYearList[0].month,
+                    displayedMonthYearList[0].year
+                )
+            }
+
+
 
             val transactionsList = withContext(Dispatchers.IO) {
                 transactionsDatabase.getTransactionsFromMonthYear(
-                    displayedMonthYear!![0],
-                    displayedMonthYear!![1]
+                    displayedMonthYearArray[0],
+                    displayedMonthYearArray[1]
                 )
             }
 

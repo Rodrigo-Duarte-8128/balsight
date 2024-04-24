@@ -29,6 +29,7 @@ interface AccountsDao {
     @Query("SELECT COUNT(1) FROM accounts_table WHERE number = :number")
     fun accountNumberInDatabase(number: Int): Boolean
 
-
+    @Query("SELECT account_number FROM accounts_table WHERE main_account = 1")
+    fun getMainAccountNumber(): Int?
 }
 
