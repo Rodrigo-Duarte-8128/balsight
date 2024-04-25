@@ -19,6 +19,8 @@ import com.pocket_sight.databinding.FragmentEditAccountBinding
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
+import com.pocket_sight.types.transactions.TransactionsDao
+import com.pocket_sight.types.transactions.TransactionsDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -33,7 +35,9 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
     private var _binding: FragmentEditAccountBinding? = null
     val binding get() = _binding!!
 
-    lateinit var database: AccountsDao
+    lateinit var accountsDatabase: AccountsDao
+    lateinit var transactionsDatabase: TransactionsDao
+
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -47,7 +51,8 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
         val accountNumber: Int = args.accountId
 
         _binding = FragmentEditAccountBinding.inflate(inflater, container, false)
-        database = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
+        accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
+        transactionsDatabase = TransactionsDatabase.getInstance(requireNotNull(this.activity).application).transactionsDao
 
         val menuHost: MenuHost = requireActivity()
         val menuProvider = EditAccountMenuProvider(this.requireContext(), this)
@@ -94,7 +99,7 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
         ) {
         uiScope.launch {
             withContext(Dispatchers.IO) {
-                account = database.get(accountNumber)
+                account = accountsDatabase.get(accountNumber)
             }
             setInfo(
                 account,
@@ -161,6 +166,11 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
                     editAccountNumberEditText.error = "Account Number Already Exists"
                     return@launch
                 }
+
+                // update all associated transactions
+                withContext(Dispatchers.IO) {
+                    transactionsDatabase.updateAccountNumber(oldAccountNumber, newAccountNumber)
+                }
             }
 
             if (editSwitch.isChecked && !account.mainAccount) {
@@ -173,6 +183,8 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
                 balance,
                 editSwitch.isChecked
             )
+
+
 
             view.findNavController().navigate(R.id.action_editAccountFragment_to_accounts_fragment)
 
@@ -187,23 +199,23 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
         newIsMain: Boolean
         ) {
         withContext(Dispatchers.IO) {
-            database.delete(account)
+            accountsDatabase.delete(account)
             val newAccount = Account(newAccountNumber, newName, newBalance, newIsMain)
-            database.insert(newAccount)
+            accountsDatabase.insert(newAccount)
         }
     }
 
 
     private suspend fun newNumberInDatabase(newAccountNumber: Int): Boolean {
         return withContext(Dispatchers.IO) {
-            database.accountNumberInDatabase(newAccountNumber)
+            accountsDatabase.accountNumberInDatabase(newAccountNumber)
         }
     }
 
 
     private suspend fun setMainAttributesToFalse() {
         withContext(Dispatchers.IO) {
-            database.setMainToFalse()
+            accountsDatabase.setMainToFalse()
         }
     }
 
@@ -215,7 +227,7 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
         Toast.makeText(this.context, "Account Removed. Need also to remove related transactions...", Toast.LENGTH_SHORT).show()
         uiScope.launch {
             withContext(Dispatchers.IO) {
-                database.delete(account)
+                accountsDatabase.delete(account)
             }
         }
         dialog.findNavController().navigate(R.id.accounts_fragment)
