@@ -32,7 +32,8 @@
             android:textSize="20sp"
             android:textAlignment="center"
             android:ems="10"
-            android:inputType="date"/>
+            android:focusable="false"
+            android:inputType="none"/>
 
         <View
             android:layout_width="0dp"

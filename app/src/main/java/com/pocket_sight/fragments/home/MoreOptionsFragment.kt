@@ -85,6 +85,9 @@ class MoreOptionsFragment: Fragment() {
     ) {
         val dateTime: LocalDateTime = convertTimeMillisToLocalDateTime(timeMillis)
         dateEditText.setText("${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}")
+        dateEditText.setOnClickListener {
+            MoreOptionsDatePicker(dateTime.dayOfMonth, dateTime.monthValue - 1, dateTime.year, this).show(this.parentFragmentManager, "Pick Date")
+        }
         val hour = dateTime.hour
         val minute = dateTime.minute
         var hourString = hour.toString()
@@ -102,7 +105,7 @@ class MoreOptionsFragment: Fragment() {
         noteEditText.setText(args.note)
     }
 
-    
+
     fun setTime(minute: Int, hour: Int) {
         var hourString = hour.toString()
         var minuteString = minute.toString()
@@ -113,6 +116,18 @@ class MoreOptionsFragment: Fragment() {
             minuteString = "0$minuteString"
         }
         timeEditText.setText("${hourString}:${minuteString}")
+    }
+
+    fun setDate(year: Int, month: Int, day: Int) {
+        var dayString = day.toString()
+        var monthString = (month + 1).toString()
+        if (dayString.length == 1) {
+            dayString = "0$dayString"
+        }
+        if (monthString.length == 1) {
+            monthString = "0$monthString"
+        }
+        dateEditText.setText("$dayString/$monthString/$year")
     }
 
     private fun confirmChanges(view: View, dateEditText: EditText, timeEditText: EditText, noteEditText: EditText) {

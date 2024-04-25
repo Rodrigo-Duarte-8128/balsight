@@ -122,9 +122,9 @@ class HomeFragment : Fragment() {
         )
 
 
-        val menuHost: MenuHost = requireActivity()
-        val menuProvider = HomeMenuProvider(this.requireContext(), this)
-        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        //val menuHost: MenuHost = requireActivity()
+        //val menuProvider = HomeMenuProvider(this.requireContext(), this)
+        //menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
 
 
