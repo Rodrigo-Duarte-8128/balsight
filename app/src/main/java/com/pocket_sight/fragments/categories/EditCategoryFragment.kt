@@ -39,11 +39,14 @@ import com.pocket_sight.types.categories.ProvisionalSubcategory
 import com.pocket_sight.types.categories.SubcategoriesDao
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.categories.Subcategory
+import com.pocket_sight.types.transactions.TransactionsDao
+import com.pocket_sight.types.transactions.TransactionsDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.math.RoundingMode
 
 
 class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCategoryDialogListener {
@@ -60,6 +63,8 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
     private lateinit var categoriesDatabase: CategoriesDao
     private lateinit var subcategoriesDatabase: SubcategoriesDao
     private lateinit var provisionalSubcategoriesDatabase: ProvisionalSubcategoriesDao
+    private lateinit var transactionsDatabase: TransactionsDao
+    private lateinit var accountsDatabase: AccountsDao
 
     private lateinit var adapter: SubcategoriesAdapter
 
@@ -82,6 +87,10 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
             SubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).subcategoriesDatabaseDao
         provisionalSubcategoriesDatabase=
             ProvisionalSubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).provisionalSubcategoriesDatabaseDao
+        transactionsDatabase =
+            TransactionsDatabase.getInstance(requireNotNull(this.activity).application).transactionsDao
+        accountsDatabase=
+            AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
 
         val subCategoriesRecyclerView = binding.rvSubcategories
 
@@ -246,6 +255,29 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
                     kindSpinner.selectedItem.toString()
                 )
                 categoriesDatabase.insert(newCategory)
+            }
+
+            // if new kind changed, update value of associated transactions
+            if (category.kind != kindSpinner.selectedItem.toString()) {
+                // update account balances
+                val associatedTransactions = withContext(Dispatchers.IO) {
+                    transactionsDatabase.getTransactionsFromCategory(category.number)
+                }
+                withContext(Dispatchers.IO) {
+                    for (transaction in associatedTransactions) {
+                        val value = transaction.value
+                        val account = accountsDatabase.get(transaction.accountNumber)
+                        val oldBalance = account.balance
+                        var newBalance = oldBalance - 2*value
+                        newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                        accountsDatabase.updateBalance(transaction.accountNumber, newBalance)
+                    }
+                }
+
+                // update transactions in database
+                withContext(Dispatchers.IO) {
+                    transactionsDatabase.changeValuesOfCategory(category.number)
+                }
             }
 
             // move fragment

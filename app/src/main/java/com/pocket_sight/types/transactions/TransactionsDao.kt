@@ -25,6 +25,12 @@ interface TransactionsDao {
     @Query("update transactions_table set transaction_account_number = :newAccountNumber where transaction_account_number = :oldAccountNumber")
     fun updateAccountNumber(oldAccountNumber: Int, newAccountNumber: Int)
 
+    @Query("update transactions_table set transaction_value = -transaction_value where transaction_category_number = :categoryNumber")
+    fun changeValuesOfCategory(categoryNumber: Int)
+
+    @Query("select * from transactions_table where transaction_category_number = :categoryNumber order by transactionId desc")
+    fun getTransactionsFromCategory(categoryNumber: Int): List<Transaction>
+
     @Query("DELETE FROM transactions_table")
     fun clear()
 }
