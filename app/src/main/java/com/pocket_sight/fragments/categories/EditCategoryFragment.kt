@@ -50,7 +50,7 @@ import kotlinx.coroutines.withContext
 import java.math.RoundingMode
 
 
-class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCategoryDialogListener {
+class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCategoryDialogListener, RemoveSubcategoriesDialogFragment.RemoveSubcategoriesDialogListener {
 
     private lateinit var category: Category
 
@@ -66,6 +66,9 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
     private lateinit var provisionalSubcategoriesDatabase: ProvisionalSubcategoriesDao
     private lateinit var transactionsDatabase: TransactionsDao
     private lateinit var accountsDatabase: AccountsDao
+
+    private lateinit var editNameEditText: EditText
+    private lateinit var kindSpinner: Spinner
 
     private lateinit var adapter: SubcategoriesAdapter
 
@@ -100,8 +103,8 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
         menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
 
-        val editNameEditText: EditText = binding.editCategoryNameEditText
-        val kindSpinner: Spinner = binding.editCategoryKindSpinner
+        editNameEditText = binding.editCategoryNameEditText
+        kindSpinner = binding.editCategoryKindSpinner
 
 
         ArrayAdapter.createFromResource(
@@ -127,12 +130,15 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
 
         val confirmEditCategoryButton: Button = binding.confirmEditCategoryButton
         confirmEditCategoryButton.setOnClickListener {view: View ->
-            handleConfirmChanges(
-                view,
-                editNameEditText,
-                kindSpinner
-            )
+            confirmButtonClicked(view)
         }
+        //confirmEditCategoryButton.setOnClickListener {view: View ->
+        //    handleConfirmChanges(
+        //        view,
+        //        editNameEditText,
+        //        kindSpinner
+        //    )
+        //}
 
 //        val confirmEditAccountButton: Button = binding.confirmEditAccountButton
 //        confirmEditAccountButton.setOnClickListener { view: View ->
@@ -208,11 +214,34 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
         }
     }
 
-    private fun handleConfirmChanges(
-        view: View,
-        editNameEditText: EditText,
-        kindSpinner: Spinner
+
+    private fun confirmButtonClicked(
+        view: View
     ) {
+        uiScope.launch {
+            val oldSubcategories = withContext(Dispatchers.IO) {
+                subcategoriesDatabase.getSubcategoriesWithParent(category.number)
+            }
+            val newSubcategoriesNumbers = provisionalSubcategoriesList.map {
+                it.associatedSubcategoryNumber
+            }
+
+            var someSubcategoryRemoved = false
+            for (subcategory in oldSubcategories) {
+                if (subcategory.number !in newSubcategoriesNumbers) {
+                    someSubcategoryRemoved = true
+                }
+            }
+
+            if (someSubcategoryRemoved) {
+                showRemoveSubcategoriesDialog()
+            } else {
+                handleConfirmChanges()
+            }
+        }
+    }
+
+    private fun handleConfirmChanges() {
         uiScope.launch {
             var newCategoryNameInDatabase: Boolean
             val newName = editNameEditText.text.toString()
@@ -228,9 +257,6 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
             // if subcategories were removed, need to update associated transactions
             val oldSubcategories = withContext(Dispatchers.IO) {
                 subcategoriesDatabase.getSubcategoriesWithParent(category.number)
-            }
-            val newSubcategoriesNames = provisionalSubcategoriesList.map {
-                it.name
             }
 
             // update subcategories database
@@ -259,6 +285,7 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
             }.map {
                 it.number
             }
+
 
             for (subcategory in oldSubcategories) {
                 if (subcategory.number !in newSubcategoriesNumbers) {
@@ -306,11 +333,11 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
                 }
             }
 
-            // move fragment
-            view.findNavController().navigate(
-                EditCategoryFragmentDirections.actionEditCategoryFragmentToCategoriesFragment()
-            )
         }
+        // move fragment
+        NavHostFragment.findNavController(this).navigate(
+            EditCategoryFragmentDirections.actionEditCategoryFragmentToCategoriesFragment()
+        )
     }
 
 
@@ -318,14 +345,28 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
         NavHostFragment.findNavController(this).navigate(EditCategoryFragmentDirections.actionEditCategoryFragmentToAddSubcategoryFragment(category.number))
     }
 
+    private fun showRemoveSubcategoriesDialog() {
+        RemoveSubcategoriesDialogFragment(this).show(this.parentFragmentManager, "RemoveSubcategoriesDialog")
+    }
+
+    override fun onRemoveSubcategoriesDialogPositiveClick(dialog: DialogFragment) {
+        Toast.makeText(
+            this.context,
+            "Subcategories Removed.",
+            Toast.LENGTH_SHORT
+        ).show()
+        handleConfirmChanges()
+    }
+
     fun showRemoveCategoryDialog() {
         RemoveCategoryDialogFragment(this).show(this.parentFragmentManager, "RemoveCategoryDialog")
     }
 
+
     override fun onRemoveCategoryDialogPositiveClick(dialog: DialogFragment) {
         Toast.makeText(
             this.context,
-            "Category Removed. Set category of associated transactions to null.",
+            "Category Removed.",
             Toast.LENGTH_SHORT
         ).show()
         uiScope.launch {
