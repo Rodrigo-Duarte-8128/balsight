@@ -88,8 +88,14 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
         viewHolder.valueView.text = valueString
 
         uiScope.launch {
-            val categoryName = withContext(Dispatchers.IO) {
-                categoriesDatabase.get(act.categoryNumber!!).name
+            val categoryNumber = act.categoryNumber
+            var categoryString = ""
+            if (categoryNumber != null) {
+                categoryString = withContext(Dispatchers.IO) {
+                    categoriesDatabase.get(act.categoryNumber!!).name
+                }
+            } else {
+                categoryString = "None"
             }
             var subcategoryNumber: Int? = act.subcategory
             var subcategoryName = ""
@@ -97,8 +103,14 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
                 subcategoryName = withContext(Dispatchers.IO) {
                     subcategoriesDatabase.get(subcategoryNumber).name
                 }
+            } else {
+                subcategoryName = if (act.oldSubcategoryName != null) {
+                    act.oldSubcategoryName!!
+                } else {
+                    "None"
+                }
             }
-            viewHolder.categoryView.text = "$categoryName / $subcategoryName"
+            viewHolder.categoryView.text = "$categoryString / $subcategoryName"
         }
     }
 }

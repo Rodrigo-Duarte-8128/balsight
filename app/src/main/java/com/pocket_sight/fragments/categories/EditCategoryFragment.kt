@@ -224,6 +224,14 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
                 return@launch
             }
 
+            // if subcategories were removed, need to update associated transactions
+            val oldSubcategories = withContext(Dispatchers.IO) {
+                subcategoriesDatabase.getSubcategoriesWithParent(category.number)
+            }
+            val newSubcategoriesNames = provisionalSubcategoriesList.map {
+                it.name
+            }
+
             // update subcategories database
             withContext(Dispatchers.IO) {
                 subcategoriesDatabase.clearSubcategoriesWithParent(category.number)
@@ -245,6 +253,23 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
                 provisionalSubcategoriesDatabase.clearProvisionalSubcategories()
             }
 
+            val newSubcategoriesNumbers = withContext(Dispatchers.IO) {
+                subcategoriesDatabase.getSubcategoriesWithParent(category.number)
+            }.map {
+                it.number
+            }
+
+            for (subcategory in oldSubcategories) {
+                if (subcategory.number !in newSubcategoriesNumbers) {
+                    // this subcategory has been removed
+                    // need to update subcategoryNumber of associated transactions
+                    withContext(Dispatchers.IO) {
+                        transactionsDatabase.updateTransactionsWithRemovedSubcategory(subcategory.number, subcategory.name)
+                    }
+                }
+            }
+
+
             // update category database
             withContext(Dispatchers.IO) {
                 categoriesDatabase.delete(category)
@@ -257,7 +282,7 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
                 categoriesDatabase.insert(newCategory)
             }
 
-            // if new kind changed, update value of associated transactions
+            // if kind changed, update value of associated transactions
             if (category.kind != kindSpinner.selectedItem.toString()) {
                 // update account balances
                 val associatedTransactions = withContext(Dispatchers.IO) {
