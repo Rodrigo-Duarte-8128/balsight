@@ -13,8 +13,11 @@ interface TransactionsDao {
     @Delete
     fun delete(transaction: Transaction)
 
+    @Query("delete from transactions_table where transactionId = :timeMillis")
+    fun deleteByKey(timeMillis: Long)
+
     @Query("SELECT * from transactions_table WHERE transactionId = :key")
-    fun get(key: Int): Transaction
+    fun get(key: Long): Transaction
 
     @Query("SELECT * from transactions_table WHERE transaction_month_int = :month and transaction_year_int = :year and transaction_account_number = :accountNumber ORDER BY transactionId DESC")
     fun getTransactionsFromMonthYear(month: Int, year: Int, accountNumber: Int): List<Transaction>

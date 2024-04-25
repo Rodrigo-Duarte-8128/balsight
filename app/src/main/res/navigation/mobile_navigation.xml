@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_home_fragment_to_addExpenseFragment"
             app:destination="@id/add_expense_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_editTransactionFragment"
+            app:destination="@id/edit_transaction_fragment" />
     </fragment>
 
     <fragment
@@ -172,6 +175,12 @@
             app:destination="@id/add_expense_fragment"
             app:popUpTo="@id/home_fragment" />
         <argument
+            android:name="from"
+            app:argType="string"/>
+        <argument
+            android:name="original_time_millis"
+            app:argType="long"/>
+        <argument
             android:name="timeMillis"
             app:argType="long" />
         <argument
@@ -189,6 +198,41 @@
         <argument
             android:name="note"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_more_options_fragment_to_edit_transaction_fragment"
+            app:destination="@id/edit_transaction_fragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/edit_transaction_fragment"
+        android:name="com.pocket_sight.fragments.home.EditTransactionFragment"
+        android:label="Edit Transaction"
+        tools:layout="@layout/fragment_edit_transaction">
+        <argument
+            android:name="original_time_millis"
+            app:argType="long"/>
+        <argument
+            android:name="timeMillis"
+            app:argType="long" />
+        <argument
+            android:name="account_number"
+            app:argType="integer" />
+        <argument
+            android:name="value_string"
+            app:argType="string"/>
+        <argument
+            android:name="selected_category_number"
+            app:argType="integer"/>
+        <argument
+            android:name="selected_subcategory_number"
+            app:argType="integer"/>
+        <argument
+            android:name="note"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_edit_transaction_fragment_to_more_options_fragment"
+            app:destination="@id/more_options_fragment" />
+        <action
+            android:id="@+id/action_edit_transaction_fragment_to_home_fragment"
+            app:destination="@id/home_fragment" />
+    </fragment>
 </navigation>

@@ -165,15 +165,29 @@ class MoreOptionsFragment: Fragment() {
         val newTimeMillis: Long = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
 
+        if (args.from == "edit_transaction_fragment") {
+            view.findNavController().navigate(MoreOptionsFragmentDirections.actionMoreOptionsFragmentToEditTransactionFragment(
+                args.originalTimeMillis,
+                newTimeMillis,
+                args.accountNumber,
+                args.valueString,
+                args.selectedCategoryNumber,
+                args.selectedSubcategoryNumber,
+                note
+            ))
+        }
 
-        view.findNavController().navigate(MoreOptionsFragmentDirections.actionMoreOptionsFragmentToAddExpenseFragment(
-            accountNumber,
-            newTimeMillis,
-            note,
-            args.valueString,
-            args.selectedCategoryNumber,
-            args.selectedSubcategoryNumber
-        ))
+        if (args.from == "add_expense_fragment") {
+            view.findNavController().navigate(MoreOptionsFragmentDirections.actionMoreOptionsFragmentToAddExpenseFragment(
+                accountNumber,
+                newTimeMillis,
+                note,
+                args.valueString,
+                args.selectedCategoryNumber,
+                args.selectedSubcategoryNumber
+            ))
+        }
+
     }
 
 

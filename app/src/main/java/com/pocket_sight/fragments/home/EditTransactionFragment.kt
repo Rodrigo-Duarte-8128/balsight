@@ -17,8 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.databinding.FragmentAddExpenseBinding
-import com.pocket_sight.fragments.accounts.AccountsAdapter
-import com.pocket_sight.fragments.categories.EditCategoryFragmentArgs
+import com.pocket_sight.databinding.FragmentEditTransactionBinding
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
@@ -38,8 +37,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.math.RoundingMode
 
-class AddExpenseFragment: Fragment() {
-    private var _binding: FragmentAddExpenseBinding? = null
+
+class EditTransactionFragment: Fragment() {
+    private var _binding: FragmentEditTransactionBinding? = null
     val binding get() = _binding!!
 
     lateinit var categoriesDatabase: CategoriesDao
@@ -47,8 +47,8 @@ class AddExpenseFragment: Fragment() {
     lateinit var transactionsDatabase: TransactionsDao
     lateinit var accountsDatabase: AccountsDao
 
-    lateinit var categoriesAdapter: AddExpenseCategoriesAdapter
-    lateinit var subcategoriesAdapter: AddExpenseSubcategoriesAdapter
+    lateinit var categoriesAdapter: EditTransactionCategoriesAdapter
+    lateinit var subcategoriesAdapter: EditTransactionSubcategoriesAdapter
 
     lateinit var recyclerView: RecyclerView
 
@@ -57,7 +57,10 @@ class AddExpenseFragment: Fragment() {
     lateinit var subcategoryTextView: TextView
     lateinit var valueEditText: EditText
 
-    lateinit var args: AddExpenseFragmentArgs
+    lateinit var args: EditTransactionFragmentArgs
+
+    lateinit var transaction: Transaction
+    var kind = "Expense"
 
     private var selectedCategoryNumber: Int? = null
     private var selectedSubcategoryNumber: Int? = null
@@ -70,13 +73,15 @@ class AddExpenseFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentAddExpenseBinding.inflate(inflater, container, false)
+        _binding = FragmentEditTransactionBinding.inflate(inflater, container, false)
 
-        args = AddExpenseFragmentArgs.fromBundle(requireArguments())
+        args = EditTransactionFragmentArgs.fromBundle(requireArguments())
+
+
 
 
         val menuHost: MenuHost = requireActivity()
-        val menuProvider = AddExpenseMenuProvider(this.requireContext(), this)
+        val menuProvider = EditTransactionMenuProvider(this.requireContext(), this)
         menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         categoriesDatabase = CategoriesDatabase.getInstance(requireNotNull(this.activity).application).categoriesDatabaseDao
@@ -84,31 +89,50 @@ class AddExpenseFragment: Fragment() {
         transactionsDatabase = TransactionsDatabase.getInstance(requireNotNull(this.activity).application).transactionsDao
         accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
 
-        valueEditText = binding.addExpenseValueEditText
+        valueEditText = binding.editTransactionValueEditText
 
-        chooseTextView = binding.addExpenseChooseTextView
-        categoryTextView = binding.addExpenseCategoryTextView
-        subcategoryTextView = binding.addExpenseSubcategoryTextView
+        chooseTextView = binding.editTransactionChooseTextView
+        categoryTextView = binding.editTransactionCategoryTextView
+        subcategoryTextView = binding.editTransactionSubcategoryTextView
 
-        recyclerView = binding.addExpenseRv
+        recyclerView = binding.editTransactionRv
 
         buildFragmentInfo(this, this.requireContext(), recyclerView)
 
-        val addExpenseButton: Button = binding.addExpenseButton
-        addExpenseButton.setOnClickListener {view: View ->
-            addExpense(this.requireContext(), view, valueEditText)
+        val confirmChangesButton: Button = binding.editTransactionConfirmChangesButton
+        confirmChangesButton.setOnClickListener {view: View ->
+            confirmChangesClicked(
+                this.requireContext(),
+                view,
+                valueEditText
+            )
         }
+//        val addExpenseButton: Button = binding.addExpenseButton
+//        addExpenseButton.setOnClickListener {view: View ->
+//            addExpense(this.requireContext(), view, valueEditText)
+//        }
 
 
         return binding.root
     }
 
-    private fun buildFragmentInfo(fragment: AddExpenseFragment, context: Context, recyclerView: RecyclerView) {
+
+
+
+    private fun buildFragmentInfo(fragment: EditTransactionFragment, context: Context, recyclerView: RecyclerView) {
         uiScope.launch {
-            val valueString = args.valueString
-            if (valueString != "-1") {
-                valueEditText.setText(valueString)
+            val value = args.valueString.toDouble()
+            kind = if (value >= 0) {
+                "Income"
+            } else {"Expense"}
+
+            val absoluteValue = if (kind == "Income") {
+                value
+            } else {
+                -value
             }
+            valueEditText.setText(absoluteValue.toString())
+
             selectedCategoryNumber = if (args.selectedCategoryNumber == -1) {
                 null
             } else {args.selectedCategoryNumber}
@@ -131,7 +155,7 @@ class AddExpenseFragment: Fragment() {
                 val subcategories = withContext(Dispatchers.IO) {
                     subcategoriesDatabase.getSubcategoriesWithParent(selectedCategoryNumber!!)
                 }
-                subcategoriesAdapter = AddExpenseSubcategoriesAdapter(fragment, context, subcategories)
+                subcategoriesAdapter = EditTransactionSubcategoriesAdapter(fragment, context, subcategories)
                 recyclerView.adapter = subcategoriesAdapter
 
                 categoryTextView.text = withContext(Dispatchers.IO) {
@@ -140,11 +164,11 @@ class AddExpenseFragment: Fragment() {
             } else {
                 val categories = withContext(Dispatchers.IO) {
                     categoriesDatabase.getAllCategories().filter {
-                        it.kind == "Expense"
+                        it.kind == kind
                     }
                 }
 
-                categoriesAdapter = AddExpenseCategoriesAdapter(fragment, context, categories)
+                categoriesAdapter = EditTransactionCategoriesAdapter(fragment, context, categories)
                 recyclerView.adapter = categoriesAdapter
             }
 
@@ -156,10 +180,14 @@ class AddExpenseFragment: Fragment() {
                     subcategoriesDatabase.get(selectedSubcategoryNumber!!).name
                 }
             }
+
+            transaction = withContext(Dispatchers.IO) {
+                transactionsDatabase.get(args.originalTimeMillis)
+            }
         }
     }
 
-    fun categoryClicked(fragment: AddExpenseFragment, context: Context, category: Category) {
+    fun categoryClicked(fragment: EditTransactionFragment, context: Context, category: Category) {
         uiScope.launch {
             chooseTextView.text = "Choose Subcategory"
             categoryTextView.text = category.name
@@ -169,12 +197,12 @@ class AddExpenseFragment: Fragment() {
             val subcategories = withContext(Dispatchers.IO) {
                 subcategoriesDatabase.getSubcategoriesWithParent(category.number)
             }
-            subcategoriesAdapter = AddExpenseSubcategoriesAdapter(fragment, context, subcategories)
+            subcategoriesAdapter = EditTransactionSubcategoriesAdapter(fragment, context, subcategories)
             recyclerView.adapter = subcategoriesAdapter
         }
     }
 
-    fun subcategoryClicked(fragment: AddExpenseFragment, context: Context, subcategory: Subcategory) {
+    fun subcategoryClicked(fragment: EditTransactionFragment, context: Context, subcategory: Subcategory) {
         uiScope.launch {
             chooseTextView.text = "Choose Category"
             subcategoryTextView.text = subcategory.name
@@ -184,17 +212,23 @@ class AddExpenseFragment: Fragment() {
                     it.kind == "Expense"
                 }
             }
-            categoriesAdapter = AddExpenseCategoriesAdapter(fragment, context, categories)
+            categoriesAdapter = EditTransactionCategoriesAdapter(fragment, context, categories)
             recyclerView.adapter = categoriesAdapter
         }
     }
 
     fun moreOptionsClicked() {
-        val valueString = if (valueEditText.text.toString() == "") {
-            "-1"
-        } else {
-            valueEditText.text.toString()
+        var valueString = "-1"
+        if (valueEditText.text.toString() != "") {
+            val valueDouble = valueEditText.text.toString().toDouble()
+            valueString = if (kind == "Expense") {
+                (-valueDouble).toString()
+            } else {
+                valueDouble.toString()
+            }
+
         }
+
         val selectedCatInt: Int = if (selectedCategoryNumber != null) {
             selectedCategoryNumber!!
         } else {
@@ -205,9 +239,9 @@ class AddExpenseFragment: Fragment() {
         } else {
             -1
         }
-        this.findNavController().navigate(AddExpenseFragmentDirections.actionAddExpenseFragmentToMoreOptionsFragment(
-            "add_expense_fragment",
-            args.timeMillis,
+        this.findNavController().navigate(EditTransactionFragmentDirections.actionEditTransactionFragmentToMoreOptionsFragment(
+            "edit_transaction_fragment",
+            args.originalTimeMillis,
             args.timeMillis,
             args.accountNumber,
             valueString,
@@ -217,14 +251,17 @@ class AddExpenseFragment: Fragment() {
         ))
     }
 
-    fun addExpense(context: Context, view: View, valueEditText: EditText) {
+    fun confirmChangesClicked(context: Context, view: View, valueEditText: EditText) {
         uiScope.launch {
             val valueString = valueEditText.text.toString()
             var value: Double
 
             try {
                 value = valueString.toDouble()
-                value = -value.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                value = value.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                if (kind == "Expense") {
+                    value = -value
+                }
             } catch (e: Exception) {
                 valueEditText.error = "Invalid Value"
                 return@launch
@@ -254,6 +291,7 @@ class AddExpenseFragment: Fragment() {
                     null,
                     null
                 )
+                transactionsDatabase.deleteByKey(args.originalTimeMillis)
                 transactionsDatabase.insert(newTransaction)
             }
 
@@ -261,13 +299,18 @@ class AddExpenseFragment: Fragment() {
             val account = withContext(Dispatchers.IO) {
                 accountsDatabase.get(args.accountNumber)
             }
-            var newBalance = account.balance + value
+            var newBalance = account.balance - transaction.value + value
             newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
             withContext(Dispatchers.IO) {
                 accountsDatabase.updateBalance(args.accountNumber, newBalance)
             }
 
-            view.findNavController().navigate(AddExpenseFragmentDirections.actionAddExpenseFragmentToHomeFragment())
+            view.findNavController().navigate(EditTransactionFragmentDirections.actionEditTransactionFragmentToHomeFragment())
         }
+    }
+
+
+    fun removeTransactionClicked() {
+
     }
 }

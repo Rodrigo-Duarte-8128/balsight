@@ -8,9 +8,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.convertMonthIntToString
+import com.pocket_sight.fragments.categories.CategoriesFragmentDirections
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.SubcategoriesDatabase
@@ -37,7 +39,26 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
 
         init {
             rowLayout.setOnClickListener {
-                Toast.makeText(context, "act clicked!", Toast.LENGTH_SHORT).show()
+                val position = adapterPosition
+                val transaction = acts[position]
+                val selectedCategoryNumber: Int = if (transaction.categoryNumber != null) {
+                    transaction.categoryNumber!!
+                } else {-1}
+                val selectedSubcategoryNumber: Int = if (transaction.subcategory != null) {
+                    transaction.subcategory!!
+                } else {-1}
+
+                itemView.findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToEditTransactionFragment(
+                        transaction.transactionId,
+                        transaction.transactionId,
+                        transaction.accountNumber,
+                        transaction.value.toString(),
+                        selectedCategoryNumber,
+                        selectedSubcategoryNumber,
+                        transaction.note
+                    )
+                )
             }
         }
 
