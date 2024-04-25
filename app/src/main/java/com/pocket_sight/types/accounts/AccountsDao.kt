@@ -23,6 +23,9 @@ interface AccountsDao {
     @Query("UPDATE accounts_table SET main_account = 0")
     fun setMainToFalse()
 
+    @Query("UPDATE accounts_table SET account_balance = :newBalance WHERE account_number = :accountNumber")
+    fun updateBalance(accountNumber: Int, newBalance: Double)
+
     @Query("SELECT * from accounts_table ORDER BY account_number")
     fun getAllAccounts(): MutableList<Account>
 

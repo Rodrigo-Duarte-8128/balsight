@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.databinding.FragmentAddExpenseBinding
 import com.pocket_sight.fragments.accounts.AccountsAdapter
 import com.pocket_sight.fragments.categories.EditCategoryFragmentArgs
+import com.pocket_sight.types.accounts.AccountsDao
+import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.Category
@@ -43,6 +45,7 @@ class AddExpenseFragment: Fragment() {
     lateinit var categoriesDatabase: CategoriesDao
     lateinit var subcategoriesDatabase: SubcategoriesDao
     lateinit var transactionsDatabase: TransactionsDao
+    lateinit var accountsDatabase: AccountsDao
 
     lateinit var categoriesAdapter: AddExpenseCategoriesAdapter
     lateinit var subcategoriesAdapter: AddExpenseSubcategoriesAdapter
@@ -79,6 +82,7 @@ class AddExpenseFragment: Fragment() {
         categoriesDatabase = CategoriesDatabase.getInstance(requireNotNull(this.activity).application).categoriesDatabaseDao
         subcategoriesDatabase = SubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).subcategoriesDatabaseDao
         transactionsDatabase = TransactionsDatabase.getInstance(requireNotNull(this.activity).application).transactionsDao
+        accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
 
         valueEditText = binding.addExpenseValueEditText
 
@@ -250,6 +254,17 @@ class AddExpenseFragment: Fragment() {
                 )
                 transactionsDatabase.insert(newTransaction)
             }
+
+            //update associated account balance
+            val account = withContext(Dispatchers.IO) {
+                accountsDatabase.get(args.accountNumber)
+            }
+            var newBalance = account.balance + value
+            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+            withContext(Dispatchers.IO) {
+                accountsDatabase.updateBalance(args.accountNumber, newBalance)
+            }
+
             view.findNavController().navigate(AddExpenseFragmentDirections.actionAddExpenseFragmentToHomeFragment())
         }
     }
