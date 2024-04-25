@@ -95,7 +95,11 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
                     categoriesDatabase.get(act.categoryNumber!!).name
                 }
             } else {
-                categoryString = "None"
+                categoryString = if (act.oldCategoryName != null) {
+                    act.oldCategoryName!!
+                } else {
+                    "None"
+                }
             }
             var subcategoryNumber: Int? = act.subcategory
             var subcategoryName = ""

@@ -2,6 +2,7 @@ package com.pocket_sight.fragments.categories
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -324,16 +325,41 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
     override fun onRemoveCategoryDialogPositiveClick(dialog: DialogFragment) {
         Toast.makeText(
             this.context,
-            "Category Removed. Need also to update associated transactions...",
+            "Category Removed. Set category of associated transactions to null.",
             Toast.LENGTH_SHORT
         ).show()
         uiScope.launch {
             withContext(Dispatchers.IO) {
+
+                // set category number of associated transactions to null
+                val associatedTransactions = transactionsDatabase.getTransactionsFromCategory(category.number)
+                for (transaction in associatedTransactions) {
+                    val subcategoryNumber = transaction.subcategory
+                    var oldSubcategoryName: String? = null
+                    if (subcategoryNumber != null) {
+                        oldSubcategoryName = subcategoriesDatabase.get(subcategoryNumber).name
+                    }
+
+                    transactionsDatabase.updateTransaction(
+                        transaction.transactionId,
+                        transaction.value,
+                        transaction.accountNumber,
+                        null,
+                        null,
+                        transaction.note,
+                        oldSubcategoryName,
+                        category.name
+                    )
+                }
+
+                // delete category and associated subcategories from databases
                 categoriesDatabase.delete(category)
                 subcategoriesDatabase.clearSubcategoriesWithParent(category.number)
                 provisionalSubcategoriesDatabase.clearProvisionalSubcategories()
             }
         }
+
+
         dialog.findNavController().navigate(R.id.categories_fragment)
         dialog.dismiss()
     }

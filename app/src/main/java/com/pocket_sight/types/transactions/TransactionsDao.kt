@@ -31,6 +31,18 @@ interface TransactionsDao {
     @Query("update transactions_table set transaction_subcategory_number = null, transaction_old_subcategory_name = :oldSubName where transaction_subcategory_number = :subcategoryNumber")
     fun updateTransactionsWithRemovedSubcategory(subcategoryNumber: Int, oldSubName: String)
 
+    @Query("update transactions_table set transaction_value = :value, transaction_account_number = :accountNumber, transaction_category_number = :categoryNumber, transaction_subcategory_number = :subcategoryNumber, transaction_note = :note, transaction_old_subcategory_name = :oldSubcategoryName, transaction_old_category_name = :oldCategoryName where transactionId = :transactionId")
+    fun updateTransaction(
+        transactionId: Long,
+        value: Double,
+        accountNumber: Int,
+        categoryNumber: Int?,
+        subcategoryNumber: Int?,
+        note: String,
+        oldSubcategoryName: String?,
+        oldCategoryName: String?
+    )
+
     @Query("select * from transactions_table where transaction_category_number = :categoryNumber order by transactionId desc")
     fun getTransactionsFromCategory(categoryNumber: Int): List<Transaction>
 
