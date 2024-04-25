@@ -58,7 +58,15 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
         val act = acts[position]
 
         viewHolder.dayMonthTextView.text = "${act.day} ${convertMonthIntToString(act.month)}"
-        viewHolder.timeTextView.text = "${act.hour}:${act.minutes}"
+        var minutesString = act.minutes.toString()
+        if (minutesString.length == 1) {
+           minutesString = "0$minutesString"
+        }
+        var hoursString = act.hour.toString()
+        if (hoursString.length == 1) {
+            hoursString = "0$hoursString"
+        }
+        viewHolder.timeTextView.text = "$hoursString:$minutesString"
         viewHolder.noteView.text = act.note
         val value = act.value
         val valueString = if (value >= 0) {

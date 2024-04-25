@@ -44,6 +44,8 @@ class MoreOptionsFragment: Fragment() {
     var timeMillis: Long = 0L
     var accountNumber: Int = 0
 
+    lateinit var args: MoreOptionsFragmentArgs
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,7 +54,7 @@ class MoreOptionsFragment: Fragment() {
 
         _binding = FragmentMoreOptionsBinding.inflate(inflater, container, false)
 
-        val args = MoreOptionsFragmentArgs.fromBundle(requireArguments())
+        args = MoreOptionsFragmentArgs.fromBundle(requireArguments())
         timeMillis = args.timeMillis
         accountNumber = args.accountNumber
 
@@ -61,7 +63,7 @@ class MoreOptionsFragment: Fragment() {
         val timeEditText = binding.moreOptionsTimeEditText
         val noteEditText = binding.moreOptionsNoteEditText
 
-        buildFragmentInfo(timeMillis, dateEditText, timeEditText)
+        buildFragmentInfo(timeMillis, dateEditText, timeEditText, noteEditText)
 
         val confirmChangesButton: Button = binding.moreOptionsConfirmButton
         confirmChangesButton.setOnClickListener {view: View ->
@@ -72,10 +74,16 @@ class MoreOptionsFragment: Fragment() {
         return binding.root
     }
 
-    private fun buildFragmentInfo(timeMillis: Long, dateEditText: EditText, timeEditText: EditText) {
+    private fun buildFragmentInfo(
+        timeMillis: Long,
+        dateEditText: EditText,
+        timeEditText: EditText,
+        noteEditText: EditText
+    ) {
         val dateTime: LocalDateTime = convertTimeMillisToLocalDateTime(timeMillis)
         dateEditText.setText("${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}")
         timeEditText.setText("${dateTime.hour}:${dateTime.minute}")
+        noteEditText.setText(args.note)
     }
 
     private fun confirmChanges(view: View, dateEditText: EditText, timeEditText: EditText, noteEditText: EditText) {
@@ -117,7 +125,10 @@ class MoreOptionsFragment: Fragment() {
         view.findNavController().navigate(MoreOptionsFragmentDirections.actionMoreOptionsFragmentToAddExpenseFragment(
             accountNumber,
             newTimeMillis,
-            note
+            note,
+            args.valueString,
+            args.selectedCategoryNumber,
+            args.selectedSubcategoryNumber
         ))
     }
 

@@ -165,7 +165,8 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
                         val provisionalSubcategory = ProvisionalSubcategory(
                             provisionalSubcategoriesDatabase.getMaxNumber() + 1,
                             subcategory.name,
-                            subcategory.parentNumber
+                            subcategory.parentNumber,
+                            subcategory.number
                         )
                         provisionalSubcategoriesDatabase.insert(provisionalSubcategory)
                     }
@@ -218,8 +219,14 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
             withContext(Dispatchers.IO) {
                 subcategoriesDatabase.clearSubcategoriesWithParent(category.number)
                 for (provisionalSubcategory in provisionalSubcategoriesList) {
+                    val subcatNumber = if (provisionalSubcategory.associatedSubcategoryNumber == null) {
+                        subcategoriesDatabase.getMaxNumber() + 1
+                    } else {
+                        provisionalSubcategory.associatedSubcategoryNumber!!
+                    }
                     val newSubcategory = Subcategory(
-                        subcategoriesDatabase.getMaxNumber() + 1,
+                        //subcategoriesDatabase.getMaxNumber() + 1,
+                        subcatNumber,
                         provisionalSubcategory.name,
                         provisionalSubcategory.parentNumber
                     )

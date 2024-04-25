@@ -79,7 +79,8 @@ class AddSubcategoryFragment: Fragment() {
                 val newProvisionalSubcategory = ProvisionalSubcategory(
                     provisionalSubcategoryNumber,
                     nameEditText.text.toString(),
-                    parentCategoryNumber
+                    parentCategoryNumber,
+                    null
                 )
                 database.insert(newProvisionalSubcategory)
             }

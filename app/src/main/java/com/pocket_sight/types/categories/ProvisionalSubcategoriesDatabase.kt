@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ProvisionalSubcategory::class], version = 1, exportSchema = false)
+@Database(entities = [ProvisionalSubcategory::class], version = 2, exportSchema = false)
 abstract class ProvisionalSubcategoriesDatabase: RoomDatabase() {
     abstract val provisionalSubcategoriesDatabaseDao: ProvisionalSubcategoriesDao
 

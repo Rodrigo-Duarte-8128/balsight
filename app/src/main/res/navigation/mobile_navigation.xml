@@ -152,11 +152,21 @@
         <action
             android:id="@+id/action_add_expense_fragment_to_moreOptionsFragment"
             app:destination="@id/more_options_fragment" />
+        <argument
+            android:name="value_string"
+            app:argType="string"/> <!-- the string "-1" acts as null -->
+        <argument
+            android:name="selected_category_number"
+            app:argType="integer"/> <!-- -1 acts as null -->
+        <argument
+            android:name="selected_subcategory_number"
+            app:argType="integer"/> <!-- -1 acts as null -->
     </fragment>
     <fragment
         android:id="@+id/more_options_fragment"
         android:name="com.pocket_sight.fragments.home.MoreOptionsFragment"
-        android:label="More Options" >
+        android:label="More Options"
+        tools:layout="@layout/fragment_more_options">
         <action
             android:id="@+id/action_moreOptionsFragment_to_add_expense_fragment"
             app:destination="@id/add_expense_fragment"
@@ -167,6 +177,18 @@
         <argument
             android:name="account_number"
             app:argType="integer" />
+        <argument
+            android:name="value_string"
+            app:argType="string"/>
+        <argument
+            android:name="selected_category_number"
+            app:argType="integer"/>
+        <argument
+            android:name="selected_subcategory_number"
+            app:argType="integer"/>
+        <argument
+            android:name="note"
+            app:argType="string"/>
     </fragment>
 
 </navigation>

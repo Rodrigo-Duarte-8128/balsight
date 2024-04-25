@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -28,6 +29,8 @@ import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
+import com.pocket_sight.types.categories.SubcategoriesDao
+import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.displayed.DisplayedAccount
 import com.pocket_sight.types.displayed.DisplayedAccountDao
 import com.pocket_sight.types.displayed.DisplayedAccountDatabase
@@ -54,6 +57,8 @@ class HomeFragment : Fragment() {
     lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
     lateinit var accountsDatabase: AccountsDao
     lateinit var displayedAccountDatabase: DisplayedAccountDao
+
+    lateinit var subcategoriesDatabase: SubcategoriesDao
 
     lateinit var adapter: HomeAdapter
 
@@ -102,6 +107,10 @@ class HomeFragment : Fragment() {
         displayedAccountDatabase = DisplayedAccountDatabase.getInstance(this.requireContext()).displayedAccountDao
 
 
+        subcategoriesDatabase = SubcategoriesDatabase.getInstance(this.requireContext()).subcategoriesDatabaseDao
+
+
+
         val actsRV = binding.rvActs
         val displayedMonthYearButton: Button = binding.displayedMonthButton
         val displayedAccountButton: Button = binding.displayedAccountButton
@@ -141,6 +150,11 @@ class HomeFragment : Fragment() {
         displayedAccountButton: Button
     ) {
         uiScope.launch {
+
+            //withContext(Dispatchers.IO) {
+            //    transactionsDatabase.clear()
+            //    subcategoriesDatabase.clear()
+            //}
 
             var displayedMonthYearArray = arrayOf(
                 LocalDateTime.now().monthValue,
@@ -201,7 +215,6 @@ class HomeFragment : Fragment() {
                 )
             }
 
-
             adapter = HomeAdapter(context, transactionsList)
 
             val layoutManager = LinearLayoutManager(context)
@@ -223,10 +236,14 @@ class HomeFragment : Fragment() {
                     HomeFragmentDirections.actionHomeFragmentToAddExpenseFragment(
                         accountNumber,
                         System.currentTimeMillis(),
-                        ""
+                        "",
+                        "-1",
+                        -1,
+                        -1
                     )
                 )
             }
+
         }
 
         binding.addIncomeFab.setOnClickListener{

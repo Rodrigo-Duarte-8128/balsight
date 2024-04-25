@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
+import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentAddCategoryBinding
 import com.pocket_sight.databinding.FragmentAddSubcategoryBinding
@@ -50,6 +53,10 @@ class EditSubcategoryFragment: Fragment() {
 
         _binding = FragmentEditSubcategoryBinding.inflate(inflater, container, false)
         database = ProvisionalSubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).provisionalSubcategoriesDatabaseDao
+
+        val menuHost: MenuHost = requireActivity()
+        val menuProvider = EditSubcategoryMenuProvider(this.requireContext(), this)
+        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
 
         val args = EditSubcategoryFragmentArgs.fromBundle(requireArguments())
@@ -98,13 +105,30 @@ class EditSubcategoryFragment: Fragment() {
             withContext(Dispatchers.IO) {
                 database.delete(provisionalSubcategory)
                 val newProvisionalSubcategory = ProvisionalSubcategory(
-                    database.getMaxNumber() + 1,
+                    //database.getMaxNumber() + 1,
+                    provisionalSubcategoryNumber,
                     nameEditText.text.toString(),
-                    provisionalSubcategory.parentNumber
+                    provisionalSubcategory.parentNumber,
+                    provisionalSubcategory.associatedSubcategoryNumber
                 )
                 database.insert(newProvisionalSubcategory)
             }
             view.findNavController().navigate(
+                EditSubcategoryFragmentDirections.actionEditSubcategoryFragmentToEditCategoryFragment(
+                    provisionalSubcategory.parentNumber,
+                    false
+                )
+            )
+        }
+    }
+
+    fun removeSubcategoryClicked(fragment: Fragment) {
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                database.delete(provisionalSubcategory)
+            }
+
+            fragment.findNavController().navigate(
                 EditSubcategoryFragmentDirections.actionEditSubcategoryFragmentToEditCategoryFragment(
                     provisionalSubcategory.parentNumber,
                     false

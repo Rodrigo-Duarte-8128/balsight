@@ -52,6 +52,7 @@ class AddExpenseFragment: Fragment() {
     lateinit var chooseTextView: TextView
     lateinit var categoryTextView: TextView
     lateinit var subcategoryTextView: TextView
+    lateinit var valueEditText: EditText
 
     lateinit var args: AddExpenseFragmentArgs
 
@@ -70,6 +71,7 @@ class AddExpenseFragment: Fragment() {
 
         args = AddExpenseFragmentArgs.fromBundle(requireArguments())
 
+
         val menuHost: MenuHost = requireActivity()
         val menuProvider = AddExpenseMenuProvider(this.requireContext(), this)
         menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
@@ -78,7 +80,7 @@ class AddExpenseFragment: Fragment() {
         subcategoriesDatabase = SubcategoriesDatabase.getInstance(requireNotNull(this.activity).application).subcategoriesDatabaseDao
         transactionsDatabase = TransactionsDatabase.getInstance(requireNotNull(this.activity).application).transactionsDao
 
-        val valueEditText = binding.addExpenseValueEditText
+        valueEditText = binding.addExpenseValueEditText
 
         chooseTextView = binding.addExpenseChooseTextView
         categoryTextView = binding.addExpenseCategoryTextView
@@ -99,20 +101,57 @@ class AddExpenseFragment: Fragment() {
 
     private fun buildFragmentInfo(fragment: AddExpenseFragment, context: Context, recyclerView: RecyclerView) {
         uiScope.launch {
-            val categories = withContext(Dispatchers.IO) {
-                categoriesDatabase.getAllCategories().filter {
-                    it.kind == "Expense"
-                }
+            val valueString = args.valueString
+            if (valueString != "-1") {
+                valueEditText.setText(valueString)
             }
+            selectedCategoryNumber = if (args.selectedCategoryNumber == -1) {
+                null
+            } else {args.selectedCategoryNumber}
 
-            categoriesAdapter = AddExpenseCategoriesAdapter(fragment, context, categories)
+            selectedSubcategoryNumber = if (args.selectedSubcategoryNumber == -1) {
+                null
+            } else {args.selectedSubcategoryNumber}
+
+            var showingSubcategories = false
+
+            if (selectedCategoryNumber != null && selectedSubcategoryNumber == null) {
+                showingSubcategories = true
+            }
 
             val layoutManager = LinearLayoutManager(context)
             layoutManager.orientation = LinearLayoutManager.VERTICAL
-
-            recyclerView.adapter = categoriesAdapter
             recyclerView.layoutManager = layoutManager
 
+            if (showingSubcategories) {
+                val subcategories = withContext(Dispatchers.IO) {
+                    subcategoriesDatabase.getSubcategoriesWithParent(selectedCategoryNumber!!)
+                }
+                subcategoriesAdapter = AddExpenseSubcategoriesAdapter(fragment, context, subcategories)
+                recyclerView.adapter = subcategoriesAdapter
+
+                categoryTextView.text = withContext(Dispatchers.IO) {
+                    categoriesDatabase.get(selectedCategoryNumber!!).name
+                }
+            } else {
+                val categories = withContext(Dispatchers.IO) {
+                    categoriesDatabase.getAllCategories().filter {
+                        it.kind == "Expense"
+                    }
+                }
+
+                categoriesAdapter = AddExpenseCategoriesAdapter(fragment, context, categories)
+                recyclerView.adapter = categoriesAdapter
+            }
+
+            if (selectedCategoryNumber != null && selectedSubcategoryNumber != null) {
+                categoryTextView.text = withContext(Dispatchers.IO) {
+                    categoriesDatabase.get(selectedCategoryNumber!!).name
+                }
+                subcategoryTextView.text = withContext(Dispatchers.IO) {
+                    subcategoriesDatabase.get(selectedSubcategoryNumber!!).name
+                }
+            }
         }
     }
 
@@ -147,9 +186,28 @@ class AddExpenseFragment: Fragment() {
     }
 
     fun moreOptionsClicked() {
+        val valueString = if (valueEditText.text.toString() == "") {
+            "-1"
+        } else {
+            valueEditText.text.toString()
+        }
+        val selectedCatInt: Int = if (selectedCategoryNumber != null) {
+            selectedCategoryNumber!!
+        } else {
+            -1
+        }
+        val selectedSubcatInt: Int = if (selectedSubcategoryNumber != null) {
+            selectedSubcategoryNumber!!
+        } else {
+            -1
+        }
         this.findNavController().navigate(AddExpenseFragmentDirections.actionAddExpenseFragmentToMoreOptionsFragment(
             args.timeMillis,
-            args.accountNumber
+            args.accountNumber,
+            valueString,
+            selectedCatInt,
+            selectedSubcatInt,
+            args.note
         ))
     }
 

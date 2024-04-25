@@ -14,7 +14,10 @@ data class ProvisionalSubcategory(
     var name: String,
 
     @ColumnInfo(name="parent_category_number")
-    var parentNumber: Int
+    var parentNumber: Int,
+
+    @ColumnInfo(name="associated_subcategory_number")
+    var associatedSubcategoryNumber: Int?
 )
 
 
