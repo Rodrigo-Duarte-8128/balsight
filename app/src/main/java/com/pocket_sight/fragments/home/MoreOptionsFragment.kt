@@ -46,6 +46,9 @@ class MoreOptionsFragment: Fragment() {
 
     lateinit var args: MoreOptionsFragmentArgs
 
+    lateinit var dateEditText: EditText
+    lateinit var timeEditText: EditText
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,8 +62,8 @@ class MoreOptionsFragment: Fragment() {
         accountNumber = args.accountNumber
 
 
-        val dateEditText = binding.moreOptionsDateEditText
-        val timeEditText = binding.moreOptionsTimeEditText
+        dateEditText = binding.moreOptionsDateEditText
+        timeEditText = binding.moreOptionsTimeEditText
         val noteEditText = binding.moreOptionsNoteEditText
 
         buildFragmentInfo(timeMillis, dateEditText, timeEditText, noteEditText)
@@ -82,8 +85,34 @@ class MoreOptionsFragment: Fragment() {
     ) {
         val dateTime: LocalDateTime = convertTimeMillisToLocalDateTime(timeMillis)
         dateEditText.setText("${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}")
-        timeEditText.setText("${dateTime.hour}:${dateTime.minute}")
+        val hour = dateTime.hour
+        val minute = dateTime.minute
+        var hourString = hour.toString()
+        var minuteString = minute.toString()
+        if (hourString.length == 1) {
+            hourString = "0$hourString"
+        }
+        if (minuteString.length == 1) {
+            minuteString = "0$minuteString"
+        }
+        timeEditText.setText("${hourString}:${minuteString}")
+        timeEditText.setOnClickListener {
+            MoreOptionsTimePicker(dateTime.minute, dateTime.hour, this).show(this.parentFragmentManager, "Pick Time")
+        }
         noteEditText.setText(args.note)
+    }
+
+    
+    fun setTime(minute: Int, hour: Int) {
+        var hourString = hour.toString()
+        var minuteString = minute.toString()
+        if (hourString.length == 1) {
+            hourString = "0$hourString"
+        }
+        if (minuteString.length == 1) {
+            minuteString = "0$minuteString"
+        }
+        timeEditText.setText("${hourString}:${minuteString}")
     }
 
     private fun confirmChanges(view: View, dateEditText: EditText, timeEditText: EditText, noteEditText: EditText) {
