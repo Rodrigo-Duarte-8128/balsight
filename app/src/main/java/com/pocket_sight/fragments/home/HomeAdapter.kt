@@ -13,26 +13,30 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.convertMonthIntToString
 import com.pocket_sight.fragments.categories.CategoriesFragmentDirections
+import com.pocket_sight.types.Act
+import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.transactions.Transaction
+import com.pocket_sight.types.transfers.Transfer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+class HomeAdapter(val context: Context, val acts: List<Act>, val displayedAccountNumber: Int?): RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
 
     private val categoriesDatabase = CategoriesDatabase.getInstance(context).categoriesDatabaseDao
     private val subcategoriesDatabase = SubcategoriesDatabase.getInstance(context).subcategoriesDatabaseDao
+    private val accountsDatabase = AccountsDatabase.getInstance(context).accountsDao
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val dayMonthTextView: TextView = itemView.findViewById(R.id.row_act_day_month_text_view)
         val timeTextView: TextView = itemView.findViewById(R.id.row_act_time_text_view)
-        val categoryView: TextView = itemView.findViewById(R.id.row_act_category_text_view)
+        val descriptionView: TextView = itemView.findViewById(R.id.row_act_category_text_view)
         val noteView: TextView = itemView.findViewById(R.id.row_act_note_text_view)
         val valueView: TextView = itemView.findViewById(R.id.row_act_value_text_view)
         val rowLayout: LinearLayout = itemView.findViewById(R.id.acts_rv_row_layout)
@@ -40,25 +44,33 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
         init {
             rowLayout.setOnClickListener {
                 val position = adapterPosition
-                val transaction = acts[position]
-                val selectedCategoryNumber: Int = if (transaction.categoryNumber != null) {
-                    transaction.categoryNumber!!
-                } else {-1}
-                val selectedSubcategoryNumber: Int = if (transaction.subcategory != null) {
-                    transaction.subcategory!!
-                } else {-1}
+                val act = acts[position]
+                if (act is Transaction) {
+                    //val transaction = acts[position]
+                    val selectedCategoryNumber: Int = if (act.categoryNumber != null) {
+                        act.categoryNumber!!
+                    } else {-1}
+                    val selectedSubcategoryNumber: Int = if (act.subcategory != null) {
+                        act.subcategory!!
+                    } else {-1}
 
-                itemView.findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToEditTransactionFragment(
-                        transaction.transactionId,
-                        transaction.transactionId,
-                        transaction.accountNumber,
-                        transaction.value.toString(),
-                        selectedCategoryNumber,
-                        selectedSubcategoryNumber,
-                        transaction.note
+                    itemView.findNavController().navigate(
+                        HomeFragmentDirections.actionHomeFragmentToEditTransactionFragment(
+                            act.transactionId,
+                            act.transactionId,
+                            act.accountNumber,
+                            act.value.toString(),
+                            selectedCategoryNumber,
+                            selectedSubcategoryNumber,
+                            act.note
+                        )
                     )
-                )
+                }
+
+                if (act is Transfer) {
+                    // move to EditTransferFragment
+                }
+
             }
         }
 
@@ -78,64 +90,125 @@ class HomeAdapter(val context: Context, val acts: List<Transaction>): RecyclerVi
     override fun onBindViewHolder(viewHolder: HomeAdapter.ViewHolder, position: Int) {
         val act = acts[position]
 
-        viewHolder.dayMonthTextView.text = "${act.day} ${convertMonthIntToString(act.month)}"
-        var minutesString = act.minutes.toString()
-        if (minutesString.length == 1) {
-           minutesString = "0$minutesString"
-        }
-        var hoursString = act.hour.toString()
-        if (hoursString.length == 1) {
-            hoursString = "0$hoursString"
-        }
-        viewHolder.timeTextView.text = "$hoursString:$minutesString"
-        viewHolder.noteView.text = act.note
-        val value = act.value
-        val valueString = if (value >= 0) {
-            viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.green))
-            if (value == value.toInt().toDouble()) {
-                "+ ${act.value.toInt()} \u20ac"
-            } else {
-                "+ ${act.value} \u20ac"
+        if (act is Transaction) {
+            viewHolder.dayMonthTextView.text = "${act.day} ${convertMonthIntToString(act.month)}"
+            var minutesString = act.minutes.toString()
+            if (minutesString.length == 1) {
+                minutesString = "0$minutesString"
             }
-        } else {
-            val positiveValue = -value
-            viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.red))
-            if (positiveValue == positiveValue.toInt().toDouble()) {
-                "- ${positiveValue.toInt()} \u20ac"
-            } else {
-                "- ${positiveValue} \u20ac"
+            var hoursString = act.hour.toString()
+            if (hoursString.length == 1) {
+                hoursString = "0$hoursString"
             }
-        }
-        viewHolder.valueView.text = valueString
+            viewHolder.timeTextView.text = "$hoursString:$minutesString"
+            viewHolder.noteView.text = act.note
 
-        uiScope.launch {
-            val categoryNumber = act.categoryNumber
-            var categoryString = ""
-            if (categoryNumber != null) {
-                categoryString = withContext(Dispatchers.IO) {
-                    categoriesDatabase.get(act.categoryNumber!!).name
+            val value = act.value
+            val valueString = if (value >= 0) {
+                viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.green))
+                if (value == value.toInt().toDouble()) {
+                    "+ ${act.value.toInt()} \u20ac"
+                } else {
+                    "+ ${act.value} \u20ac"
                 }
             } else {
-                categoryString = if (act.oldCategoryName != null) {
-                    act.oldCategoryName!!
+                val positiveValue = -value
+                viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.red))
+                if (positiveValue == positiveValue.toInt().toDouble()) {
+                    "- ${positiveValue.toInt()} \u20ac"
                 } else {
-                    "None"
+                    "- ${positiveValue} \u20ac"
                 }
             }
-            var subcategoryNumber: Int? = act.subcategory
-            var subcategoryName = ""
-            if (subcategoryNumber != null) {
-                subcategoryName = withContext(Dispatchers.IO) {
-                    subcategoriesDatabase.get(subcategoryNumber).name
+            viewHolder.valueView.text = valueString
+
+            uiScope.launch {
+                val categoryNumber = act.categoryNumber
+                var categoryString = ""
+                if (categoryNumber != null) {
+                    categoryString = withContext(Dispatchers.IO) {
+                        categoriesDatabase.get(act.categoryNumber!!).name
+                    }
+                } else {
+                    categoryString = if (act.oldCategoryName != null) {
+                        act.oldCategoryName!!
+                    } else {
+                        "None"
+                    }
+                }
+                var subcategoryNumber: Int? = act.subcategory
+                var subcategoryName = ""
+                if (subcategoryNumber != null) {
+                    subcategoryName = withContext(Dispatchers.IO) {
+                        subcategoriesDatabase.get(subcategoryNumber).name
+                    }
+                } else {
+                    subcategoryName = if (act.oldSubcategoryName != null) {
+                        act.oldSubcategoryName!!
+                    } else {
+                        "None"
+                    }
+                }
+                viewHolder.descriptionView.text = "$categoryString / $subcategoryName"
+            }
+        }
+
+
+        if (act is Transfer) {
+            viewHolder.dayMonthTextView.text = "${act.day} ${convertMonthIntToString(act.month)}"
+            var minutesString = act.minute.toString()
+            if (minutesString.length == 1) {
+                minutesString = "0$minutesString"
+            }
+            var hoursString = act.hour.toString()
+            if (hoursString.length == 1) {
+                hoursString = "0$hoursString"
+            }
+            viewHolder.timeTextView.text = "$hoursString:$minutesString"
+            viewHolder.noteView.text = act.note
+
+            val value = act.value
+            val valueString = if (displayedAccountNumber == act.accountSendingNumber) {
+                viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.red))
+                if (value == value.toInt().toDouble()) {
+                    "- ${act.value.toInt()} \u20ac"
+                } else {
+                    "- ${act.value} \u20ac"
                 }
             } else {
-                subcategoryName = if (act.oldSubcategoryName != null) {
-                    act.oldSubcategoryName!!
+                viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.green))
+                if (value == value.toInt().toDouble()) {
+                    "+ ${act.value.toInt()} \u20ac"
                 } else {
-                    "None"
+                    "+ ${act.value} \u20ac"
                 }
             }
-            viewHolder.categoryView.text = "$categoryString / $subcategoryName"
+            viewHolder.valueView.text = valueString
+
+
+            uiScope.launch {
+                var accountSendingName: String = "Another"
+                var accountReceivingName: String = "Another"
+
+                if (act.accountSendingNumber != null) {
+                    accountSendingName = withContext(Dispatchers.IO) {
+                        accountsDatabase.getNameFromAccountNumber(act.accountSendingNumber!!)
+                    }
+                }
+
+                if (act.accountReceivingNumber != null) {
+                    accountReceivingName = withContext(Dispatchers.IO) {
+                        accountsDatabase.getNameFromAccountNumber(act.accountReceivingNumber!!)
+                    }
+                }
+
+                if (displayedAccountNumber == act.accountSendingNumber) {
+                    viewHolder.descriptionView.text = "$accountSendingName -> $accountReceivingName"
+                } else {
+                    viewHolder.descriptionView.text = "$accountReceivingName <- $accountSendingName"
+                }
+
+            }
         }
     }
 }

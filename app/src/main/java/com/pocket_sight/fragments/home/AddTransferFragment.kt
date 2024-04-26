@@ -37,19 +37,26 @@ import com.pocket_sight.types.transactions.Transaction
 import com.pocket_sight.types.transactions.TransactionsDao
 import com.pocket_sight.types.transactions.TransactionsDatabase
 import com.pocket_sight.types.transactions.convertTimeMillisToLocalDateTime
+import com.pocket_sight.types.transfers.Transfer
+import com.pocket_sight.types.transfers.TransfersDao
+import com.pocket_sight.types.transfers.TransfersDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.math.RoundingMode
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
 
 class AddTransferFragment: Fragment() {
     private var _binding: FragmentAddTransferBinding? = null
     val binding get() = _binding!!
 
     lateinit var accountsDatabase: AccountsDao
+    lateinit var transfersDatabase: TransfersDao
 
     var timeMillis = 0L
 
@@ -81,6 +88,7 @@ class AddTransferFragment: Fragment() {
 
 
         accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
+        transfersDatabase = TransfersDatabase.getInstance(requireNotNull(this.activity).application).transfersDao
 
         accountSendingSpinner = binding.addTransferAccountSendingSpinner
         //accountSendingSpinner.onItemSelectedListener = this
@@ -95,8 +103,8 @@ class AddTransferFragment: Fragment() {
         buildFragmentInfo(this)
 
         val addTransferButton: Button = binding.addTransferButton
-        addTransferButton.setOnClickListener {
-            addTransfer()
+        addTransferButton.setOnClickListener {view: View ->
+            addTransfer(view)
         }
 
 
@@ -191,7 +199,134 @@ class AddTransferFragment: Fragment() {
         timeEditText.setText("${hourString}:${minuteString}")
     }
 
-    fun addTransfer() {
+    fun addTransfer(view: View) {
+        uiScope.launch {
+            val accountSendingString = accountSendingSpinner.selectedItem.toString()
+            val accountReceivingString = accountReceivingSpinner.selectedItem.toString()
+
+            if (accountSendingString == "Another" && accountReceivingString == "Another") {
+                Toast.makeText(this@AddTransferFragment.requireContext(), "No Accounts Selected", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            if (accountSendingString == accountReceivingString) {
+                Toast.makeText(this@AddTransferFragment.requireContext(), "The Two Accounts Are Equal", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            var accountSendingNumber: Int? = null
+            var accountReceivingNumber: Int? = null
+
+            if (accountSendingString != "Another") {
+                accountSendingNumber = accountSendingString.split(".")[0].toInt()
+            }
+            if (accountReceivingString != "Another") {
+                accountReceivingNumber = accountReceivingString.split(".")[0].toInt()
+            }
+
+            val valueString = valueEditText.text.toString()
+            var value: Double
+            try {
+                value = valueString.toDouble()
+                value = value.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+            } catch (e: Exception) {
+                valueEditText.error = "Invalid Value"
+                return@launch
+            }
+
+
+            val dateStringList: List<String> = dateEditText.text.toString().split("/")
+
+            var dayInt = 0
+            var monthInt = 0
+            var yearInt = 0
+
+            try {
+                dayInt = dateStringList[0].toInt()
+                monthInt = dateStringList[1].toInt()
+                yearInt = dateStringList[2].toInt()
+            } catch (e: Exception) {
+                dateEditText.error = "Invalid Date"
+                return@launch
+            }
+            val timeString = timeEditText.text.toString()
+            val timeStringList = timeString.split(":")
+
+            var hourInt = 0
+            var minuteInt = 0
+
+            try {
+                hourInt = timeStringList[0].toInt()
+                minuteInt = timeStringList[1].toInt()
+            } catch (e: Exception) {
+                timeEditText.error = "Invalid Time"
+                return@launch
+            }
+
+            val dateTime = LocalDateTime.of(LocalDate.of(yearInt, monthInt, dayInt), LocalTime.of(hourInt, minuteInt))
+            val newTimeMillis: Long = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+            val newTimeMillisInDatabase = withContext(Dispatchers.IO) {
+                transfersDatabase.idInDatabase(newTimeMillis)
+            }
+
+            if (newTimeMillisInDatabase) {
+                Toast.makeText(this@AddTransferFragment.requireContext(), "Date and Time Taken by Another Transfer.", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            withContext(Dispatchers.IO) {
+                val newTransfer = Transfer(
+                    newTimeMillis,
+                    dateTime.minute,
+                    dateTime.hour,
+                    dateTime.dayOfMonth,
+                    dateTime.monthValue,
+                    dateTime.year,
+                    value,
+                    noteEditText.text.toString(),
+                    accountSendingNumber,
+                    accountReceivingNumber
+                )
+                transfersDatabase.insert(newTransfer)
+            }
+
+            // update account balances
+            var accountSending: Account? = null
+            var accountReceiving: Account? = null
+
+            if (accountSendingNumber != null) {
+                accountSending = withContext(Dispatchers.IO) {
+                    accountsDatabase.get(accountSendingNumber)
+                }
+            }
+            if (accountReceivingNumber != null) {
+                accountReceiving = withContext(Dispatchers.IO) {
+                    accountsDatabase.get(accountReceivingNumber)
+                }
+            }
+
+            if (accountSending != null) {
+                withContext(Dispatchers.IO) {
+                    var newBalance = accountSending.balance - value
+                    newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                    accountsDatabase.updateBalance(accountSending.number, newBalance)
+
+                }
+            }
+
+            if (accountReceiving != null) {
+                withContext(Dispatchers.IO) {
+                    var newBalance = accountReceiving.balance + value
+                    newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                    accountsDatabase.updateBalance(accountReceiving.number, newBalance)
+                }
+            }
+
+
+            view.findNavController().navigate(AddTransferFragmentDirections.actionAddTransferFragmentToHomeFragment())
+        }
+
 
     }
 

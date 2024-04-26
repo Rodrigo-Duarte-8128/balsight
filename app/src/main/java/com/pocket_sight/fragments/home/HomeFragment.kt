@@ -25,6 +25,7 @@ import com.pocket_sight.databinding.FragmentHomeBinding
 import com.pocket_sight.fragments.categories.CategoriesAdapter
 import com.pocket_sight.parseMonthYearArrayToText
 import com.pocket_sight.parseMonthYearText
+import com.pocket_sight.types.Act
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
@@ -39,6 +40,8 @@ import com.pocket_sight.types.displayed.DisplayedMonthYearDatabase
 import com.pocket_sight.types.transactions.Transaction
 import com.pocket_sight.types.transactions.TransactionsDao
 import com.pocket_sight.types.transactions.TransactionsDatabase
+import com.pocket_sight.types.transfers.TransfersDao
+import com.pocket_sight.types.transfers.TransfersDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -54,6 +57,7 @@ class HomeFragment : Fragment() {
     var fabIsExpanded = false
 
     lateinit var transactionsDatabase: TransactionsDao
+    lateinit var transfersDatabase: TransfersDao
     lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
     lateinit var accountsDatabase: AccountsDao
     lateinit var displayedAccountDatabase: DisplayedAccountDao
@@ -102,6 +106,7 @@ class HomeFragment : Fragment() {
 
 
         transactionsDatabase = TransactionsDatabase.getInstance(this.requireContext()).transactionsDao
+        transfersDatabase = TransfersDatabase.getInstance(this.requireContext()).transfersDao
         displayedMonthYearDatabase = DisplayedMonthYearDatabase.getInstance(this.requireContext()).monthYearDao
         accountsDatabase = AccountsDatabase.getInstance(this.requireContext()).accountsDao
         displayedAccountDatabase = DisplayedAccountDatabase.getInstance(this.requireContext()).displayedAccountDao
@@ -214,8 +219,21 @@ class HomeFragment : Fragment() {
                     accountNumber
                 )
             }
+            val transfersListFromMonthYear = withContext(Dispatchers.IO) {
+                transfersDatabase.getTransfersFromMonthYear(
+                    displayedMonthYearArray[0],
+                    displayedMonthYearArray[1]
+                )
+            }
 
-            adapter = HomeAdapter(context, transactionsList)
+            val transfersListWithDisplayedAccount = transfersListFromMonthYear.filter {
+                it.accountReceivingNumber == displayedAccountNumber || it.accountSendingNumber == displayedAccountNumber
+            }
+
+            val actsList: List<Act> = (transactionsList + transfersListWithDisplayedAccount).sortedByDescending {
+                it.getId()
+            }
+            adapter = HomeAdapter(context, actsList, displayedAccountNumber)
 
             val layoutManager = LinearLayoutManager(context)
             layoutManager.orientation = LinearLayoutManager.VERTICAL

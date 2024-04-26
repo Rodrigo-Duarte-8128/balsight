@@ -11,9 +11,10 @@ import java.util.TimeZone
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.pocket_sight.types.Act
 
 @Entity(tableName = "transactions_table")
-data class Transaction (
+data class Transaction(
     @PrimaryKey
     var transactionId: Long, // this is the currentTimeMillis at the instant the transaction is created
 
@@ -52,7 +53,7 @@ data class Transaction (
 
     @ColumnInfo(name = "transaction_old_category_name")
     var oldCategoryName: String?
-)
+): Act()
 
 
 fun convertTimeMillisToLocalDateTime(timeMillis: Long): LocalDateTime {
