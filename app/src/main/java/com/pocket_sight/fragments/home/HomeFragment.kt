@@ -246,11 +246,30 @@ class HomeFragment : Fragment() {
 
         }
 
-        binding.addIncomeFab.setOnClickListener{
-            Toast.makeText(this.context, "Add Income Clicked", Toast.LENGTH_SHORT).show()
+        binding.addIncomeFab.setOnClickListener{view: View ->
+            val accountNumber = displayedAccountNumber
+            if (accountNumber == null) {
+                Toast.makeText(this.context, "No Account Selected", Toast.LENGTH_SHORT).show()
+            } else {
+                view.findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToAddIncomeFragment(
+                        System.currentTimeMillis(),
+                        accountNumber,
+                        "",
+                        "-1",
+                        -1,
+                        -1
+                    )
+                )
+            }
         }
-        binding.addTransferFab.setOnClickListener{
-            Toast.makeText(this.context, "Add Transfer Clicked", Toast.LENGTH_SHORT).show()
+
+        binding.addTransferFab.setOnClickListener{view: View ->
+            view.findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToAddTransferFragment(
+                    System.currentTimeMillis()
+                )
+            )
         }
     }
 

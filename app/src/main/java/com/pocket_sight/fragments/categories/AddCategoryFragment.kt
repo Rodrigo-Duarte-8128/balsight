@@ -48,6 +48,8 @@ class AddCategoryFragment: Fragment() {
         val nameEditText: EditText = binding.categoryNameEditText
         val kindSpinner: Spinner = binding.categoryKindSpinner
 
+
+
         ArrayAdapter.createFromResource(
             this.requireContext(),
             R.array.kinds_array,

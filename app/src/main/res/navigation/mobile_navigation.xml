@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_home_fragment_to_editTransactionFragment"
             app:destination="@id/edit_transaction_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_addIncomeFragment"
+            app:destination="@id/add_income_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_add_transfer_fragment"
+            app:destination="@id/add_transfer_fragment" />
     </fragment>
 
     <fragment
@@ -201,6 +207,9 @@
         <action
             android:id="@+id/action_more_options_fragment_to_edit_transaction_fragment"
             app:destination="@id/edit_transaction_fragment" />
+        <action
+            android:id="@+id/action_more_options_fragment_to_add_income_fragment"
+            app:destination="@id/add_income_fragment" />
     </fragment>
     <fragment
         android:id="@+id/edit_transaction_fragment"
@@ -234,5 +243,47 @@
         <action
             android:id="@+id/action_edit_transaction_fragment_to_home_fragment"
             app:destination="@id/home_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/add_income_fragment"
+        android:name="com.pocket_sight.fragments.home.AddIncomeFragment"
+        android:label="Add Income"
+        tools:layout="@layout/fragment_add_income" >
+        <action
+            android:id="@+id/action_add_income_fragment_to_home_fragment"
+            app:destination="@id/home_fragment" />
+        <action
+            android:id="@+id/action_add_income_fragment_to_more_options_fragment"
+            app:destination="@id/more_options_fragment" />
+        <argument
+            android:name="timeMillis"
+            app:argType="long" />
+        <argument
+            android:name="account_number"
+            app:argType="integer" />
+        <argument
+            android:name="note"
+            app:argType="string" />
+        <argument
+            android:name="value_string"
+            app:argType="string"/> <!-- the string "-1" acts as null -->
+        <argument
+            android:name="selected_category_number"
+            app:argType="integer"/> <!-- -1 acts as null -->
+        <argument
+            android:name="selected_subcategory_number"
+            app:argType="integer"/> <!-- -1 acts as null -->
+    </fragment>
+    <fragment
+        android:id="@+id/add_transfer_fragment"
+        android:name="com.pocket_sight.fragments.home.AddTransferFragment"
+        android:label="Add Transfer"
+        tools:layout="@layout/fragment_add_transfer" >
+        <action
+            android:id="@+id/action_add_transfer_fragment_to_home_fragment"
+            app:destination="@id/home_fragment" />
+        <argument
+            android:name="time_millis"
+            app:argType="long"/>
     </fragment>
 </navigation>

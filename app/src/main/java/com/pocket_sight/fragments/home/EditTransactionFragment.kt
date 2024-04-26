@@ -164,6 +164,7 @@ class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.Remov
                 categoryTextView.text = withContext(Dispatchers.IO) {
                     categoriesDatabase.get(selectedCategoryNumber!!).name
                 }
+                chooseTextView.text = "Choose Subcategory"
             } else {
                 val categories = withContext(Dispatchers.IO) {
                     categoriesDatabase.getAllCategories().filter {
@@ -173,6 +174,7 @@ class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.Remov
 
                 categoriesAdapter = EditTransactionCategoriesAdapter(fragment, context, categories)
                 recyclerView.adapter = categoriesAdapter
+
             }
 
             if (selectedCategoryNumber != null && selectedSubcategoryNumber != null) {
@@ -212,7 +214,7 @@ class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.Remov
             selectedSubcategoryNumber = subcategory.number
             val categories = withContext(Dispatchers.IO) {
                 categoriesDatabase.getAllCategories().filter {
-                    it.kind == "Expense"
+                    it.kind == kind
                 }
             }
             categoriesAdapter = EditTransactionCategoriesAdapter(fragment, context, categories)

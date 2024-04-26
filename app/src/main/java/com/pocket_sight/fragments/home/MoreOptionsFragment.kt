@@ -188,6 +188,17 @@ class MoreOptionsFragment: Fragment() {
             ))
         }
 
+        if (args.from == "add_income_fragment") {
+            view.findNavController().navigate(MoreOptionsFragmentDirections.actionMoreOptionsFragmentToAddIncomeFragment(
+                newTimeMillis,
+                accountNumber,
+                note,
+                args.valueString,
+                args.selectedCategoryNumber,
+                args.selectedSubcategoryNumber
+            ))
+        }
+
     }
 
 
