@@ -10,14 +10,17 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.MenuHost
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.databinding.FragmentAddExpenseBinding
 import com.pocket_sight.databinding.FragmentEditTransactionBinding
+import com.pocket_sight.fragments.categories.RemoveSubcategoriesDialogFragment
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
@@ -38,7 +41,7 @@ import kotlinx.coroutines.withContext
 import java.math.RoundingMode
 
 
-class EditTransactionFragment: Fragment() {
+class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.RemoveTransactionDialogListener {
     private var _binding: FragmentEditTransactionBinding? = null
     val binding get() = _binding!!
 
@@ -309,8 +312,33 @@ class EditTransactionFragment: Fragment() {
         }
     }
 
-
-    fun removeTransactionClicked() {
-
+    fun showRemoveTransactionDialog() {
+        RemoveTransactionDialogFragment(this).show(this.parentFragmentManager, "RemoveTransactionDialog")
     }
+
+    override fun onRemoveTransactionDialogPositiveClick(dialog: DialogFragment) {
+        uiScope.launch {
+            // delete transaction from database
+            withContext(Dispatchers.IO) {
+                transactionsDatabase.delete(transaction)
+            }
+
+            // update associated account balance
+            val associatedAccount = withContext(Dispatchers.IO) {
+                accountsDatabase.get(transaction.accountNumber)
+            }
+
+            var newBalance = associatedAccount.balance - transaction.value
+            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+
+            withContext(Dispatchers.IO) {
+                accountsDatabase.updateBalance(transaction.accountNumber, newBalance)
+            }
+        }
+
+        NavHostFragment.findNavController(this).navigate(
+            EditTransactionFragmentDirections.actionEditTransactionFragmentToHomeFragment()
+        )
+    }
+
 }
