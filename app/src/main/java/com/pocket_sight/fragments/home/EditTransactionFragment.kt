@@ -280,6 +280,15 @@ class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.Remov
             val millis = args.timeMillis
             val dateTime = convertTimeMillisToLocalDateTime(millis)
 
+            val timeInDatabase = withContext(Dispatchers.IO) {
+                transactionsDatabase.idInDatabase(millis)
+            }
+
+            if (timeInDatabase) {
+                Toast.makeText(context, "Time and Date Taken by Another Transaction.", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
             withContext(Dispatchers.IO) {
                 val newTransaction = Transaction(
                     millis,
