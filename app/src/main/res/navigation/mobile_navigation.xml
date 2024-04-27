@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_home_fragment_to_add_transfer_fragment"
             app:destination="@id/add_transfer_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_edit_transfer_fragment"
+            app:destination="@id/edit_transfer_fragment" />
     </fragment>
 
     <fragment
@@ -285,5 +288,33 @@
         <argument
             android:name="time_millis"
             app:argType="long"/>
+    </fragment>
+    <fragment
+        android:id="@+id/edit_transfer_fragment"
+        android:name="com.pocket_sight.fragments.home.EditTransferFragment"
+        android:label="Edit Transfer"
+        tools:layout="@layout/fragment_edit_transfer" >
+        <action
+            android:id="@+id/action_edit_transfer_fragment_to_home_fragment"
+            app:destination="@id/home_fragment" />
+        <argument
+            android:name="original_time_millis"
+            app:argType="long"/>
+        <argument
+            android:name="new_time_millis"
+            app:argType="long"/>
+        <argument
+            android:name="value"
+            app:argType="double"/>
+        <argument
+            android:name="note"
+            app:argType="string"/>
+        <argument
+            android:name="account_sending_number"
+            app:argType="int"/> <!-- here -1 represents null -->
+        <argument
+            android:name="account_receiving_number"
+            app:argType="int"/> <!-- here -1 represents null -->
+
     </fragment>
 </navigation>
