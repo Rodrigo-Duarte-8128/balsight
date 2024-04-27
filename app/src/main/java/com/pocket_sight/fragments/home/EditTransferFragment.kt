@@ -71,7 +71,7 @@ class EditTransferFragment: Fragment() {
         args = EditTransferFragmentArgs.fromBundle(requireArguments())
 
         originalTimeMillis = args.originalTimeMillis
-        originalValue = args.value
+        originalValue = args.valueString.toDouble()
 
         if (args.accountReceivingNumber != -1) {
             originalAccountReceivingNumber = args.accountReceivingNumber

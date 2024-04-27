@@ -301,17 +301,17 @@
             android:name="original_time_millis"
             app:argType="long"/>
         <argument
-            android:name="value"
-            app:argType="double"/>
+            android:name="value_string"
+            app:argType="string"/>
         <argument
             android:name="note"
             app:argType="string"/>
         <argument
             android:name="account_sending_number"
-            app:argType="int"/> <!-- here -1 represents null -->
+            app:argType="integer"/> <!-- here -1 represents null -->
         <argument
             android:name="account_receiving_number"
-            app:argType="int"/> <!-- here -1 represents null -->
+            app:argType="integer"/> <!-- here -1 represents null -->
 
     </fragment>
 </navigation>
