@@ -1,8 +1,6 @@
 package com.pocket_sight.fragments.home
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,33 +8,14 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.databinding.FragmentAddExpenseBinding
-import com.pocket_sight.databinding.FragmentAddTransferBinding
 import com.pocket_sight.databinding.FragmentEditTransferBinding
-import com.pocket_sight.fragments.accounts.AccountsAdapter
-import com.pocket_sight.fragments.categories.EditCategoryFragmentArgs
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
-import com.pocket_sight.types.categories.CategoriesDao
-import com.pocket_sight.types.categories.CategoriesDatabase
-import com.pocket_sight.types.categories.Category
-import com.pocket_sight.types.categories.SubcategoriesDao
-import com.pocket_sight.types.categories.SubcategoriesDatabase
-import com.pocket_sight.types.categories.Subcategory
-import com.pocket_sight.types.transactions.Transaction
-import com.pocket_sight.types.transactions.TransactionsDao
-import com.pocket_sight.types.transactions.TransactionsDatabase
 import com.pocket_sight.types.transactions.convertTimeMillisToLocalDateTime
 import com.pocket_sight.types.transfers.Transfer
 import com.pocket_sight.types.transfers.TransfersDao
@@ -59,7 +38,10 @@ class EditTransferFragment: Fragment() {
     lateinit var accountsDatabase: AccountsDao
     lateinit var transfersDatabase: TransfersDao
 
+    lateinit var transfer: Transfer
+
     var originalTimeMillis = 0L
+    var originalValue = 0.0
     var originalAccountSendingNumber: Int? = null
     var originalAccountReceivingNumber: Int? = null
 
@@ -89,6 +71,7 @@ class EditTransferFragment: Fragment() {
         args = EditTransferFragmentArgs.fromBundle(requireArguments())
 
         originalTimeMillis = args.originalTimeMillis
+        originalValue = args.value
 
         if (args.accountReceivingNumber != -1) {
             originalAccountReceivingNumber = args.accountReceivingNumber
@@ -122,6 +105,11 @@ class EditTransferFragment: Fragment() {
 
     private fun buildFragmentInfo(fragment: EditTransferFragment) {
         uiScope.launch {
+            transfer = withContext(Dispatchers.IO) {
+                transfersDatabase.get(originalTimeMillis)
+            }
+
+
             val accountsList: MutableList<Account> = withContext(Dispatchers.IO) {
                 accountsDatabase.getAllAccounts()
             }
@@ -168,7 +156,7 @@ class EditTransferFragment: Fragment() {
         dateEditText.setText("${dayString}/${monthString}/${dateTime.year}")
 
         dateEditText.setOnClickListener {
-            AddTransferDatePicker(dateTime.dayOfMonth, dateTime.monthValue - 1, dateTime.year, this).show(this.parentFragmentManager, "Pick Date")
+            EditTransferDatePicker(dateTime.dayOfMonth, dateTime.monthValue - 1, dateTime.year, this).show(this.parentFragmentManager, "Pick Date")
         }
 
         var hourString = dateTime.hour.toString()
@@ -181,7 +169,7 @@ class EditTransferFragment: Fragment() {
         }
         timeEditText.setText("${hourString}:${minuteString}")
         timeEditText.setOnClickListener {
-            AddTransferTimePicker(dateTime.minute, dateTime.hour, this).show(this.parentFragmentManager, "Pick Time")
+            EditTransferTimePicker(dateTime.minute, dateTime.hour, this).show(this.parentFragmentManager, "Pick Time")
         }
     }
 
@@ -210,40 +198,36 @@ class EditTransferFragment: Fragment() {
     }
 
 
-    fun confirmChanges(view: View) {
-
-    }
-
-    fun addTransfer(view: View) {
+    private fun confirmChanges(view: View) {
         uiScope.launch {
-            val accountSendingString = accountSendingSpinner.selectedItem.toString()
-            val accountReceivingString = accountReceivingSpinner.selectedItem.toString()
+            val newAccountSendingString = accountSendingSpinner.selectedItem.toString()
+            val newAccountReceivingString = accountReceivingSpinner.selectedItem.toString()
 
-            if (accountSendingString == "Another" && accountReceivingString == "Another") {
-                Toast.makeText(this@AddTransferFragment.requireContext(), "No Accounts Selected", Toast.LENGTH_SHORT).show()
+            if (newAccountSendingString == "Another" && newAccountReceivingString == "Another") {
+                Toast.makeText(this@EditTransferFragment.requireContext(), "No Accounts Selected", Toast.LENGTH_SHORT).show()
                 return@launch
             }
 
-            if (accountSendingString == accountReceivingString) {
-                Toast.makeText(this@AddTransferFragment.requireContext(), "The Two Accounts Are Equal", Toast.LENGTH_SHORT).show()
+            if (newAccountSendingString == newAccountReceivingString) {
+                Toast.makeText(this@EditTransferFragment.requireContext(), "The Two Accounts Are Equal", Toast.LENGTH_SHORT).show()
                 return@launch
             }
 
-            var accountSendingNumber: Int? = null
-            var accountReceivingNumber: Int? = null
+            var newAccountSendingNumber: Int? = null
+            var newAccountReceivingNumber: Int? = null
 
-            if (accountSendingString != "Another") {
-                accountSendingNumber = accountSendingString.split(".")[0].toInt()
+            if (newAccountSendingString != "Another") {
+                newAccountSendingNumber = newAccountSendingString.split(".")[0].toInt()
             }
-            if (accountReceivingString != "Another") {
-                accountReceivingNumber = accountReceivingString.split(".")[0].toInt()
+            if (newAccountReceivingString != "Another") {
+                newAccountReceivingNumber = newAccountReceivingString.split(".")[0].toInt()
             }
 
             val valueString = valueEditText.text.toString()
-            var value: Double
+            var newValue: Double
             try {
-                value = valueString.toDouble()
-                value = value.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                newValue = valueString.toDouble()
+                newValue = newValue.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
             } catch (e: Exception) {
                 valueEditText.error = "Invalid Value"
                 return@launch
@@ -286,11 +270,12 @@ class EditTransferFragment: Fragment() {
             }
 
             if (newTimeMillisInDatabase) {
-                Toast.makeText(this@AddTransferFragment.requireContext(), "Date and Time Taken by Another Transfer.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@EditTransferFragment.requireContext(), "Date and Time Taken by Another Transfer.", Toast.LENGTH_SHORT).show()
                 return@launch
             }
 
             withContext(Dispatchers.IO) {
+                transfersDatabase.delete(transfer)
                 val newTransfer = Transfer(
                     newTimeMillis,
                     dateTime.minute,
@@ -298,52 +283,81 @@ class EditTransferFragment: Fragment() {
                     dateTime.dayOfMonth,
                     dateTime.monthValue,
                     dateTime.year,
-                    value,
+                    newValue,
                     noteEditText.text.toString(),
-                    accountSendingNumber,
-                    accountReceivingNumber
+                    newAccountSendingNumber,
+                   newAccountReceivingNumber
                 )
                 transfersDatabase.insert(newTransfer)
             }
 
             // update account balances
-            var accountSending: Account? = null
-            var accountReceiving: Account? = null
+            var oldAccountSending: Account? = null
+            var oldAccountReceiving: Account? = null
+            var newAccountSending: Account? = null
+            var newAccountReceiving: Account? = null
 
-            if (accountSendingNumber != null) {
-                accountSending = withContext(Dispatchers.IO) {
-                    accountsDatabase.get(accountSendingNumber)
+            if (originalAccountSendingNumber != null) {
+                oldAccountSending = withContext(Dispatchers.IO) {
+                    accountsDatabase.get(originalAccountSendingNumber!!)
                 }
             }
-            if (accountReceivingNumber != null) {
-                accountReceiving = withContext(Dispatchers.IO) {
-                    accountsDatabase.get(accountReceivingNumber)
+            if (originalAccountReceivingNumber != null) {
+                oldAccountReceiving = withContext(Dispatchers.IO) {
+                    accountsDatabase.get(originalAccountReceivingNumber!!)
                 }
             }
 
-            if (accountSending != null) {
+            if (newAccountSendingNumber != null) {
+                newAccountSending = withContext(Dispatchers.IO) {
+                    accountsDatabase.get(newAccountSendingNumber)
+                }
+            }
+            if (newAccountReceivingNumber != null) {
+                newAccountReceiving = withContext(Dispatchers.IO) {
+                    accountsDatabase.get(newAccountReceivingNumber)
+                }
+            }
+
+
+
+            if (oldAccountSending != null) {
                 withContext(Dispatchers.IO) {
-                    var newBalance = accountSending.balance - value
+                    var newBalance = oldAccountSending.balance + originalValue
                     newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                    accountsDatabase.updateBalance(accountSending.number, newBalance)
+                    accountsDatabase.updateBalance(oldAccountSending.number, newBalance)
 
                 }
             }
 
-            if (accountReceiving != null) {
+            if (oldAccountReceiving != null) {
                 withContext(Dispatchers.IO) {
-                    var newBalance = accountReceiving.balance + value
+                    var newBalance = oldAccountReceiving.balance - originalValue
                     newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                    accountsDatabase.updateBalance(accountReceiving.number, newBalance)
+                    accountsDatabase.updateBalance(oldAccountReceiving.number, newBalance)
                 }
             }
 
+            if (newAccountSending != null) {
+                withContext(Dispatchers.IO) {
+                    var newBalance = newAccountSending.balance - newValue
+                    newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                    accountsDatabase.updateBalance(newAccountSending.number, newBalance)
+                }
+            }
 
-            view.findNavController().navigate(AddTransferFragmentDirections.actionAddTransferFragmentToHomeFragment())
+            if (newAccountReceiving != null) {
+                withContext(Dispatchers.IO) {
+                    var newBalance = newAccountReceiving.balance + newValue
+                    newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                    accountsDatabase.updateBalance(newAccountReceiving.number, newBalance)
+                }
+            }
+
+            view.findNavController().navigate(EditTransferFragmentDirections.actionEditTransferFragmentToHomeFragment())
         }
-
-
     }
+
 
 
 }
