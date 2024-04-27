@@ -286,7 +286,7 @@ class EditTransferFragment: Fragment() {
                     newValue,
                     noteEditText.text.toString(),
                     newAccountSendingNumber,
-                   newAccountReceivingNumber
+                    newAccountReceivingNumber
                 )
                 transfersDatabase.insert(newTransfer)
             }
@@ -357,7 +357,6 @@ class EditTransferFragment: Fragment() {
             view.findNavController().navigate(EditTransferFragmentDirections.actionEditTransferFragmentToHomeFragment())
         }
     }
-
 
 
 }

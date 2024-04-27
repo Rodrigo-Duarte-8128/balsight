@@ -301,9 +301,6 @@
             android:name="original_time_millis"
             app:argType="long"/>
         <argument
-            android:name="new_time_millis"
-            app:argType="long"/>
-        <argument
             android:name="value"
             app:argType="double"/>
         <argument
