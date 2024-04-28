@@ -214,24 +214,23 @@ class AddRecurringExpenseFragment: Fragment() {
             -1
         }
 
-        val monthDayString = if (monthDayEditText.text.toString() == "") {
-            "-1"
-        } else {
-            monthDayEditText.text.toString()
+
+        val monthDayString = monthDayEditText.text.toString()
+        var monthDayInt = -1
+        if (monthDayString != "") {
+            try {
+                monthDayInt = monthDayString.toInt()
+            } catch (e: Exception) {
+                monthDayEditText.error = "Invalid Month Day"
+                return
+            }
+
+            if (monthDayInt < 1 || monthDayInt > 28) {
+                monthDayEditText.error = "Invalid Month Day"
+                return
+            }
         }
 
-        val monthDayInt: Int
-        try {
-            monthDayInt = monthDayString.toInt()
-        } catch (e: Exception) {
-            monthDayEditText.error = "Invalid Month Day"
-            return
-        }
-
-        if (monthDayInt < 1 || monthDayInt > 28) {
-            monthDayEditText.error = "Invalid Month Day"
-            return
-        }
 
         this.findNavController().navigate(AddRecurringExpenseFragmentDirections.actionAddRecurringExpenseFragmentToRecurringActMoreOptionsFragment(
             "add_recurring_expense_fragment",

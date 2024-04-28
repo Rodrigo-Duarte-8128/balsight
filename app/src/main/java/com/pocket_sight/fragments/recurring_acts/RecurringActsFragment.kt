@@ -204,7 +204,25 @@ class RecurringActsFragment : Fragment() {
         }
 
         binding.addRecurringIncomeFab.setOnClickListener{view: View ->
-
+            val accountNumber = recurringDisplayedAccountNumber
+            if (accountNumber == null) {
+                Toast.makeText(
+                    this@RecurringActsFragment.context,
+                    "No Account Selected",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                view.findNavController().navigate(RecurringActsFragmentDirections.actionRecurringActsFragmentToAddRecurringIncomeFragment(
+                    System.currentTimeMillis(),
+                    "-1",
+                    "",
+                    accountNumber,
+                    -1,
+                    -1,
+                    -1,
+                    ""
+                ))
+            }
         }
 
         binding.addRecurringTransferFab.setOnClickListener{view: View ->

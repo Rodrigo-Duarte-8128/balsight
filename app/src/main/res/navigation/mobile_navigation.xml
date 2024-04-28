@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_recurring_acts_fragment_to_addRecurringExpenseFragment"
             app:destination="@id/add_recurring_expense_fragment" />
+        <action
+            android:id="@+id/action_recurring_acts_fragment_to_add_recurring_income_fragment"
+            app:destination="@id/add_recurring_income_fragment" />
     </fragment>
 
     <fragment
@@ -411,6 +414,46 @@
         <argument
             android:name="note"
             app:argType="string" />
+        <argument
+            android:name="month_day"
+            app:argType="integer" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_recurring_act_more_options_fragment_to_add_recurring_income_fragment"
+            app:destination="@id/add_recurring_income_fragment"
+            app:popUpTo="@id/recurring_acts_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/add_recurring_income_fragment"
+        android:name="com.pocket_sight.fragments.recurring_acts.AddRecurringIncomeFragment"
+        android:label="Add Recurring Income"
+        tools:layout="@layout/fragment_add_recurring_income" >
+        <action
+            android:id="@+id/action_add_recurring_income_fragment_to_recurring_acts_fragment"
+            app:destination="@id/recurring_acts_fragment" />
+        <action
+            android:id="@+id/action_add_recurring_income_fragment_to_recurring_act_more_options_fragment"
+            app:destination="@id/recurring_act_more_options_fragment" />
+        <argument
+            android:name="timeMillis"
+            app:argType="long" />
+        <argument
+            android:name="value_string"
+            app:argType="string" />
+        <argument
+            android:name="note"
+            app:argType="string" />
+        <argument
+            android:name="account_number"
+            app:argType="integer" />
+        <argument
+            android:name="selected_category_number"
+            app:argType="integer" />
+        <argument
+            android:name="selected_subcategory_number"
+            app:argType="integer" />
         <argument
             android:name="month_day"
             app:argType="integer" />

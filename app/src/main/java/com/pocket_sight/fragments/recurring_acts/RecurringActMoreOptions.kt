@@ -119,6 +119,18 @@ class RecurringActMoreOptions: Fragment() {
                 args.name
             ))
         }
+        if (args.from == "add_recurring_income_fragment") {
+            view.findNavController().navigate(RecurringActMoreOptionsDirections.actionRecurringActMoreOptionsFragmentToAddRecurringIncomeFragment(
+                newTimeMillis,
+                args.valueString,
+                note,
+                args.accountNumber,
+                args.selectedCategoryNumber,
+                args.selectedSubcategoryNumber,
+                args.monthDay,
+                args.name
+            ))
+        }
     }
 }
 
