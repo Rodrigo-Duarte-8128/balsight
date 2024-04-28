@@ -1,6 +1,7 @@
 package com.pocket_sight.fragments.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentEditTransferBinding
 import com.pocket_sight.types.accounts.Account
@@ -31,7 +36,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 
-class EditTransferFragment: Fragment() {
+class EditTransferFragment: Fragment(), RemoveTransferDialogFragment.RemoveTransferDialogListener {
     private var _binding: FragmentEditTransferBinding? = null
     val binding get() = _binding!!
 
@@ -79,6 +84,11 @@ class EditTransferFragment: Fragment() {
         if (args.accountSendingNumber != -1) {
             originalAccountSendingNumber = args.accountSendingNumber
         }
+
+
+        val menuHost: MenuHost = requireActivity()
+        val menuProvider = EditTransferMenuProvider(this.requireContext(), this)
+        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
 
         accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
@@ -132,6 +142,9 @@ class EditTransferFragment: Fragment() {
             var accountReceivingSpinnerSelectionPosition = 0
 
             accountsStringsList.forEachIndexed {index, accountString ->
+                if (accountString == "Another") {
+                    return@forEachIndexed
+                }
                 if (accountString.split(".")[0].toInt() == originalAccountSendingNumber) {
                     accountSendingSpinnerSelectionPosition = index
                 }
@@ -141,35 +154,38 @@ class EditTransferFragment: Fragment() {
             }
             accountSendingSpinner.setSelection(accountSendingSpinnerSelectionPosition)
             accountReceivingSpinner.setSelection(accountReceivingSpinnerSelectionPosition)
-        }
+
+            valueEditText.setText(originalValue.toString())
+            noteEditText.setText(transfer.note)
 
 
-        val dateTime: LocalDateTime = convertTimeMillisToLocalDateTime(originalTimeMillis)
-        var dayString = dateTime.dayOfMonth.toString()
-        var monthString = dateTime.monthValue.toString()
-        if (dayString.length == 1) {
-            dayString = "0$dayString"
-        }
-        if (monthString.length == 1) {
-            monthString = "0$monthString"
-        }
-        dateEditText.setText("${dayString}/${monthString}/${dateTime.year}")
+            val dateTime: LocalDateTime = convertTimeMillisToLocalDateTime(originalTimeMillis)
+            var dayString = dateTime.dayOfMonth.toString()
+            var monthString = dateTime.monthValue.toString()
+            if (dayString.length == 1) {
+                dayString = "0$dayString"
+            }
+            if (monthString.length == 1) {
+                monthString = "0$monthString"
+            }
+            dateEditText.setText("${dayString}/${monthString}/${dateTime.year}")
 
-        dateEditText.setOnClickListener {
-            EditTransferDatePicker(dateTime.dayOfMonth, dateTime.monthValue - 1, dateTime.year, this).show(this.parentFragmentManager, "Pick Date")
-        }
+            dateEditText.setOnClickListener {
+                EditTransferDatePicker(dateTime.dayOfMonth, dateTime.monthValue - 1, dateTime.year, this@EditTransferFragment).show(this@EditTransferFragment.parentFragmentManager, "Pick Date")
+            }
 
-        var hourString = dateTime.hour.toString()
-        var minuteString = dateTime.minute.toString()
-        if (hourString.length == 1) {
-            hourString = "0$hourString"
-        }
-        if (minuteString.length == 1) {
-            minuteString = "0$minuteString"
-        }
-        timeEditText.setText("${hourString}:${minuteString}")
-        timeEditText.setOnClickListener {
-            EditTransferTimePicker(dateTime.minute, dateTime.hour, this).show(this.parentFragmentManager, "Pick Time")
+            var hourString = dateTime.hour.toString()
+            var minuteString = dateTime.minute.toString()
+            if (hourString.length == 1) {
+                hourString = "0$hourString"
+            }
+            if (minuteString.length == 1) {
+                minuteString = "0$minuteString"
+            }
+            timeEditText.setText("${hourString}:${minuteString}")
+            timeEditText.setOnClickListener {
+                EditTransferTimePicker(dateTime.minute, dateTime.hour, this@EditTransferFragment).show(this@EditTransferFragment.parentFragmentManager, "Pick Time")
+            }
         }
     }
 
@@ -269,7 +285,7 @@ class EditTransferFragment: Fragment() {
                 transfersDatabase.idInDatabase(newTimeMillis)
             }
 
-            if (newTimeMillisInDatabase) {
+            if (newTimeMillis != originalTimeMillis && newTimeMillisInDatabase) {
                 Toast.makeText(this@EditTransferFragment.requireContext(), "Date and Time Taken by Another Transfer.", Toast.LENGTH_SHORT).show()
                 return@launch
             }
@@ -297,6 +313,7 @@ class EditTransferFragment: Fragment() {
             var newAccountSending: Account? = null
             var newAccountReceiving: Account? = null
 
+            // get old account objects
             if (originalAccountSendingNumber != null) {
                 oldAccountSending = withContext(Dispatchers.IO) {
                     accountsDatabase.get(originalAccountSendingNumber!!)
@@ -308,25 +325,12 @@ class EditTransferFragment: Fragment() {
                 }
             }
 
-            if (newAccountSendingNumber != null) {
-                newAccountSending = withContext(Dispatchers.IO) {
-                    accountsDatabase.get(newAccountSendingNumber)
-                }
-            }
-            if (newAccountReceivingNumber != null) {
-                newAccountReceiving = withContext(Dispatchers.IO) {
-                    accountsDatabase.get(newAccountReceivingNumber)
-                }
-            }
-
-
-
+            // update old account balances
             if (oldAccountSending != null) {
                 withContext(Dispatchers.IO) {
                     var newBalance = oldAccountSending.balance + originalValue
                     newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
                     accountsDatabase.updateBalance(oldAccountSending.number, newBalance)
-
                 }
             }
 
@@ -338,6 +342,19 @@ class EditTransferFragment: Fragment() {
                 }
             }
 
+            // get new account objects
+            if (newAccountSendingNumber != null) {
+                newAccountSending = withContext(Dispatchers.IO) {
+                    accountsDatabase.get(newAccountSendingNumber)
+                }
+            }
+            if (newAccountReceivingNumber != null) {
+                newAccountReceiving = withContext(Dispatchers.IO) {
+                    accountsDatabase.get(newAccountReceivingNumber)
+                }
+            }
+
+            // update new account balances
             if (newAccountSending != null) {
                 withContext(Dispatchers.IO) {
                     var newBalance = newAccountSending.balance - newValue
@@ -356,6 +373,40 @@ class EditTransferFragment: Fragment() {
 
             view.findNavController().navigate(EditTransferFragmentDirections.actionEditTransferFragmentToHomeFragment())
         }
+    }
+
+
+    fun showRemoveTransferDialog() {
+        RemoveTransferDialogFragment(this).show(this.parentFragmentManager, "RemoveTransferDialog")
+    }
+
+    override fun onRemoveTransferDialogPositiveClick(dialog: DialogFragment) {
+        uiScope.launch {
+            // remove transfer from database
+            withContext(Dispatchers.IO) {
+                transfersDatabase.delete(transfer)
+            }
+
+            // update associated accounts balances
+            if (originalAccountSendingNumber != null) {
+                withContext(Dispatchers.IO) {
+                    val oldBalance = accountsDatabase.get(originalAccountSendingNumber!!).balance
+                    val newBalance = (oldBalance + originalValue).toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                    accountsDatabase.updateBalance(originalAccountSendingNumber!!, newBalance)
+                }
+            }
+            if (originalAccountReceivingNumber != null) {
+                withContext(Dispatchers.IO) {
+                    val oldBalance = accountsDatabase.get(originalAccountReceivingNumber!!).balance
+                    val newBalance = (oldBalance - originalValue).toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                    accountsDatabase.updateBalance(originalAccountReceivingNumber!!, newBalance)
+                }
+            }
+        }
+
+        NavHostFragment.findNavController(this).navigate(
+            EditTransferFragmentDirections.actionEditTransferFragmentToHomeFragment()
+        )
     }
 
 

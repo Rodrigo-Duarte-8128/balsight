@@ -69,6 +69,23 @@ class HomeAdapter(val context: Context, val acts: List<Act>, val displayedAccoun
 
                 if (act is Transfer) {
                     // move to EditTransferFragment
+                    val accountSendingNumber: Int = if (act.accountSendingNumber != null) {
+                        act.accountSendingNumber!!
+                    } else {-1}
+
+                    val accountReceivingNumber: Int = if (act.accountReceivingNumber != null) {
+                        act.accountReceivingNumber!!
+                    } else {-1}
+
+                    itemView.findNavController().navigate(
+                        HomeFragmentDirections.actionHomeFragmentToEditTransferFragment(
+                            act.transferId,
+                            act.value.toString(),
+                            act.note,
+                            accountSendingNumber,
+                            accountReceivingNumber
+                        )
+                    )
                 }
 
             }
