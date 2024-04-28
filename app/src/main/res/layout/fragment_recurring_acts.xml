@@ -1,77 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.pocket_sight.fragments.home.HomeFragment">
+    tools:context="com.pocket_sight.fragments.recurring_acts.RecurringActsFragment">
 
 
     <LinearLayout
-        android:id="@+id/home_fragment_first_linear_layout"
+        android:id="@+id/recurring_acts_fragment_first_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:weightSum="1"
+        android:gravity="center"
+        android:padding="10dp"
         app:layout_constraintTop_toTopOf="parent"
         android:baselineAligned="false">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/recurring_acts_fragment_displayed_account_button"
+            android:layout_width="0dp"
             android:layout_weight="0.5"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <Button
-                android:id="@+id/displayed_account_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:backgroundTint="@color/accent"
-                android:textAlignment="center"
-                android:text="Current" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:backgroundTint="@color/accent"
+            android:textAlignment="center"
+            android:text="Current" />
 
-            <Button
-                android:id="@+id/displayed_month_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/accent"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:text="Apr 2024" />
-        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/home_fragment_second_linear_layout"
+        android:id="@+id/recurring_acts_fragment_second_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/home_fragment_first_linear_layout">
+        app:layout_constraintTop_toBottomOf="@+id/recurring_acts_fragment_first_linear_layout">
 
         <TextView
-            android:id="@+id/date_text"
+            android:id="@+id/name_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".25"
             android:textSize="20sp"
             android:background="@color/primary"
             android:textColor="@color/on_primary"
-            android:text="@string/date"
+            android:text="Name"
             android:textAlignment="center" />
 
         <TextView
-            android:id="@+id/category_text"
+            android:id="@+id/recurring_acts_fragment_category_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
@@ -82,7 +62,7 @@
             android:textAlignment="center" />
 
         <TextView
-            android:id="@+id/value_text"
+            android:id="@+id/recurring_acts_fragment_value_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.25"
@@ -94,17 +74,17 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_acts"
+        android:id="@+id/rv_recurring_acts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingBottom="75dp"
         android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_fragment_second_linear_layout"/>
+        app:layout_constraintTop_toBottomOf="@+id/recurring_acts_fragment_second_linear_layout"/>
 
-    
+
     <View
-        android:id="@+id/home_screen_grey_view"
+        android:id="@+id/recurring_acts_fragment_grey_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#66000000"
@@ -119,7 +99,7 @@
     </View>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fab_constraint_layout"
+        android:id="@+id/recurring_acts_fragment_fab_constraint_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="32dp"
@@ -128,7 +108,7 @@
         app:layout_constraintHorizontal_bias="0.5">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/main_home_fab"
+            android:id="@+id/main_recurring_acts_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/baseline_add_24"
@@ -142,7 +122,7 @@
         </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_expense_fab"
+            android:id="@+id/add_recurring_expense_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/baseline_add_24"
@@ -150,15 +130,15 @@
             app:backgroundTint="@color/red"
             android:visibility="invisible"
             app:tint="@color/white"
-            app:layout_constraintBottom_toTopOf="@id/main_home_fab"
-            app:layout_constraintEnd_toEndOf="@id/main_home_fab">
+            app:layout_constraintBottom_toTopOf="@id/main_recurring_acts_fab"
+            app:layout_constraintEnd_toEndOf="@id/main_recurring_acts_fab">
         </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
         <TextView
-            android:id="@+id/add_expense_text_view"
+            android:id="@+id/add_recurring_expense_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Expense"
+            android:text="Add Recurring Expense"
             android:background="@drawable/fab_text_bg"
             android:textColor="@color/black"
             android:paddingHorizontal="27dp"
@@ -166,14 +146,44 @@
             android:textStyle="bold"
             android:elevation="8dp"
             android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@id/add_expense_fab"
-            app:layout_constraintTop_toTopOf="@id/add_expense_fab"
-            app:layout_constraintBottom_toBottomOf="@id/add_expense_fab">
+            app:layout_constraintEnd_toStartOf="@id/add_recurring_expense_fab"
+            app:layout_constraintTop_toTopOf="@id/add_recurring_expense_fab"
+            app:layout_constraintBottom_toBottomOf="@id/add_recurring_expense_fab">
 
         </TextView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_income_fab"
+            android:id="@+id/add_recurring_income_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/baseline_add_24"
+            android:layout_marginBottom="12dp"
+            app:backgroundTint="@color/red"
+            android:visibility="invisible"
+            app:tint="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/add_recurring_expense_fab"
+            app:layout_constraintEnd_toEndOf="@id/add_recurring_expense_fab">
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+        <TextView
+            android:id="@+id/add_recurring_income_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Recurring Income"
+            android:background="@drawable/fab_text_bg"
+            android:textColor="@color/black"
+            android:paddingHorizontal="27dp"
+            android:paddingVertical="7dp"
+            android:textStyle="bold"
+            android:elevation="8dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@id/add_recurring_income_fab"
+            app:layout_constraintTop_toTopOf="@id/add_recurring_income_fab"
+            app:layout_constraintBottom_toBottomOf="@id/add_recurring_income_fab">
+        </TextView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_recurring_transfer_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/baseline_add_24"
@@ -181,15 +191,15 @@
             app:backgroundTint="@color/green"
             android:visibility="invisible"
             app:tint="@color/white"
-            app:layout_constraintBottom_toTopOf="@id/add_expense_fab"
-            app:layout_constraintEnd_toEndOf="@id/add_expense_fab">
+            app:layout_constraintBottom_toTopOf="@id/add_recurring_income_fab"
+            app:layout_constraintEnd_toEndOf="@id/add_recurring_income_fab">
         </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
         <TextView
-            android:id="@+id/add_income_text_view"
+            android:id="@+id/add_recurring_transfer_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Income"
+            android:text="Add Recurring Transfer"
             android:background="@drawable/fab_text_bg"
             android:textColor="@color/black"
             android:paddingHorizontal="30dp"
@@ -197,42 +207,12 @@
             android:textStyle="bold"
             android:elevation="8dp"
             android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@id/add_income_fab"
-            app:layout_constraintTop_toTopOf="@id/add_income_fab"
-            app:layout_constraintBottom_toBottomOf="@id/add_income_fab">
+            app:layout_constraintEnd_toStartOf="@id/add_recurring_transfer_fab"
+            app:layout_constraintTop_toTopOf="@id/add_recurring_transfer_fab"
+            app:layout_constraintBottom_toBottomOf="@id/add_recurring_transfer_fab">
 
         </TextView>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_transfer_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/baseline_add_24"
-            android:layout_marginBottom="12dp"
-            app:backgroundTint="@color/secondary_variant"
-            android:visibility="invisible"
-            app:tint="@color/white"
-            app:layout_constraintBottom_toTopOf="@id/add_income_fab"
-            app:layout_constraintEnd_toEndOf="@id/add_income_fab">
-        </com.google.android.material.floatingactionbutton.FloatingActionButton>
-
-        <TextView
-            android:id="@+id/add_transfer_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Transfer"
-            android:background="@drawable/fab_text_bg"
-            android:textColor="@color/black"
-            android:paddingHorizontal="27dp"
-            android:paddingVertical="7dp"
-            android:textStyle="bold"
-            android:elevation="8dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toStartOf="@id/add_transfer_fab"
-            app:layout_constraintTop_toTopOf="@id/add_transfer_fab"
-            app:layout_constraintBottom_toBottomOf="@id/add_transfer_fab">
-
-        </TextView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

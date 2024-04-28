@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/recurring_acts_rv_row_layout"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/row_recurring_act_name_text_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:background="@color/secondary"
+            android:gravity="center"
+            android:text="Name"
+            android:textColor="@color/on_secondary"
+            android:textSize="17sp" />
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:weightSum="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/row_recurring_act_category_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.6"
+                android:background="@color/secondary"
+                android:gravity="center"
+                android:text="Category"
+                android:textColor="@color/on_secondary"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/row_recurring_act_note_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.4"
+                android:background="@color/secondary"
+                android:textColor="@color/on_secondary"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:text="Note" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/row_recurring_act_value_text_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:background="@color/secondary"
+            android:textColor="@color/on_secondary"
+            android:layout_weight="0.25"
+            android:text="Value" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
