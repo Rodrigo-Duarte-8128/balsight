@@ -17,4 +17,7 @@ interface DisplayedMonthYearDao {
 
     @Query("SELECT * from displayed_month_year_table ORDER BY monthYearId")
     fun getAllDisplayedMonthYear(): List<DisplayedMonthYear>
+
+    @Query("delete from displayed_month_year_table")
+    fun clear()
 }

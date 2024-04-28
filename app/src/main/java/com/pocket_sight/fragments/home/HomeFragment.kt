@@ -150,6 +150,12 @@ class HomeFragment : Fragment() {
             )
         }
 
+        displayedMonthYearButton.setOnClickListener {view: View ->
+            view.findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToChooseMonthFragment()
+            )
+        }
+
 
 
         return binding.root
