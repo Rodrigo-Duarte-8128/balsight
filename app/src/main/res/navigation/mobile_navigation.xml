@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_home_fragment_to_edit_transfer_fragment"
             app:destination="@id/edit_transfer_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_choose_account_fragment"
+            app:destination="@id/choose_account_fragment" />
     </fragment>
 
     <fragment
@@ -313,5 +316,14 @@
             android:name="account_receiving_number"
             app:argType="integer"/> <!-- here -1 represents null -->
 
+    </fragment>
+    <fragment
+        android:id="@+id/choose_account_fragment"
+        android:name="com.pocket_sight.fragments.home.ChooseAccountFragment"
+        android:label="Choose Account to Display"
+        tools:layout="@layout/fragment_choose_account" >
+        <action
+            android:id="@+id/action_choose_account_fragment_to_home_fragment"
+            app:destination="@id/home_fragment" />
     </fragment>
 </navigation>

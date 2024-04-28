@@ -16,4 +16,7 @@ interface DisplayedAccountDao {
 
     @Query("SELECT * from displayed_account_table ORDER BY displayedAccountId")
     fun getAllDisplayedAccount(): List<DisplayedAccount>
+
+    @Query("delete from displayed_account_table")
+    fun clear()
 }

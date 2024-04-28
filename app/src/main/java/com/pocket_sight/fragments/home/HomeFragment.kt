@@ -119,6 +119,7 @@ class HomeFragment : Fragment() {
         val actsRV = binding.rvActs
         val displayedMonthYearButton: Button = binding.displayedMonthButton
         val displayedAccountButton: Button = binding.displayedAccountButton
+
         buildFragmentInfo(
             this.requireContext(),
             actsRV,
@@ -142,6 +143,12 @@ class HomeFragment : Fragment() {
         }
         createSecondaryFabsListeners()
         handleTouchWhenFabExpanded()
+
+        displayedAccountButton.setOnClickListener {view: View ->
+            view.findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToChooseAccountFragment()
+            )
+        }
 
 
 
