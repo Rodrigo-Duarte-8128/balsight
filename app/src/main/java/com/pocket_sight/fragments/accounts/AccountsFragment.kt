@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.math.RoundingMode
 
 
 class AccountsFragment: Fragment() {
@@ -99,6 +100,7 @@ class AccountsFragment: Fragment() {
                 intTotal = total.toInt()
                 totalWealthTextView.text = "\u20ac ${intTotal}"
             } else {
+                total = total.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
                 totalWealthTextView.text = "\u20ac $total"
             }
 

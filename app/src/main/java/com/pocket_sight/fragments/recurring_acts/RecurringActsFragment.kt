@@ -99,7 +99,7 @@ class RecurringActsFragment : Fragment() {
 
         displayedAccountButton = binding.recurringActsFragmentDisplayedAccountButton
         displayedAccountButton.setOnClickListener {view: View ->
-
+            view.findNavController().navigate(RecurringActsFragmentDirections.actionRecurringActsFragmentToChooseDisplayedAccount())
         }
 
         buildFragmentInfo()
@@ -226,7 +226,11 @@ class RecurringActsFragment : Fragment() {
         }
 
         binding.addRecurringTransferFab.setOnClickListener{view: View ->
-
+            view.findNavController().navigate(
+                RecurringActsFragmentDirections.actionRecurringActsFragmentToAddRecurringTransferFragment(
+                    System.currentTimeMillis()
+                )
+            )
         }
 
     }
@@ -286,5 +290,6 @@ class RecurringActsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        fabIsExpanded = false
     }
 }

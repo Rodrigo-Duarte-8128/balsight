@@ -50,6 +50,12 @@
         <action
             android:id="@+id/action_recurring_acts_fragment_to_add_recurring_income_fragment"
             app:destination="@id/add_recurring_income_fragment" />
+        <action
+            android:id="@+id/action_recurring_acts_fragment_to_add_recurring_transfer_fragment"
+            app:destination="@id/add_recurring_transfer_fragment" />
+        <action
+            android:id="@+id/action_recurring_acts_fragment_to_chooseDisplayedAccount"
+            app:destination="@id/choose_displayed_account_fragment" />
     </fragment>
 
     <fragment
@@ -460,5 +466,26 @@
         <argument
             android:name="name"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/add_recurring_transfer_fragment"
+        android:name="com.pocket_sight.fragments.recurring_acts.AddRecurringTransferFragment"
+        android:label="Add Recurring Transfer"
+        tools:layout="@layout/fragment_add_recurring_transfer" >
+        <action
+            android:id="@+id/action_add_recurring_transfer_fragment_to_recurring_acts_fragment"
+            app:destination="@id/recurring_acts_fragment" />
+        <argument
+            android:name="timeMillis"
+            app:argType="long"/>
+    </fragment>
+    <fragment
+        android:id="@+id/choose_displayed_account_fragment"
+        android:name="com.pocket_sight.fragments.recurring_acts.ChooseDisplayedAccount"
+        android:label="Choose Account"
+        tools:layout="@layout/fragment_choose_displayed_account" >
+        <action
+            android:id="@+id/action_chooseDisplayedAccount_to_recurring_acts_fragment"
+            app:destination="@id/recurring_acts_fragment" />
     </fragment>
 </navigation>
