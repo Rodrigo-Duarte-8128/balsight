@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import com.pocket_sight.types.transactions.Transaction
 
 
 @Dao
@@ -13,6 +14,9 @@ interface RecurringTransactionsDao{
 
     @Delete
     fun delete(recurringTransaction: RecurringTransaction)
+
+    @Query("SELECT * from recurring_transactions_table WHERE recurringTransactionId = :key")
+    fun get(key: Int): RecurringTransaction
 
     @Query("SELECT * from recurring_transactions_table ORDER BY recurringTransactionId")
     fun getAllRecurringTransactions(): List<RecurringTransaction>

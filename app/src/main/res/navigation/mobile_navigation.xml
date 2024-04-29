@@ -56,6 +56,9 @@
         <action
             android:id="@+id/action_recurring_acts_fragment_to_chooseDisplayedAccount"
             app:destination="@id/choose_displayed_account_fragment" />
+        <action
+            android:id="@+id/action_recurring_acts_fragment_to_editRecurringTransactionFragment"
+            app:destination="@id/edit_recurring_transaction_fragment" />
     </fragment>
 
     <fragment
@@ -487,5 +490,81 @@
         <action
             android:id="@+id/action_chooseDisplayedAccount_to_recurring_acts_fragment"
             app:destination="@id/recurring_acts_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/edit_recurring_transaction_fragment"
+        android:name="com.pocket_sight.fragments.recurring_acts.EditRecurringTransactionFragment"
+        android:label="Edit Recurring Transaction"
+        tools:layout="@layout/fragment_edit_recurring_transaction" >
+        <action
+            android:id="@+id/action_editRecurringTransactionFragment_to_recurring_acts_fragment"
+            app:destination="@id/recurring_acts_fragment" />
+        <argument
+            android:name="recurring_transaction_id"
+            app:argType="integer"/>
+        <argument
+            android:name="startDateTimeMillis"
+            app:argType="long" />
+        <argument
+            android:name="account_number"
+            app:argType="integer" />
+        <argument
+            android:name="value_string"
+            app:argType="string"/>
+        <argument
+            android:name="selected_category_number"
+            app:argType="integer"/>
+        <argument
+            android:name="selected_subcategory_number"
+            app:argType="integer"/>
+        <argument
+            android:name="note"
+            app:argType="string"/>
+        <argument
+            android:name="name"
+            app:argType="string"/>
+        <argument
+            android:name="month_day_int"
+            app:argType="integer"/>
+        <action
+            android:id="@+id/action_edit_recurring_transaction_fragment_to_editRecurringTransactionMoreOptions"
+            app:destination="@id/edit_recurring_transaction_more_options" />
+    </fragment>
+    <fragment
+        android:id="@+id/edit_recurring_transaction_more_options"
+        android:name="com.pocket_sight.fragments.recurring_acts.EditRecurringTransactionMoreOptions"
+        android:label="More Options"
+        tools:layout="@layout/fragment_edit_recurring_transaction_more_options" >
+        <action
+            android:id="@+id/action_editRecurringTransactionMoreOptions_to_edit_recurring_transaction_fragment"
+            app:destination="@id/edit_recurring_transaction_fragment"
+            app:popUpTo="@id/recurring_acts_fragment" />
+        <argument
+            android:name="recurring_transaction_id"
+            app:argType="integer"/>
+        <argument
+            android:name="startDateTimeMillis"
+            app:argType="long" />
+        <argument
+            android:name="account_number"
+            app:argType="integer" />
+        <argument
+            android:name="value_string"
+            app:argType="string"/>
+        <argument
+            android:name="selected_category_number"
+            app:argType="integer"/>
+        <argument
+            android:name="selected_subcategory_number"
+            app:argType="integer"/>
+        <argument
+            android:name="note"
+            app:argType="string"/>
+        <argument
+            android:name="name"
+            app:argType="string"/>
+        <argument
+            android:name="month_day_int"
+            app:argType="integer"/>
     </fragment>
 </navigation>

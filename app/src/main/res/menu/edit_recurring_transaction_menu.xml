@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_more_options"
+        android:title="More Options" />
+    <item
+        android:id="@+id/action_remove_recurring_transaction"
+        android:title="Remove Recurring Transaction"/>
+</menu>
