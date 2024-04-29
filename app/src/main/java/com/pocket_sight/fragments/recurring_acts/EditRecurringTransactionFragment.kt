@@ -303,78 +303,68 @@ class EditRecurringTransactionFragment: Fragment(), RemoveRecurringTransactionDi
                 return@launch
             }
 
-            val millis = args.timeMillis
-            val dateTime = convertTimeMillisToLocalDateTime(millis)
-
-            val timeInDatabase = withContext(Dispatchers.IO) {
-                transactionsDatabase.idInDatabase(millis)
-            }
-
-            if (timeInDatabase) {
-                Toast.makeText(context, "Time and Date Taken by Another Transaction.", Toast.LENGTH_SHORT).show()
+            val monthDayString = monthDayEditText.text.toString()
+            var monthDayInt = 0
+            try {
+                monthDayInt = monthDayString.toInt()
+            } catch (e: Exception) {
+                monthDayEditText.error = "Invalid Month Day"
                 return@launch
             }
 
+            if (monthDayInt < 1 || monthDayInt > 28) {
+                monthDayEditText.error = "Month Day Needs to be Between 1 and 28"
+                return@launch
+            }
+
+
+            val millis = args.startDateTimeMillis
+            val dateTime = convertTimeMillisToLocalDateTime(millis)
+
+
             withContext(Dispatchers.IO) {
-                val newTransaction = Transaction(
-                    millis,
-                    dateTime.minute,
-                    dateTime.hour,
+                val newRecurringTransaction = RecurringTransaction(
+                    recurringTransaction.recurringTransactionId,
+                    nameEditText.text.toString(),
+                    monthDayInt,
+                    value,
+                    args.note,
+                    selectedCategoryNumber,
+                    selectedSubcategoryNumber,
+                    null,
+                    null,
+                    args.accountNumber,
                     dateTime.dayOfMonth,
                     dateTime.monthValue,
                     dateTime.year,
-                    value,
-                    args.accountNumber,
-                    selectedCategoryNumber,
-                    selectedSubcategoryNumber,
-                    args.note,
-                    null,
-                    null
+                    recurringTransaction.lastInstantiationDay,
+                    recurringTransaction.lastInstantiationMonthInt,
+                    recurringTransaction.lastInstantiationYear
                 )
-                transactionsDatabase.deleteByKey(args.originalTimeMillis)
-                transactionsDatabase.insert(newTransaction)
+                recurringTransactionsDatabase.delete(recurringTransaction)
+                recurringTransactionsDatabase.insert(newRecurringTransaction)
             }
 
-            //update associated account balance
-            val account = withContext(Dispatchers.IO) {
-                accountsDatabase.get(args.accountNumber)
-            }
-            var newBalance = account.balance - transaction.value + value
-            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-            withContext(Dispatchers.IO) {
-                accountsDatabase.updateBalance(args.accountNumber, newBalance)
-            }
-
-            view.findNavController().navigate(EditTransactionFragmentDirections.actionEditTransactionFragmentToHomeFragment())
+            view.findNavController().navigate(
+                EditRecurringTransactionFragmentDirections.actionEditRecurringTransactionFragmentToRecurringActsFragment()
+            )
         }
     }
 
     fun showRemoveTransactionDialog() {
-        RemoveTransactionDialogFragment(this).show(this.parentFragmentManager, "RemoveTransactionDialog")
+        RemoveRecurringTransactionDialogFragment(this).show(this.parentFragmentManager, "RemoveTransactionDialog")
     }
 
-    override fun onRemoveTransactionDialogPositiveClick(dialog: DialogFragment) {
+    override fun onRemoveRecurringTransactionDialogPositiveClick(dialog: DialogFragment) {
         uiScope.launch {
             // delete transaction from database
             withContext(Dispatchers.IO) {
-                transactionsDatabase.delete(transaction)
-            }
-
-            // update associated account balance
-            val associatedAccount = withContext(Dispatchers.IO) {
-                accountsDatabase.get(transaction.accountNumber)
-            }
-
-            var newBalance = associatedAccount.balance - transaction.value
-            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-
-            withContext(Dispatchers.IO) {
-                accountsDatabase.updateBalance(transaction.accountNumber, newBalance)
+                recurringTransactionsDatabase.delete(recurringTransaction)
             }
         }
 
         NavHostFragment.findNavController(this).navigate(
-            EditTransactionFragmentDirections.actionEditTransactionFragmentToHomeFragment()
+            EditRecurringTransactionFragmentDirections.actionEditRecurringTransactionFragmentToRecurringActsFragment()
         )
     }
 

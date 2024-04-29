@@ -14,6 +14,8 @@ interface RecurringTransferDao{
     @Delete
     fun delete(recurringTransfer: RecurringTransfer)
 
+    @Query("SELECT * from recurring_transfers_table WHERE recurringTransferId = :key")
+    fun get(key: Int): RecurringTransfer
     @Query("SELECT * from recurring_transfers_table ORDER BY recurringTransferId")
     fun getAllRecurringTransfers(): List<RecurringTransfer>
 

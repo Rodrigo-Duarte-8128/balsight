@@ -59,6 +59,9 @@
         <action
             android:id="@+id/action_recurring_acts_fragment_to_editRecurringTransactionFragment"
             app:destination="@id/edit_recurring_transaction_fragment" />
+        <action
+            android:id="@+id/action_recurring_acts_fragment_to_edit_recurring_transfer_fragment"
+            app:destination="@id/edit_recurring_transfer_fragment" />
     </fragment>
 
     <fragment
@@ -562,6 +565,39 @@
             app:argType="string"/>
         <argument
             android:name="name"
+            app:argType="string"/>
+        <argument
+            android:name="month_day_int"
+            app:argType="integer"/>
+    </fragment>
+    <fragment
+        android:id="@+id/edit_recurring_transfer_fragment"
+        android:name="com.pocket_sight.fragments.recurring_acts.EditRecurringTransferFragment"
+        android:label="Edit Recurring Fragment"
+        tools:layout="@layout/fragment_edit_recurring_transfer" >
+        <action
+            android:id="@+id/action_edit_recurring_transfer_fragment_to_recurring_acts_fragment"
+            app:destination="@id/recurring_acts_fragment" />
+        <argument
+            android:name="recurringTransferId"
+            app:argType="integer"/>
+        <argument
+            android:name="transfer_start_time_millis"
+            app:argType="long"/>
+        <argument
+            android:name="account_sending_number"
+            app:argType="integer"/>
+        <argument
+            android:name="account_receiving_number"
+            app:argType="integer"/>
+        <argument
+            android:name="name"
+            app:argType="string"/>
+        <argument
+            android:name="value_string"
+            app:argType="string"/>
+        <argument
+            android:name="note"
             app:argType="string"/>
         <argument
             android:name="month_day_int"

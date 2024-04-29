@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.convertMonthIntToString
@@ -21,6 +22,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
 
 class RecurringActsAdapter(val context: Context, val recurringActs: List<RecurringAct>, val displayedAccountNumber: Int?): RecyclerView.Adapter<RecurringActsAdapter.ViewHolder>() {
 
@@ -41,7 +46,7 @@ class RecurringActsAdapter(val context: Context, val recurringActs: List<Recurri
                 val position = adapterPosition
                 val act = recurringActs[position]
                 if (act is RecurringTransaction) {
-                    //val transaction = acts[position]
+
                     val selectedCategoryNumber: Int = if (act.categoryNumber != null) {
                         act.categoryNumber!!
                     } else {-1}
@@ -49,8 +54,24 @@ class RecurringActsAdapter(val context: Context, val recurringActs: List<Recurri
                         act.subcategoryNumber!!
                     } else {-1}
 
-                    //itemView.findNavController().navigate(
-                    //)
+                    var valueString = act.value.toString()
+
+                    val dateTime = LocalDateTime.of(LocalDate.of(act.year, act.month, act.monthDay), LocalTime.of(1, 1))
+                    val startDateTimeMillis: Long = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+                    itemView.findNavController().navigate(
+                        RecurringActsFragmentDirections.actionRecurringActsFragmentToEditRecurringTransactionFragment(
+                            act.recurringTransactionId,
+                            startDateTimeMillis,
+                            act.accountNumber,
+                            act.value.toString(),
+                            selectedCategoryNumber,
+                            selectedSubcategoryNumber,
+                            act.note,
+                            act.name,
+                            act.monthDay
+                        )
+                    )
                 }
 
                 if (act is RecurringTransfer) {
@@ -63,8 +84,21 @@ class RecurringActsAdapter(val context: Context, val recurringActs: List<Recurri
                         act.accountReceivingNumber!!
                     } else {-1}
 
-                    //itemView.findNavController().navigate(
-                    //)
+                    val dateTime = LocalDateTime.of(LocalDate.of(act.year, act.month, act.monthDay), LocalTime.of(1, 1))
+                    val startDateTimeMillis: Long = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+                    itemView.findNavController().navigate(
+                        RecurringActsFragmentDirections.actionRecurringActsFragmentToEditRecurringTransferFragment(
+                            act.recurringTransferId,
+                            startDateTimeMillis,
+                            accountSendingNumber,
+                            accountReceivingNumber,
+                            act.name,
+                            act.value.toString(),
+                            act.note,
+                            act.monthDay
+                        )
+                    )
                 }
 
             }

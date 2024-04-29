@@ -22,7 +22,7 @@ class RemoveRecurringTransactionDialogFragment(val fragment: EditRecurringTransa
             builder.setMessage("This will permanently delete this recurring transaction.")
 
             builder.setPositiveButton("Confirm") { _, _->
-                fragment.onRemoveTransactionDialogPositiveClick(this)
+                fragment.onRemoveRecurringTransactionDialogPositiveClick(this)
             }
 
 
