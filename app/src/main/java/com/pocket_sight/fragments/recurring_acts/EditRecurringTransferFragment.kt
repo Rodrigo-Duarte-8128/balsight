@@ -9,8 +9,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentEditRecurringTransferBinding
 import com.pocket_sight.types.accounts.Account
@@ -30,7 +34,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class EditRecurringTransferFragment: Fragment() {
+class EditRecurringTransferFragment: Fragment(), RemoveRecurringTransferDialogFragment.RemoveRecurringTransferDialogListener {
     private var _binding: FragmentEditRecurringTransferBinding? = null
     val binding get() = _binding!!
 
@@ -66,6 +70,9 @@ class EditRecurringTransferFragment: Fragment() {
         args = EditRecurringTransferFragmentArgs.fromBundle(requireArguments())
 
 
+        val menuHost: MenuHost = requireActivity()
+        val menuProvider = EditRecurringTransferMenuProvider(this.requireContext(), this)
+        menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
         recurringTransfersDatabase = RecurringTransferDatabase.getInstance(requireNotNull(this.activity).application).recurringTransferDao
@@ -270,6 +277,24 @@ class EditRecurringTransferFragment: Fragment() {
             )
         }
     }
+
+    fun showRemoveTransferDialog() {
+        RemoveRecurringTransferDialogFragment(this).show(this.parentFragmentManager, "RemoveTransactionDialog")
+    }
+
+    override fun onRemoveRecurringTransferDialogPositiveClick(dialog: DialogFragment) {
+        uiScope.launch {
+            // delete transaction from database
+            withContext(Dispatchers.IO) {
+                recurringTransfersDatabase.delete(recurringTransfer)
+            }
+        }
+
+        NavHostFragment.findNavController(this).navigate(
+            EditRecurringTransferFragmentDirections.actionEditRecurringTransferFragmentToRecurringActsFragment()
+        )
+    }
+
 }
 
 

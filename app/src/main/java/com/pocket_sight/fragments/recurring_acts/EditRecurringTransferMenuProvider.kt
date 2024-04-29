@@ -8,15 +8,14 @@ import androidx.core.view.MenuProvider
 import com.pocket_sight.R
 
 
-class EditRecurringTransactionMenuProvider(private val context: Context, private val fragment: EditRecurringTransactionFragment): MenuProvider {
+class EditRecurringTransferMenuProvider(private val context: Context, private val fragment: EditRecurringTransferFragment): MenuProvider {
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.edit_recurring_transaction_menu, menu)
+        menuInflater.inflate(R.menu.edit_recurring_transfer_menu, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.action_more_options -> fragment.moreOptionsClicked()
-            R.id.action_remove_recurring_transaction -> fragment.showRemoveTransactionDialog()
+            R.id.action_remove_recurring_transfer -> fragment.showRemoveTransferDialog()
         }
         return fragment.onContextItemSelected(menuItem)
     }

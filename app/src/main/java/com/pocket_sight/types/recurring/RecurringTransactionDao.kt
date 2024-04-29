@@ -18,6 +18,9 @@ interface RecurringTransactionsDao{
     @Query("SELECT * from recurring_transactions_table WHERE recurringTransactionId = :key")
     fun get(key: Int): RecurringTransaction
 
+    @Query("update recurring_transactions_table set recurring_transaction_last_instantiation_day = :day, recurring_transaction_last_instantiation_month_int = :month, recurring_transaction_last_instantiation_year = :year where recurringTransactionId = :recurringTransactionId")
+    fun updateInstantiationDate(recurringTransactionId: Int, day: Int, month: Int, year: Int)
+
     @Query("SELECT * from recurring_transactions_table ORDER BY recurringTransactionId")
     fun getAllRecurringTransactions(): List<RecurringTransaction>
 

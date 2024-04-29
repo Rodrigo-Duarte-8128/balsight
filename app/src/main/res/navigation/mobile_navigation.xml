@@ -573,7 +573,7 @@
     <fragment
         android:id="@+id/edit_recurring_transfer_fragment"
         android:name="com.pocket_sight.fragments.recurring_acts.EditRecurringTransferFragment"
-        android:label="Edit Recurring Fragment"
+        android:label="Edit Recurring Transfer"
         tools:layout="@layout/fragment_edit_recurring_transfer" >
         <action
             android:id="@+id/action_edit_recurring_transfer_fragment_to_recurring_acts_fragment"

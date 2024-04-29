@@ -18,10 +18,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.pocket_sight.databinding.FragmentAddExpenseBinding
 import com.pocket_sight.databinding.FragmentEditRecurringTransactionBinding
-import com.pocket_sight.databinding.FragmentEditTransactionBinding
-import com.pocket_sight.fragments.categories.RemoveSubcategoriesDialogFragment
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
@@ -33,9 +30,6 @@ import com.pocket_sight.types.categories.Subcategory
 import com.pocket_sight.types.recurring.RecurringTransaction
 import com.pocket_sight.types.recurring.RecurringTransactionsDao
 import com.pocket_sight.types.recurring.RecurringTransactionsDatabase
-import com.pocket_sight.types.transactions.Transaction
-import com.pocket_sight.types.transactions.TransactionsDao
-import com.pocket_sight.types.transactions.TransactionsDatabase
 import com.pocket_sight.types.transactions.convertTimeMillisToLocalDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

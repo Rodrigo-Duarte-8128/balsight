@@ -1,5 +1,10 @@
 package com.pocket_sight
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+
 
 fun convertDecimalToEuroString(number: Double): String {
     val string: String = if (number == number.toInt().toDouble()) {
@@ -59,3 +64,49 @@ fun parseMonthYearText(monthYearString: String): Array<Int> {
     return arrayOf(monthInt, yearInt)
 }
 
+
+
+fun dateAfter(date: LocalDate, startDate: LocalDate): Boolean {
+    if (date.year < startDate.year) {
+        return false
+    }
+
+    if (date.year > startDate.year) {
+        return true
+    }
+    // we are in the same year now
+    if (date.monthValue < startDate.monthValue) {
+        return false
+    }
+
+    if (date.monthValue > startDate.monthValue) {
+        return true
+    }
+    // we are in the same month now
+    if (date.dayOfMonth < startDate.dayOfMonth) {
+        return false
+    }
+    return true
+}
+
+
+fun convertDateAndIdToDateTime(date: LocalDate, id: Int): LocalDateTime {
+    // id must be between 0 and 86400
+    val seconds: Int = id % 60
+    val totalMinutes: Int = (id - seconds) / 60
+    val minutes = totalMinutes % 60
+    val hours = (totalMinutes - minutes) / 60
+    val time = LocalTime.of(hours, minutes, seconds)
+    return LocalDateTime.of(date, time)
+}
+
+fun convertDateAndIdToTimeMillis(date: LocalDate, id: Int): Long {
+    // id must be between 0 and 86400
+    val seconds: Int = id % 60
+    val totalMinutes: Int = (id - seconds) / 60
+    val minutes = totalMinutes % 60
+    val hours = (totalMinutes - minutes) / 60
+    val time = LocalTime.of(hours, minutes, seconds)
+    val dateTime = LocalDateTime.of(date, time)
+    return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+}
