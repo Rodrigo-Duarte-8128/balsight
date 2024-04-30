@@ -246,7 +246,7 @@ class AddRecurringIncomeFragment: Fragment() {
         ))
     }
 
-    fun addRecurringIncome(context: Context, view: View, valueEditText: EditText) {
+    private fun addRecurringIncome(context: Context, view: View, valueEditText: EditText) {
         uiScope.launch {
             val valueString = valueEditText.text.toString()
             var value: Double

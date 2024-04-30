@@ -11,11 +11,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.pocket_sight.databinding.ActivityMainBinding
 import com.pocket_sight.fragments.home.HomeFragment
+import com.pocket_sight.types.Act
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
+import com.pocket_sight.types.recurring.RecurringTransaction
 import com.pocket_sight.types.recurring.RecurringTransactionsDao
 import com.pocket_sight.types.recurring.RecurringTransactionsDatabase
+import com.pocket_sight.types.recurring.RecurringTransfer
 import com.pocket_sight.types.recurring.RecurringTransferDao
 import com.pocket_sight.types.recurring.RecurringTransferDatabase
 import com.pocket_sight.types.transactions.Transaction
@@ -32,6 +35,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.math.RoundingMode
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 class MainActivity : AppCompatActivity() {
 
@@ -112,6 +117,19 @@ class MainActivity : AppCompatActivity() {
                 recurringTransactionsDatabase.getAllRecurringTransactions()
             }
 
+            buildMissingRecurringTransactions(currentDate, recurringTransactionsList)
+
+
+            val recurringTransfersList = withContext(Dispatchers.IO) {
+                recurringTransfersDatabase.getAllRecurringTransfers()
+            }
+
+            buildMissingRecurringTransfers(currentDate, recurringTransfersList)
+        }
+    }
+
+    private suspend fun buildMissingRecurringTransactions(currentDate: LocalDate, recurringTransactionsList: List<RecurringTransaction>) {
+        withContext(Dispatchers.IO) {
             for (recurringTransaction in recurringTransactionsList) {
                 val startDate = LocalDate.of(
                     recurringTransaction.year,
@@ -119,64 +137,64 @@ class MainActivity : AppCompatActivity() {
                     recurringTransaction.day
                 )
 
+                if (!dateAfter(currentDate, startDate)) {
+                    continue
+                }
+                // from now on we know that currentDate is after startDate
+
                 var instantiated = false
                 if (recurringTransaction.lastInstantiationYear != null && recurringTransaction.lastInstantiationMonthInt != null && recurringTransaction.lastInstantiationDay != null) {
                     instantiated = true
                 }
 
-                if (!instantiated) {
-                    if (currentDateTime.dayOfMonth >= recurringTransaction.monthDay && dateAfter(currentDate, startDate)) {
-                        val transactionDate = LocalDate.of(currentDate.year, currentDate.monthValue, recurringTransaction.monthDay)
-                        val transactionDateTime = convertDateAndIdToDateTime(transactionDate, recurringTransaction.recurringTransactionId)
-                        val transactionId = convertDateAndIdToTimeMillis(transactionDate, recurringTransaction.recurringTransactionId)
-                        val newTransaction = Transaction(
-                            transactionId,
-                            transactionDateTime.minute,
-                            transactionDateTime.hour,
-                            transactionDateTime.dayOfMonth,
-                            transactionDateTime.monthValue,
-                            transactionDateTime.year,
-                            recurringTransaction.value,
-                            recurringTransaction.accountNumber,
-                            recurringTransaction.categoryNumber,
-                            recurringTransaction.subcategoryNumber,
-                            recurringTransaction.note,
-                            recurringTransaction.oldSubcategoryName,
-                            recurringTransaction.oldCategoryName
-                        )
-                        withContext(Dispatchers.IO) {
-                            transactionsDatabase.insert(newTransaction)
-                        }
+                if (!instantiated && currentDate.dayOfMonth >= recurringTransaction.monthDay) {
+                    val transactionDate = LocalDate.of(currentDate.year, currentDate.monthValue, recurringTransaction.monthDay)
+                    val newTransactionTimeMillis = getFirstAvailableTimeMillis(
+                        "Transaction",
+                        transactionDate.dayOfMonth,
+                        transactionDate.monthValue,
+                        transactionDate.year
+                    )
+                    val newTransactionDateTime = convertTimeMillisToLocalDateTime(newTransactionTimeMillis)
+                    val newTransaction = Transaction(
+                        newTransactionTimeMillis,
+                        newTransactionDateTime.minute,
+                        newTransactionDateTime.hour,
+                        newTransactionDateTime.dayOfMonth,
+                        newTransactionDateTime.monthValue,
+                        newTransactionDateTime.year,
+                        recurringTransaction.value,
+                        recurringTransaction.accountNumber,
+                        recurringTransaction.categoryNumber,
+                        recurringTransaction.subcategoryNumber,
+                        recurringTransaction.note,
+                        recurringTransaction.oldSubcategoryName,
+                        recurringTransaction.oldCategoryName
+                    )
+                    transactionsDatabase.insert(newTransaction)
 
-                        // update account balance
-                        val account = withContext(Dispatchers.IO) {
-                            accountsDatabase.get(recurringTransaction.accountNumber)
-                        }
+                    // update account balance
+                    val account = accountsDatabase.get(recurringTransaction.accountNumber)
 
-                        var newBalance = account.balance + recurringTransaction.value
-                        newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                        withContext(Dispatchers.IO) {
-                            accountsDatabase.updateBalance(account.number, newBalance)
-                        }
+                    var newBalance = account.balance + recurringTransaction.value
+                    newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                    accountsDatabase.updateBalance(account.number, newBalance)
 
-
-
-                        // update recurringTransaction last instantiation date
-                        withContext(Dispatchers.IO) {
-                            recurringTransactionsDatabase.updateInstantiationDate(
-                                recurringTransaction.recurringTransactionId,
-                                transactionDate.dayOfMonth,
-                                transactionDate.monthValue,
-                                transactionDate.year
-                            )
-                        }
-
-                    }
+                    // update recurringTransaction last instantiation date
+                    recurringTransactionsDatabase.updateInstantiationDate(
+                        recurringTransaction.recurringTransactionId,
+                        transactionDate.dayOfMonth,
+                        transactionDate.monthValue,
+                        transactionDate.year
+                    )
                     continue
                 }
 
+                if (!instantiated && currentDate.dayOfMonth < recurringTransaction.monthDay) {
+                    continue
+                }
 
-                // At this point we know the recurring transaction has been instantiated in the past
+                // at this point we know that the recurring transaction has been instantiated in the past
 
                 val lastInstantiationDate = LocalDate.of(
                     recurringTransaction.lastInstantiationYear!!,
@@ -190,68 +208,32 @@ class MainActivity : AppCompatActivity() {
 
                 while (!monthYear.contentEquals(currentMonthYear)) {
                     // we start by incrementing month year
-                    if (monthYear[0] == 1) {
-                        monthYear = arrayOf(12, monthYear[1] - 1)
+                    monthYear = if (monthYear[0] == 12) {
+                        arrayOf(1, monthYear[1] + 1)
                     } else {
-                        monthYear = arrayOf(monthYear[0] - 1, monthYear[1])
+                        arrayOf(monthYear[0] + 1, monthYear[1])
                     }
 
-                    if (monthYear.contentEquals(currentMonthYear)) {
-                        if (currentDateTime.dayOfMonth >= recurringTransaction.monthDay && dateAfter(currentDate, startDate)) {
-                            val transactionDate = LocalDate.of(
-                                currentDate.year,
-                                currentDate.monthValue,
-                                recurringTransaction.monthDay
-                            )
-                            val transactionDateTime = convertDateAndIdToDateTime(
-                                transactionDate,
-                                recurringTransaction.recurringTransactionId
-                            )
-                            val transactionId = convertDateAndIdToTimeMillis(
-                                transactionDate,
-                                recurringTransaction.recurringTransactionId
-                            )
-                            val newTransaction = Transaction(
-                                transactionId,
-                                transactionDateTime.minute,
-                                transactionDateTime.hour,
-                                transactionDateTime.dayOfMonth,
-                                transactionDateTime.monthValue,
-                                transactionDateTime.year,
-                                recurringTransaction.value,
-                                recurringTransaction.accountNumber,
-                                recurringTransaction.categoryNumber,
-                                recurringTransaction.subcategoryNumber,
-                                recurringTransaction.note,
-                                recurringTransaction.oldSubcategoryName,
-                                recurringTransaction.oldCategoryName
-                            )
-                            withContext(Dispatchers.IO) {
-                                transactionsDatabase.insert(newTransaction)
-                            }
-                            // update account balance
-                            val account = withContext(Dispatchers.IO) {
-                                accountsDatabase.get(recurringTransaction.accountNumber)
-                            }
-
-                            var newBalance = account.balance + recurringTransaction.value
-                            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                            withContext(Dispatchers.IO) {
-                                accountsDatabase.updateBalance(account.number, newBalance)
-                            }
-                        }
-                    } else {
-                        // in this case we always build a transaction
-                        val transactionDate = LocalDate.of(monthYear[1], monthYear[0], recurringTransaction.monthDay)
-                        val transactionDateTime = convertDateAndIdToDateTime(transactionDate, recurringTransaction.recurringTransactionId)
-                        val transactionId = convertDateAndIdToTimeMillis(transactionDate, recurringTransaction.recurringTransactionId)
+                    if (monthYear.contentEquals(currentMonthYear) && currentDate.dayOfMonth >= recurringTransaction.monthDay) {
+                        val transactionDate = LocalDate.of(
+                            currentDate.year,
+                            currentDate.monthValue,
+                            recurringTransaction.monthDay
+                        )
+                        val newTransactionTimeMillis = getFirstAvailableTimeMillis(
+                            "Transaction",
+                            transactionDate.dayOfMonth,
+                            transactionDate.monthValue,
+                            transactionDate.year
+                        )
+                        val newTransactionDateTime = convertTimeMillisToLocalDateTime(newTransactionTimeMillis)
                         val newTransaction = Transaction(
-                            transactionId,
-                            transactionDateTime.minute,
-                            transactionDateTime.hour,
-                            transactionDateTime.dayOfMonth,
-                            transactionDateTime.monthValue,
-                            transactionDateTime.year,
+                            newTransactionTimeMillis,
+                            newTransactionDateTime.minute,
+                            newTransactionDateTime.hour,
+                            newTransactionDateTime.dayOfMonth,
+                            newTransactionDateTime.monthValue,
+                            newTransactionDateTime.year,
                             recurringTransaction.value,
                             recurringTransaction.accountNumber,
                             recurringTransaction.categoryNumber,
@@ -260,38 +242,67 @@ class MainActivity : AppCompatActivity() {
                             recurringTransaction.oldSubcategoryName,
                             recurringTransaction.oldCategoryName
                         )
-                        withContext(Dispatchers.IO) {
-                            transactionsDatabase.insert(newTransaction)
-                        }
+                        transactionsDatabase.insert(newTransaction)
+
                         // update account balance
-                        val account = withContext(Dispatchers.IO) {
-                            accountsDatabase.get(recurringTransaction.accountNumber)
-                        }
+                        val account = accountsDatabase.get(recurringTransaction.accountNumber)
 
                         var newBalance = account.balance + recurringTransaction.value
                         newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                        withContext(Dispatchers.IO) {
-                            accountsDatabase.updateBalance(account.number, newBalance)
-                        }
+                        accountsDatabase.updateBalance(account.number, newBalance)
+                    }
+                    if (!monthYear.contentEquals(currentMonthYear)) {
+                        // in this case we always build a transaction
+                        val transactionDate = LocalDate.of(monthYear[1], monthYear[0], recurringTransaction.monthDay)
+
+                        val newTransactionTimeMillis = getFirstAvailableTimeMillis(
+                            "Transaction",
+                            transactionDate.dayOfMonth,
+                            transactionDate.monthValue,
+                            transactionDate.year
+                        )
+                        val newTransactionDateTime = convertTimeMillisToLocalDateTime(newTransactionTimeMillis)
+                        val newTransaction = Transaction(
+                            newTransactionTimeMillis,
+                            newTransactionDateTime.minute,
+                            newTransactionDateTime.hour,
+                            newTransactionDateTime.dayOfMonth,
+                            newTransactionDateTime.monthValue,
+                            newTransactionDateTime.year,
+                            recurringTransaction.value,
+                            recurringTransaction.accountNumber,
+                            recurringTransaction.categoryNumber,
+                            recurringTransaction.subcategoryNumber,
+                            recurringTransaction.note,
+                            recurringTransaction.oldSubcategoryName,
+                            recurringTransaction.oldCategoryName
+                        )
+                        transactionsDatabase.insert(newTransaction)
+
+                        // update account balance
+                        val account = accountsDatabase.get(recurringTransaction.accountNumber)
+
+                        var newBalance = account.balance + recurringTransaction.value
+                        newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                        accountsDatabase.updateBalance(account.number, newBalance)
                     }
                 }
 
+
                 // while loop exited, need to update last instantiation date
-                withContext(Dispatchers.IO) {
-                    recurringTransactionsDatabase.updateInstantiationDate(
-                        recurringTransaction.recurringTransactionId,
-                        recurringTransaction.monthDay,
-                        currentMonthYear[0],
-                        currentMonthYear[1]
-                    )
-                }
+                recurringTransactionsDatabase.updateInstantiationDate(
+                    recurringTransaction.recurringTransactionId,
+                    recurringTransaction.monthDay,
+                    currentMonthYear[0],
+                    currentMonthYear[1]
+                )
             }
+        }
+    }
 
 
-            val recurringTransfersList = withContext(Dispatchers.IO) {
-                recurringTransfersDatabase.getAllRecurringTransfers()
-            }
-
+    private suspend fun buildMissingRecurringTransfers(currentDate: LocalDate, recurringTransfersList: List<RecurringTransfer>) {
+        withContext(Dispatchers.IO) {
             for (recurringTransfer in recurringTransfersList) {
                 val startDate = LocalDate.of(
                     recurringTransfer.year,
@@ -299,79 +310,78 @@ class MainActivity : AppCompatActivity() {
                     recurringTransfer.day
                 )
 
+                if (!dateAfter(currentDate, startDate)) {
+                    continue
+                }
+                // from now on we know that currentDate is after startDate
+
                 var instantiated = false
                 if (recurringTransfer.lastInstantiationYear != null && recurringTransfer.lastInstantiationMonthInt != null && recurringTransfer.lastInstantiationDay != null) {
                     instantiated = true
                 }
 
-                if (!instantiated) {
-                    if (currentDateTime.dayOfMonth >= recurringTransfer.monthDay && dateAfter(currentDate, startDate)) {
-                        val transferDate = LocalDate.of(currentDate.year, currentDate.monthValue, recurringTransfer.monthDay)
-                        val transferDateTime = convertDateAndIdToDateTime(transferDate, recurringTransfer.recurringTransferId)
-                        val transferId = convertDateAndIdToTimeMillis(transferDate, recurringTransfer.recurringTransferId)
-                        val newTransfer = Transfer(
-                            transferId,
-                            transferDateTime.minute,
-                            transferDateTime.hour,
-                            transferDateTime.dayOfMonth,
-                            transferDateTime.monthValue,
-                            transferDateTime.year,
-                            recurringTransfer.value,
-                            recurringTransfer.note,
-                            recurringTransfer.accountSendingNumber,
-                            recurringTransfer.accountReceivingNumber
-                        )
-                        withContext(Dispatchers.IO) {
-                            transfersDatabase.insert(newTransfer)
-                        }
+                if (!instantiated && currentDate.dayOfMonth >= recurringTransfer.monthDay) {
+                    val transferDate = LocalDate.of(currentDate.year, currentDate.monthValue, recurringTransfer.monthDay)
+                    val newTransferTimeMillis = getFirstAvailableTimeMillis(
+                        "Transfer",
+                        transferDate.dayOfMonth,
+                        transferDate.monthValue,
+                        transferDate.year
+                    )
+                    val newTransferDateTime = convertTimeMillisToLocalDateTime(newTransferTimeMillis)
+                    val newTransfer = Transfer(
+                        newTransferTimeMillis,
+                        newTransferDateTime.minute,
+                        newTransferDateTime.hour,
+                        newTransferDateTime.dayOfMonth,
+                        newTransferDateTime.monthValue,
+                        newTransferDateTime.year,
+                        recurringTransfer.value,
+                        recurringTransfer.note,
+                        recurringTransfer.accountSendingNumber,
+                        recurringTransfer.accountReceivingNumber
+                    )
+                    transfersDatabase.insert(newTransfer)
 
-                        // update account balance
-                        var accountSending: Account? = null
-                        var accountReceiving: Account? = null
+                    // update account balance
 
-                        if (recurringTransfer.accountSendingNumber != null) {
-                            accountSending = withContext(Dispatchers.IO) {
-                                accountsDatabase.get(recurringTransfer.accountSendingNumber!!)
-                            }
-                        }
-                        if (recurringTransfer.accountReceivingNumber != null) {
-                            accountReceiving = withContext(Dispatchers.IO) {
-                                accountsDatabase.get(recurringTransfer.accountReceivingNumber!!)
-                            }
-                        }
+                    var accountSending: Account? = null
+                    var accountReceiving: Account? = null
 
-                        if (accountSending != null) {
-                            var newBalance = accountSending.balance - recurringTransfer.value
-                            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                            withContext(Dispatchers.IO) {
-                                accountsDatabase.updateBalance(accountSending!!.number, newBalance)
-                            }
-                        }
-                        if (accountReceiving != null) {
-                            var newBalance = accountReceiving.balance + recurringTransfer.value
-                            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                            withContext(Dispatchers.IO) {
-                                accountsDatabase.updateBalance(accountReceiving!!.number, newBalance)
-                            }
-                        }
-
-
-                        // update recurringTransfer last instantiation date
-                        withContext(Dispatchers.IO) {
-                            recurringTransfersDatabase.updateInstantiationDate(
-                                recurringTransfer.recurringTransferId,
-                                transferDate.dayOfMonth,
-                                transferDate.monthValue,
-                                transferDate.year
-                            )
-                        }
-
+                    if (recurringTransfer.accountSendingNumber != null) {
+                        accountSending = accountsDatabase.get(recurringTransfer.accountSendingNumber!!)
                     }
+                    if (recurringTransfer.accountReceivingNumber != null) {
+                        accountReceiving = accountsDatabase.get(recurringTransfer.accountReceivingNumber!!)
+                    }
+
+                    if (accountSending != null) {
+                        var newBalance = accountSending.balance - recurringTransfer.value
+                        newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                        accountsDatabase.updateBalance(accountSending.number, newBalance)
+                    }
+                    if (accountReceiving != null) {
+                        var newBalance = accountReceiving.balance + recurringTransfer.value
+                        newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                        accountsDatabase.updateBalance(accountReceiving.number, newBalance)
+                    }
+
+
+                    // update recurringTransfer last instantiation date
+                    recurringTransfersDatabase.updateInstantiationDate(
+                        recurringTransfer.recurringTransferId,
+                        transferDate.dayOfMonth,
+                        transferDate.monthValue,
+                        transferDate.year
+                    )
                     continue
                 }
 
+                if (!instantiated && currentDate.dayOfMonth < recurringTransfer.monthDay) {
+                    continue
+                }
 
-                // At this point we know the recurring transfer has been instantiated in the past
+                // at this point we know that the recurring transfer has been instantiated in the past
 
                 val lastInstantiationDate = LocalDate.of(
                     recurringTransfer.lastInstantiationYear!!,
@@ -385,137 +395,158 @@ class MainActivity : AppCompatActivity() {
 
                 while (!monthYear.contentEquals(currentMonthYear)) {
                     // we start by incrementing month year
-                    if (monthYear[0] == 1) {
-                        monthYear = arrayOf(12, monthYear[1] - 1)
+                    monthYear = if (monthYear[0] == 12) {
+                        arrayOf(1, monthYear[1] + 1)
                     } else {
-                        monthYear = arrayOf(monthYear[0] - 1, monthYear[1])
+                        arrayOf(monthYear[0] + 1, monthYear[1])
                     }
 
-                    if (monthYear.contentEquals(currentMonthYear)) {
-                        if (currentDateTime.dayOfMonth >= recurringTransfer.monthDay && dateAfter(currentDate, startDate)) {
-                            val transferDate = LocalDate.of(
-                                currentDate.year,
-                                currentDate.monthValue,
-                                recurringTransfer.monthDay
-                            )
-                            val transferDateTime = convertDateAndIdToDateTime(
-                                transferDate,
-                                recurringTransfer.recurringTransferId
-                            )
-                            val transferId = convertDateAndIdToTimeMillis(
-                                transferDate,
-                                recurringTransfer.recurringTransferId
-                            )
-                            val newTransfer = Transfer(
-                                transferId,
-                                transferDateTime.minute,
-                                transferDateTime.hour,
-                                transferDateTime.dayOfMonth,
-                                transferDateTime.monthValue,
-                                transferDateTime.year,
-                                recurringTransfer.value,
-                                recurringTransfer.note,
-                                recurringTransfer.accountSendingNumber,
-                                recurringTransfer.accountReceivingNumber
-                            )
-                            withContext(Dispatchers.IO) {
-                                transfersDatabase.insert(newTransfer)
-                            }
-
-                            var accountSending: Account? = null
-                            var accountReceiving: Account? = null
-
-                            if (recurringTransfer.accountSendingNumber != null) {
-                                accountSending = withContext(Dispatchers.IO) {
-                                    accountsDatabase.get(recurringTransfer.accountSendingNumber!!)
-                                }
-                            }
-                            if (recurringTransfer.accountReceivingNumber != null) {
-                                accountReceiving = withContext(Dispatchers.IO) {
-                                    accountsDatabase.get(recurringTransfer.accountReceivingNumber!!)
-                                }
-                            }
-
-                            if (accountSending != null) {
-                                var newBalance = accountSending.balance - recurringTransfer.value
-                                newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                                withContext(Dispatchers.IO) {
-                                    accountsDatabase.updateBalance(accountSending!!.number, newBalance)
-                                }
-                            }
-                            if (accountReceiving != null) {
-                                var newBalance = accountReceiving.balance + recurringTransfer.value
-                                newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                                withContext(Dispatchers.IO) {
-                                    accountsDatabase.updateBalance(accountReceiving!!.number, newBalance)
-                                }
-                            }
-                        }
-                    } else {
-                        // in this case we always build a transfer
-                        val transferDate = LocalDate.of(monthYear[1], monthYear[0], recurringTransfer.monthDay)
-                        val transferDateTime = convertDateAndIdToDateTime(transferDate, recurringTransfer.recurringTransferId)
-                        val transferId = convertDateAndIdToTimeMillis(transferDate, recurringTransfer.recurringTransferId)
+                    if (monthYear.contentEquals(currentMonthYear) && currentDate.dayOfMonth >= recurringTransfer.monthDay) {
+                        val transferDate = LocalDate.of(
+                            currentDate.year,
+                            currentDate.monthValue,
+                            recurringTransfer.monthDay
+                        )
+                        val newTransferTimeMillis = getFirstAvailableTimeMillis(
+                            "Transfer",
+                            transferDate.dayOfMonth,
+                            transferDate.monthValue,
+                            transferDate.year
+                        )
+                        val newTransferDateTime = convertTimeMillisToLocalDateTime(newTransferTimeMillis)
                         val newTransfer = Transfer(
-                            transferId,
-                            transferDateTime.minute,
-                            transferDateTime.hour,
-                            transferDateTime.dayOfMonth,
-                            transferDateTime.monthValue,
-                            transferDateTime.year,
+                            newTransferTimeMillis,
+                            newTransferDateTime.minute,
+                            newTransferDateTime.hour,
+                            newTransferDateTime.dayOfMonth,
+                            newTransferDateTime.monthValue,
+                            newTransferDateTime.year,
                             recurringTransfer.value,
                             recurringTransfer.note,
                             recurringTransfer.accountSendingNumber,
                             recurringTransfer.accountReceivingNumber
                         )
-                        withContext(Dispatchers.IO) {
-                            transfersDatabase.insert(newTransfer)
-                        }
+                        transfersDatabase.insert(newTransfer)
+
                         // update account balance
+
                         var accountSending: Account? = null
                         var accountReceiving: Account? = null
 
                         if (recurringTransfer.accountSendingNumber != null) {
-                            accountSending = withContext(Dispatchers.IO) {
-                                accountsDatabase.get(recurringTransfer.accountSendingNumber!!)
-                            }
+                            accountSending = accountsDatabase.get(recurringTransfer.accountSendingNumber!!)
                         }
                         if (recurringTransfer.accountReceivingNumber != null) {
-                            accountReceiving = withContext(Dispatchers.IO) {
-                                accountsDatabase.get(recurringTransfer.accountReceivingNumber!!)
-                            }
+                            accountReceiving = accountsDatabase.get(recurringTransfer.accountReceivingNumber!!)
                         }
 
                         if (accountSending != null) {
                             var newBalance = accountSending.balance - recurringTransfer.value
                             newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                            withContext(Dispatchers.IO) {
-                                accountsDatabase.updateBalance(accountSending.number, newBalance)
-                            }
+                            accountsDatabase.updateBalance(accountSending.number, newBalance)
                         }
                         if (accountReceiving != null) {
                             var newBalance = accountReceiving.balance + recurringTransfer.value
                             newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-                            withContext(Dispatchers.IO) {
-                                accountsDatabase.updateBalance(accountReceiving.number, newBalance)
-                            }
+                            accountsDatabase.updateBalance(accountReceiving.number, newBalance)
+                        }
+                    }
+
+
+                    if (!monthYear.contentEquals(currentMonthYear)) {
+                        // in this case we always build a transfer
+                        val transferDate = LocalDate.of(monthYear[1], monthYear[0], recurringTransfer.monthDay)
+
+                        val newTransferTimeMillis = getFirstAvailableTimeMillis(
+                            "Transfer",
+                            transferDate.dayOfMonth,
+                            transferDate.monthValue,
+                            transferDate.year
+                        )
+                        val newTransferDateTime = convertTimeMillisToLocalDateTime(newTransferTimeMillis)
+                        val newTransfer = Transfer(
+                            newTransferTimeMillis,
+                            newTransferDateTime.minute,
+                            newTransferDateTime.hour,
+                            newTransferDateTime.dayOfMonth,
+                            newTransferDateTime.monthValue,
+                            newTransferDateTime.year,
+                            recurringTransfer.value,
+                            recurringTransfer.note,
+                            recurringTransfer.accountSendingNumber,
+                            recurringTransfer.accountReceivingNumber
+                        )
+                        transfersDatabase.insert(newTransfer)
+
+                        // update account balance
+
+                        var accountSending: Account? = null
+                        var accountReceiving: Account? = null
+
+                        if (recurringTransfer.accountSendingNumber != null) {
+                            accountSending = accountsDatabase.get(recurringTransfer.accountSendingNumber!!)
+                        }
+                        if (recurringTransfer.accountReceivingNumber != null) {
+                            accountReceiving = accountsDatabase.get(recurringTransfer.accountReceivingNumber!!)
+                        }
+
+                        if (accountSending != null) {
+                            var newBalance = accountSending.balance - recurringTransfer.value
+                            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                            accountsDatabase.updateBalance(accountSending.number, newBalance)
+                        }
+                        if (accountReceiving != null) {
+                            var newBalance = accountReceiving.balance + recurringTransfer.value
+                            newBalance = newBalance.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
+                            accountsDatabase.updateBalance(accountReceiving.number, newBalance)
                         }
                     }
                 }
 
-                // while loop exited, need to update last instantiation date
-                withContext(Dispatchers.IO) {
-                    recurringTransfersDatabase.updateInstantiationDate(
-                        recurringTransfer.recurringTransferId,
-                        recurringTransfer.monthDay,
-                        currentMonthYear[0],
-                        currentMonthYear[1]
-                    )
-                }
-            }
 
+                // while loop exited, need to update last instantiation date
+                recurringTransfersDatabase.updateInstantiationDate(
+                    recurringTransfer.recurringTransferId,
+                    recurringTransfer.monthDay,
+                    currentMonthYear[0],
+                    currentMonthYear[1]
+                )
+            }
         }
     }
 
 
+    private suspend fun getFirstAvailableTimeMillis(type: String, day: Int, month: Int, year: Int): Long {
+        // here type is either "Transaction" or "Transfer"
+        // this function should return millis with millis - startMillis smaller than 86.400.000
+        // otherwise we are changing the day
+
+        val date = LocalDate.of(year, month, day)
+        val dateTime = LocalDateTime.of(date, LocalTime.of(0, 0))
+        val startMillis = convertLocalDateTimeToMillis(dateTime)
+        var millis = startMillis + 1
+        withContext(Dispatchers.IO) {
+
+            val actsListFromDay: List<Act> = if (type == "Transaction") {
+                transactionsDatabase.getTransactionsFromDay(day, month, year)
+            } else {
+                transfersDatabase.getTransfersFromDay(day, month, year)
+            }
+
+            val takenMillisList: List<Long> = actsListFromDay.map {act ->
+                if (act is Transaction) {
+                    return@map act.transactionId
+                }
+                if (act is Transfer) {
+                    return@map act.transferId
+                }
+                return@map 0L
+            }
+
+            while (millis in takenMillisList) {
+                millis++
+            }
+        }
+        return millis
+    }
 }

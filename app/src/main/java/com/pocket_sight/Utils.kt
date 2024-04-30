@@ -110,3 +110,8 @@ fun convertDateAndIdToTimeMillis(date: LocalDate, id: Int): Long {
     val dateTime = LocalDateTime.of(date, time)
     return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 }
+
+
+fun convertLocalDateTimeToMillis(date: LocalDateTime): Long {
+    return date.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+}
