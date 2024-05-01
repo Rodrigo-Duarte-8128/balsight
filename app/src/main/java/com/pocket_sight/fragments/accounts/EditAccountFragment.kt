@@ -19,8 +19,18 @@ import com.pocket_sight.databinding.FragmentEditAccountBinding
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
+import com.pocket_sight.types.displayed.DisplayedAccountDao
+import com.pocket_sight.types.displayed.DisplayedAccountDatabase
+import com.pocket_sight.types.displayed.RecurringDisplayedAccountDao
+import com.pocket_sight.types.displayed.RecurringDisplayedAccountDatabase
+import com.pocket_sight.types.recurring.RecurringTransactionsDao
+import com.pocket_sight.types.recurring.RecurringTransactionsDatabase
+import com.pocket_sight.types.recurring.RecurringTransferDao
+import com.pocket_sight.types.recurring.RecurringTransferDatabase
 import com.pocket_sight.types.transactions.TransactionsDao
 import com.pocket_sight.types.transactions.TransactionsDatabase
+import com.pocket_sight.types.transfers.TransfersDao
+import com.pocket_sight.types.transfers.TransfersDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -37,6 +47,11 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
 
     lateinit var accountsDatabase: AccountsDao
     lateinit var transactionsDatabase: TransactionsDao
+    lateinit var transfersDatabase: TransfersDao
+    lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
+    lateinit var recurringTransfersDatabase: RecurringTransferDao
+    lateinit var displayedAccountDatabase: DisplayedAccountDao
+    lateinit var recurringDisplayedAccountDatabase: RecurringDisplayedAccountDao
 
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
@@ -53,6 +68,11 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
         _binding = FragmentEditAccountBinding.inflate(inflater, container, false)
         accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
         transactionsDatabase = TransactionsDatabase.getInstance(requireNotNull(this.activity).application).transactionsDao
+        transfersDatabase = TransfersDatabase.getInstance(requireNotNull(this.activity).application).transfersDao
+        recurringTransactionsDatabase = RecurringTransactionsDatabase.getInstance(requireNotNull(this.activity).application).recurringTransactionsDao
+        recurringTransfersDatabase = RecurringTransferDatabase.getInstance(requireNotNull(this.activity).application).recurringTransferDao
+        displayedAccountDatabase = DisplayedAccountDatabase.getInstance(requireNotNull(this.activity).application).displayedAccountDao
+        recurringDisplayedAccountDatabase = RecurringDisplayedAccountDatabase.getInstance(requireNotNull(this.activity).application).recurringDisplayedAccountDao
 
         val menuHost: MenuHost = requireActivity()
         val menuProvider = EditAccountMenuProvider(this.requireContext(), this)
@@ -224,10 +244,40 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
     }
 
     override fun onRemoveAccountDialogPositiveClick(dialog: DialogFragment) {
-        Toast.makeText(this.context, "Account Removed. Need also to remove related transactions...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this.context, "Account Removed.", Toast.LENGTH_SHORT).show()
         uiScope.launch {
             withContext(Dispatchers.IO) {
                 accountsDatabase.delete(account)
+
+                // remove transactions associated with this account
+                transactionsDatabase.deleteTransactionsFromAccount(account.number)
+
+                // remove recurring transactions associated with this account
+                recurringTransactionsDatabase.deleteRecurringTransactionFromAccount(account.number)
+
+                // set to null in transfers where account was sending or receiving
+                transfersDatabase.setToNullAccountSending(account.number)
+                transfersDatabase.setToNullAccountReceiving(account.number)
+                transfersDatabase.clearNullAccountTransfers()
+
+                // set to null in recurring transfers where account was sending or receiving
+                recurringTransfersDatabase.setToNullAccountSending(account.number)
+                recurringTransfersDatabase.setToNullAccountReceiving(account.number)
+                recurringTransfersDatabase.clearNullAccountTransfers()
+
+                // if account removed is being displayed clear displayed
+                val accountDisplayedNumberList = displayedAccountDatabase.getAllDisplayedAccount()
+                if (accountDisplayedNumberList.isNotEmpty()) {
+                    if (accountDisplayedNumberList[0].displayedAccountNumber == account.number) {
+                        displayedAccountDatabase.clear()
+                    }
+                }
+                val recurringAccountDisplayedNumberList = recurringDisplayedAccountDatabase.getAllRecurringDisplayedAccount()
+                if (recurringAccountDisplayedNumberList.isNotEmpty()) {
+                    if (recurringAccountDisplayedNumberList[0].displayedAccountNumber == account.number) {
+                        recurringTransfersDatabase.clear()
+                    }
+                }
             }
         }
         dialog.findNavController().navigate(R.id.accounts_fragment)

@@ -26,6 +26,15 @@ interface RecurringTransferDao{
     @Query("select recurringTransferId from recurring_transfers_table order by recurringTransferId")
     fun getAllIds(): List<Int>
 
+    @Query("update recurring_transfers_table set recurring_transfer_account_sending_number = null where recurring_transfer_account_sending_number = :accountSendingNumber")
+    fun setToNullAccountSending(accountSendingNumber: Int)
+
+    @Query("update recurring_transfers_table set recurring_transfer_account_receiving_number = null where recurring_transfer_account_receiving_number = :accountReceivingNumber")
+    fun setToNullAccountReceiving(accountReceivingNumber: Int)
+
+    @Query("delete from recurring_transfers_table where recurring_transfer_account_receiving_number = null and recurring_transfer_account_sending_number = null")
+    fun clearNullAccountTransfers()
+
     @Query("delete from recurring_transfers_table")
     fun clear()
 }

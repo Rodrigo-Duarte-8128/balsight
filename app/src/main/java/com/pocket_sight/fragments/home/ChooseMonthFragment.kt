@@ -25,6 +25,8 @@ class ChooseMonthFragment: Fragment() {
     private var _binding: FragmentChooseMonthBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var args: ChooseMonthFragmentArgs
+
 
     lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
 
@@ -41,6 +43,7 @@ class ChooseMonthFragment: Fragment() {
     ): View {
         _binding = FragmentChooseMonthBinding.inflate(inflater, container, false)
 
+        args = ChooseMonthFragmentArgs.fromBundle(requireArguments())
 
         displayedMonthYearDatabase = DisplayedMonthYearDatabase.getInstance(this.requireContext()).monthYearDao
 
@@ -159,9 +162,17 @@ class ChooseMonthFragment: Fragment() {
                 displayedMonthYearDatabase.insert(displayedMonthYear)
             }
 
-            view.findNavController().navigate(
-                ChooseMonthFragmentDirections.actionChooseMonthFragmentToHomeFragment()
-            )
+            if (args.from == "home_fragment") {
+                view.findNavController().navigate(
+                    ChooseMonthFragmentDirections.actionChooseMonthFragmentToHomeFragment()
+                )
+            }
+
+            if (args.from == "stats_fragment") {
+                view.findNavController().navigate(
+                    ChooseMonthFragmentDirections.actionChooseMonthFragmentToStatsFragment()
+                )
+            }
 
         }
     }

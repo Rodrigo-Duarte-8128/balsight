@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.pocket_sight.databinding.FragmentStatsBinding
 import com.pocket_sight.dateAfter
 import com.pocket_sight.parseMonthYearArrayToText
@@ -99,8 +100,22 @@ class StatsFragment : Fragment() {
         budgetRatioTextView = binding.budgetRatioTextView
 
         displayedAccountStatsButton = binding.displayedAccountStatsButton
-        displayedMonthYearStatsButton = binding.displayedMonthStatsButton
+        displayedAccountStatsButton.setOnClickListener {view: View ->
+            view.findNavController().navigate(
+                StatsFragmentDirections.actionStatsFragmentToChooseAccountFragment(
+                    "stats_fragment"
+                )
+            )
+        }
 
+        displayedMonthYearStatsButton = binding.displayedMonthStatsButton
+        displayedMonthYearStatsButton.setOnClickListener {view: View ->
+            view.findNavController().navigate(
+                StatsFragmentDirections.actionStatsFragmentToChooseMonthFragment(
+                    "stats_fragment"
+                )
+            )
+        }
 
         buildFragmentInfo()
 

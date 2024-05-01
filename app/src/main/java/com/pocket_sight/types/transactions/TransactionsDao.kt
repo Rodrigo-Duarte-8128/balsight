@@ -55,6 +55,10 @@ interface TransactionsDao {
     @Query("select * from transactions_table where transaction_category_number = :categoryNumber order by transactionId desc")
     fun getTransactionsFromCategory(categoryNumber: Int): List<Transaction>
 
+
+    @Query("delete from transactions_table where transaction_account_number = :accountNumber")
+    fun deleteTransactionsFromAccount(accountNumber: Int)
+
     @Query("DELETE FROM transactions_table")
     fun clear()
 }

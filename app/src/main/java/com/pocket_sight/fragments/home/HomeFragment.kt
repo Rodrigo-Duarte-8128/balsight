@@ -146,13 +146,17 @@ class HomeFragment : Fragment() {
 
         displayedAccountButton.setOnClickListener {view: View ->
             view.findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToChooseAccountFragment()
+                HomeFragmentDirections.actionHomeFragmentToChooseAccountFragment(
+                    "home_fragment"
+                )
             )
         }
 
         displayedMonthYearButton.setOnClickListener {view: View ->
             view.findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToChooseMonthFragment()
+                HomeFragmentDirections.actionHomeFragmentToChooseMonthFragment(
+                    "home_fragment"
+                )
             )
         }
 

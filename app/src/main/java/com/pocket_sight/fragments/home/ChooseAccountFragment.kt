@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentChooseAccountBinding
+import com.pocket_sight.fragments.recurring_acts.EditRecurringTransferFragmentArgs
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
@@ -35,6 +36,8 @@ class ChooseAccountFragment: Fragment() {
     lateinit var accountSpinner: Spinner
     lateinit var accountsStringsArray: Array<String>
 
+    lateinit var args: ChooseAccountFragmentArgs
+
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
     override fun onCreateView(
@@ -44,6 +47,7 @@ class ChooseAccountFragment: Fragment() {
     ): View {
         _binding = FragmentChooseAccountBinding.inflate(inflater, container, false)
 
+        args = ChooseAccountFragmentArgs.fromBundle(requireArguments())
 
         accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
         displayedAccountDatabase = DisplayedAccountDatabase.getInstance(this.requireContext()).displayedAccountDao
@@ -132,10 +136,18 @@ class ChooseAccountFragment: Fragment() {
                 withContext(Dispatchers.IO) {
                     displayedAccountDatabase.clear()
                 }
-                view.findNavController().navigate(
-                    ChooseAccountFragmentDirections.actionChooseAccountFragmentToHomeFragment()
-                )
-                return@launch
+                if (args.from == "home_fragment") {
+                    view.findNavController().navigate(
+                        ChooseAccountFragmentDirections.actionChooseAccountFragmentToHomeFragment()
+                    )
+                    return@launch
+                }
+
+                if (args.from == "stats_fragment") {
+                    view.findNavController().navigate(
+                        ChooseAccountFragmentDirections.actionChooseAccountFragmentToStatsFragment()
+                    )
+                }
             }
 
             val accountChosenNumber = accountChosenString.split(".")[0].toInt()
@@ -147,9 +159,18 @@ class ChooseAccountFragment: Fragment() {
                 )
                 displayedAccountDatabase.insert(displayedAccount)
             }
-            view.findNavController().navigate(
-                ChooseAccountFragmentDirections.actionChooseAccountFragmentToHomeFragment()
-            )
+            if (args.from == "home_fragment") {
+                view.findNavController().navigate(
+                    ChooseAccountFragmentDirections.actionChooseAccountFragmentToHomeFragment()
+                )
+                return@launch
+            }
+
+            if (args.from == "stats_fragment") {
+                view.findNavController().navigate(
+                    ChooseAccountFragmentDirections.actionChooseAccountFragmentToStatsFragment()
+                )
+            }
         }
     }
 

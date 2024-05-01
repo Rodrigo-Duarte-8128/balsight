@@ -30,6 +30,9 @@ interface RecurringTransactionsDao{
     @Query("select recurringTransactionId from recurring_transactions_table order by recurringTransactionId")
     fun getAllIds(): List<Int>
 
+    @Query("delete from recurring_transactions_table where recurring_transaction_account_number = :accountNumber")
+    fun deleteRecurringTransactionFromAccount(accountNumber: Int)
+
     @Query("delete from recurring_transactions_table")
     fun clear()
 }

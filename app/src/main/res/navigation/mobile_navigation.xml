@@ -37,7 +37,14 @@
         android:id="@+id/stats_fragment"
         android:name="com.pocket_sight.fragments.stats.StatsFragment"
         android:label="Stats"
-        tools:layout="@layout/fragment_stats" />
+        tools:layout="@layout/fragment_stats" >
+        <action
+            android:id="@+id/action_stats_fragment_to_choose_account_fragment"
+            app:destination="@id/choose_account_fragment" />
+        <action
+            android:id="@+id/action_stats_fragment_to_choose_month_fragment"
+            app:destination="@id/choose_month_fragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/recurring_acts_fragment"
@@ -344,18 +351,30 @@
         android:name="com.pocket_sight.fragments.home.ChooseAccountFragment"
         android:label="Choose Account to Display"
         tools:layout="@layout/fragment_choose_account" >
+        <argument
+            android:name="from"
+            app:argType="string"/>
         <action
             android:id="@+id/action_choose_account_fragment_to_home_fragment"
             app:destination="@id/home_fragment" />
+        <action
+            android:id="@+id/action_choose_account_fragment_to_stats_fragment"
+            app:destination="@id/stats_fragment" />
     </fragment>
     <fragment
         android:id="@+id/choose_month_fragment"
         android:name="com.pocket_sight.fragments.home.ChooseMonthFragment"
         android:label="Choose Month and Year"
         tools:layout="@layout/fragment_choose_month" >
+        <argument
+            android:name="from"
+            app:argType="string"/>
         <action
             android:id="@+id/action_choose_month_fragment_to_home_fragment"
             app:destination="@id/home_fragment" />
+        <action
+            android:id="@+id/action_choose_month_fragment_to_stats_fragment"
+            app:destination="@id/stats_fragment" />
     </fragment>
     <fragment
         android:id="@+id/add_recurring_expense_fragment"
