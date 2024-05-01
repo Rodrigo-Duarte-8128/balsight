@@ -284,7 +284,7 @@ class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.Remov
                 transactionsDatabase.idInDatabase(millis)
             }
 
-            if (timeInDatabase) {
+            if (millis != args.originalTimeMillis && timeInDatabase) {
                 Toast.makeText(context, "Time and Date Taken by Another Transaction.", Toast.LENGTH_SHORT).show()
                 return@launch
             }
