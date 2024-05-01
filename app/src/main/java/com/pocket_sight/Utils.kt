@@ -115,3 +115,34 @@ fun convertDateAndIdToTimeMillis(date: LocalDate, id: Int): Long {
 fun convertLocalDateTimeToMillis(date: LocalDateTime): Long {
     return date.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 }
+
+fun recurringActOccursThisMonthYear(month: Int, year: Int, startDay: Int, startMonth: Int, startYear: Int, recurringDay: Int): Boolean {
+    if (year < startYear) {
+        return false
+    }
+
+    if (year > startYear) {
+        return true
+    }
+
+    // now year == startYear
+    if (month < startMonth) {
+        return false
+    }
+
+    if (month > startMonth) {
+        return true
+    }
+
+    // now month == startMonth
+
+    if (recurringDay < startDay) {
+        return false
+    }
+
+    return true
+}
+
+
+
+

@@ -37,7 +37,7 @@
         android:id="@+id/stats_fragment"
         android:name="com.pocket_sight.fragments.stats.StatsFragment"
         android:label="Stats"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_stats" />
 
     <fragment
         android:id="@+id/recurring_acts_fragment"
