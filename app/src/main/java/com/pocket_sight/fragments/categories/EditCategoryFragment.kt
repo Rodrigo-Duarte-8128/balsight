@@ -40,6 +40,8 @@ import com.pocket_sight.types.categories.ProvisionalSubcategory
 import com.pocket_sight.types.categories.SubcategoriesDao
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.categories.Subcategory
+import com.pocket_sight.types.recurring.RecurringTransactionsDao
+import com.pocket_sight.types.recurring.RecurringTransactionsDatabase
 import com.pocket_sight.types.transactions.TransactionsDao
 import com.pocket_sight.types.transactions.TransactionsDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -65,6 +67,7 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
     private lateinit var subcategoriesDatabase: SubcategoriesDao
     private lateinit var provisionalSubcategoriesDatabase: ProvisionalSubcategoriesDao
     private lateinit var transactionsDatabase: TransactionsDao
+    private lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
     private lateinit var accountsDatabase: AccountsDao
 
     private lateinit var editNameEditText: EditText
@@ -95,6 +98,8 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
             TransactionsDatabase.getInstance(requireNotNull(this.activity).application).transactionsDao
         accountsDatabase=
             AccountsDatabase.getInstance(requireNotNull(this.activity).application).accountsDao
+        recurringTransactionsDatabase =
+            RecurringTransactionsDatabase.getInstance(requireNotNull(this.activity).application).recurringTransactionsDao
 
         val subCategoriesRecyclerView = binding.rvSubcategories
 
@@ -293,6 +298,7 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
                     // need to update subcategoryNumber of associated transactions
                     withContext(Dispatchers.IO) {
                         transactionsDatabase.updateTransactionsWithRemovedSubcategory(subcategory.number, subcategory.name)
+                        recurringTransactionsDatabase.updateTransactionsWithRemovedSubcategory(subcategory.number, subcategory.name)
                     }
                 }
             }
@@ -392,6 +398,24 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
                         category.name
                     )
                 }
+
+                val associatedRecurringTransactions = recurringTransactionsDatabase.getRecurringTransactionsFromCategory(category.number)
+                for (recurringTransaction in associatedRecurringTransactions) {
+                    val subcategoryNumber = recurringTransaction.subcategoryNumber
+                    var oldSubcategoryName: String? = null
+                    if (subcategoryNumber != null) {
+                        oldSubcategoryName = subcategoriesDatabase.get(subcategoryNumber).name
+                    }
+
+                    recurringTransactionsDatabase.updateRecurringTransactionCats(
+                        recurringTransaction.recurringTransactionId,
+                        null,
+                        null,
+                        oldSubcategoryName,
+                        category.name
+                    )
+                }
+
 
                 // delete category and associated subcategories from databases
                 categoriesDatabase.delete(category)
