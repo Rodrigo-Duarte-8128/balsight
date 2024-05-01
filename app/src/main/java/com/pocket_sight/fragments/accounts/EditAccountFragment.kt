@@ -187,9 +187,17 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
                     return@launch
                 }
 
-                // update all associated transactions
+                // update all associated transactions, transfers and recurring acts
                 withContext(Dispatchers.IO) {
                     transactionsDatabase.updateAccountNumber(oldAccountNumber, newAccountNumber)
+
+                    transfersDatabase.updateAccountSending(oldAccountNumber, newAccountNumber)
+                    transfersDatabase.updateAccountReceiving(oldAccountNumber, newAccountNumber)
+
+                    recurringTransactionsDatabase.updateAccountNumber(oldAccountNumber, newAccountNumber)
+
+                    recurringTransfersDatabase.updateAccountSending(oldAccountNumber, newAccountNumber)
+                    recurringTransfersDatabase.updateAccountReceiving(oldAccountNumber, newAccountNumber)
                 }
             }
 

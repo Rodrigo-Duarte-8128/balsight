@@ -38,6 +38,12 @@ interface TransfersDao{
     @Query("select count(1) from transfers_table where transferId = :timeMillis")
     fun idInDatabase(timeMillis: Long): Boolean
 
+    @Query("update transfers_table set transfer_account_sending_number = :newAccountNumber where transfer_account_sending_number = :oldAccountNumber")
+    fun updateAccountSending(oldAccountNumber: Int, newAccountNumber: Int)
+
+    @Query("update transfers_table set transfer_account_receiving_number = :newAccountNumber where transfer_account_receiving_number = :oldAccountNumber")
+    fun updateAccountReceiving(oldAccountNumber: Int, newAccountNumber: Int)
+
     @Query("update transfers_table set transfer_account_sending_number = null where transfer_account_sending_number = :accountSendingNumber")
     fun setToNullAccountSending(accountSendingNumber: Int)
 

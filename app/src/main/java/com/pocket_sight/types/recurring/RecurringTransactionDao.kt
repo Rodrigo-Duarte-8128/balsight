@@ -21,6 +21,9 @@ interface RecurringTransactionsDao{
     @Query("update recurring_transactions_table set recurring_transaction_last_instantiation_day = :day, recurring_transaction_last_instantiation_month_int = :month, recurring_transaction_last_instantiation_year = :year where recurringTransactionId = :recurringTransactionId")
     fun updateInstantiationDate(recurringTransactionId: Int, day: Int, month: Int, year: Int)
 
+    @Query("update recurring_transactions_table set recurring_transaction_account_number = :newAccountNumber where recurring_transaction_account_number = :oldAccountNumber")
+    fun updateAccountNumber(oldAccountNumber: Int, newAccountNumber: Int)
+
     @Query("SELECT * from recurring_transactions_table ORDER BY recurringTransactionId")
     fun getAllRecurringTransactions(): List<RecurringTransaction>
 
