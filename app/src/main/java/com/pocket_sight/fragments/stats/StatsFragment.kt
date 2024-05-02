@@ -1,6 +1,7 @@
 package com.pocket_sight.fragments.stats
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -247,6 +248,13 @@ class StatsFragment : Fragment() {
 
             val budgetProgress = getProgressBarPercentage(recurringIn, recurringOut, totalIn, totalOut)
             progressBar.progress = budgetProgress
+
+            Log.i("TAG", recurringIn.toString())
+            Log.i("TAG", recurringOut.toString())
+            Log.i("TAG", totalIn.toString())
+            Log.i("TAG", totalOut.toString())
+            Log.i("TAG", budgetProgress.toString())
+            //progressBar.setProgress(budgetProgress)
         }
 
     }
@@ -346,7 +354,7 @@ class StatsFragment : Fragment() {
                 }
             }
         } else {
-            return if (totalOut <= totalIn) {
+            return if (totalIn <= totalOut) {
                 0
             } else if ((totalIn - totalOut) > (recurringIn - recurringOut)){
                 100
