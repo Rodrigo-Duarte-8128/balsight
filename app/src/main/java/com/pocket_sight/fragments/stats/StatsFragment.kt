@@ -227,23 +227,65 @@ class StatsFragment : Fragment() {
             totalOut = totalOut.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
 
 
-            recurringInTextView.text = "\u20ac $recurringIn"
-            recurringOutTextView.text = "\u20ac $recurringOut"
-            totalInTextView.text = "\u20ac $totalIn"
-            totalOutTextView.text = "\u20ac $totalOut"
+            recurringInTextView.text = if (recurringIn == recurringIn.toInt().toDouble()) {
+                "\u20ac ${recurringIn.toInt()}"
+            } else {
+                "\u20ac ${recurringIn}"
+            }
+            recurringOutTextView.text = if (recurringOut == recurringOut.toInt().toDouble()) {
+                "\u20ac ${recurringOut.toInt()}"
+            } else {
+                "\u20ac $recurringOut"
+            }
+            totalInTextView.text = if (totalIn == totalIn.toInt().toDouble()) {
+                "\u20ac ${totalIn.toInt()}"
+            } else {
+                "\u20ac $totalIn"
+            }
+            totalOutTextView.text = if (totalOut == totalOut.toInt().toDouble()) {
+                "\u20ac ${totalOut.toInt()}"
+            } else {
+                "\u20ac $totalOut"
+            }
 
             var initialBudget = recurringIn - recurringOut
             initialBudget = initialBudget.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-            initialBudgetTextView.text = "\u20ac $initialBudget"
+            initialBudgetTextView.text = if (initialBudget == initialBudget.toInt().toDouble()) {
+                "\u20ac ${initialBudget.toInt()}"
+            } else {
+                "\u20ac $initialBudget"
+            }
 
             var currentBudget = totalIn - totalOut
             currentBudget = currentBudget.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-            currentBudgetTextView.text = "\u20ac $currentBudget"
+            currentBudgetTextView.text = if (currentBudget == currentBudget.toInt().toDouble()){
+                "\u20ac ${currentBudget.toInt()}"
+            } else {
+                "\u20ac $currentBudget"
+            }
+
+            val currentBudgetString = if (currentBudget == currentBudget.toInt().toDouble()) {
+                "\u20ac ${currentBudget.toInt()}"
+            } else {
+                "\u20ac $currentBudget"
+            }
+
+            val initialBudgetString = if (initialBudget == initialBudget.toInt().toDouble()) {
+                "\u20ac ${initialBudget.toInt()}"
+            } else {
+                "\u20ac $initialBudget"
+            }
+
+            val totalInString = if (totalIn == totalIn.toInt().toDouble()) {
+                "\u20ac ${totalIn.toInt()}"
+            } else {
+                "\u20ac $totalIn"
+            }
 
             budgetRatioTextView.text = if (initialBudget > 0.0) {
-                "\u20ac $currentBudget / \u20ac $initialBudget"
+                "$currentBudgetString / $initialBudgetString"
             } else {
-                "\u20ac $currentBudget / \u20ac $totalIn"
+                "$currentBudgetString / $totalInString"
             }
 
             val budgetProgress = getProgressBarPercentage(recurringIn, recurringOut, totalIn, totalOut)

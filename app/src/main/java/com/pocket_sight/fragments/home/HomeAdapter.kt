@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.LinearLayout.LayoutParams
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -119,6 +120,16 @@ class HomeAdapter(val context: Context, val acts: List<Act>, val displayedAccoun
             }
             viewHolder.timeTextView.text = "$hoursString:$minutesString"
             viewHolder.noteView.text = act.note
+
+            if (act.note == "") {
+                val noteParams = viewHolder.noteView.layoutParams as LayoutParams
+                noteParams.weight = 0F
+                viewHolder.noteView.layoutParams = noteParams
+
+                val catParams = viewHolder.descriptionView.layoutParams as LayoutParams
+                catParams.weight = 1F
+                viewHolder.descriptionView.layoutParams = catParams
+            }
 
             val value = act.value
             val valueString = if (value >= 0) {

@@ -124,6 +124,16 @@ class RecurringActsAdapter(val context: Context, val recurringActs: List<Recurri
             viewHolder.nameTextView.text = act.name
             viewHolder.noteView.text = act.note
 
+            if (act.note == "") {
+                val noteParams = viewHolder.noteView.layoutParams as LinearLayout.LayoutParams
+                noteParams.weight = 0F
+                viewHolder.noteView.layoutParams = noteParams
+
+                val catParams = viewHolder.descriptionView.layoutParams as LinearLayout.LayoutParams
+                catParams.weight = 1F
+                viewHolder.descriptionView.layoutParams = catParams
+            }
+
             val value = act.value
             val valueString = if (value >= 0) {
                 viewHolder.valueView.setTextColor(ContextCompat.getColor(context, R.color.green))
