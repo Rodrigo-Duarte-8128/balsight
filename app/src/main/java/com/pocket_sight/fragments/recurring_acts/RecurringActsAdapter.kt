@@ -81,7 +81,7 @@ class RecurringActsAdapter(val context: Context, val recurringActs: List<Recurri
                         act.accountReceivingNumber!!
                     } else {-1}
 
-                    val dateTime = LocalDateTime.of(LocalDate.of(act.year, act.month, act.monthDay), LocalTime.of(1, 1))
+                    val dateTime = LocalDateTime.of(LocalDate.of(act.year, act.month, act.day), LocalTime.of(1, 1))
                     val startDateTimeMillis: Long = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
                     itemView.findNavController().navigate(
