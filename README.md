@@ -5,6 +5,8 @@ fully create and edit accounts, categories, subcategories, transactions, transfe
 recurring transactions. The app also has a *stats* page to help you keep on track with your 
 spending.
 
+![alt text](https://github.com/Rodrigo-Duarte-8128/pocket-sight/blob/master/app-image.jpg?raw=true)
+
 
 ## Installation
 If you want to install the app on your Android devices you can simply download the file 
