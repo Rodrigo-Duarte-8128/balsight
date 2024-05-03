@@ -29,11 +29,11 @@ class ChooseDisplayedAccount: Fragment() {
 
 
     lateinit var accountsDatabase: AccountsDao
-    lateinit var recurringDisplayedAccountDatabase: RecurringDisplayedAccountDao
+    private lateinit var recurringDisplayedAccountDatabase: RecurringDisplayedAccountDao
 
 
-    lateinit var accountSpinner: Spinner
-    lateinit var accountsStringsArray: Array<String>
+    private lateinit var accountSpinner: Spinner
+    private lateinit var accountsStringsArray: Array<String>
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 

@@ -1,7 +1,6 @@
 package com.pocket_sight.fragments.categories
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +9,8 @@ import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.types.accounts.Account
-import com.pocket_sight.types.accounts.AccountsDatabase
-import com.pocket_sight.types.categories.CategoriesDatabase
-import com.pocket_sight.types.categories.Category
 import com.pocket_sight.types.categories.ProvisionalSubcategory
 import com.pocket_sight.types.categories.SubcategoriesDatabase
-import com.pocket_sight.types.categories.Subcategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,7 +18,6 @@ import kotlinx.coroutines.Job
 
 class SubcategoriesAdapter(val context: Context, val subcategories: List<ProvisionalSubcategory>): RecyclerView.Adapter<SubcategoriesAdapter.ViewHolder>() {
 
-    private val database = SubcategoriesDatabase.getInstance(context).subcategoriesDatabaseDao
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){

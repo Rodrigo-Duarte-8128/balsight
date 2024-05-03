@@ -44,26 +44,26 @@ class EditRecurringTransactionFragment: Fragment(), RemoveRecurringTransactionDi
     private var _binding: FragmentEditRecurringTransactionBinding? = null
     val binding get() = _binding!!
 
-    lateinit var categoriesDatabase: CategoriesDao
+    private lateinit var categoriesDatabase: CategoriesDao
     lateinit var subcategoriesDatabase: SubcategoriesDao
-    lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
+    private lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
     lateinit var accountsDatabase: AccountsDao
 
-    lateinit var categoriesAdapter: EditRecurringTransactionCategoriesAdapter
-    lateinit var subcategoriesAdapter: EditRecurringTransactionSubcategoriesAdapter
+    private lateinit var categoriesAdapter: EditRecurringTransactionCategoriesAdapter
+    private lateinit var subcategoriesAdapter: EditRecurringTransactionSubcategoriesAdapter
 
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
     lateinit var nameEditText: EditText
-    lateinit var monthDayEditText: EditText
+    private lateinit var monthDayEditText: EditText
     lateinit var valueEditText: EditText
-    lateinit var chooseTextView: TextView
-    lateinit var categoryTextView: TextView
-    lateinit var subcategoryTextView: TextView
+    private lateinit var chooseTextView: TextView
+    private lateinit var categoryTextView: TextView
+    private lateinit var subcategoryTextView: TextView
 
     lateinit var args: EditRecurringTransactionFragmentArgs
 
-    lateinit var recurringTransaction: RecurringTransaction
+    private lateinit var recurringTransaction: RecurringTransaction
     var kind = "Expense"
 
     private var selectedCategoryNumber: Int? = null

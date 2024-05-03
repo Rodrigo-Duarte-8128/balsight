@@ -7,16 +7,13 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.convertMonthIntToString
-import com.pocket_sight.fragments.categories.CategoriesFragmentDirections
 import com.pocket_sight.types.Act
 import com.pocket_sight.types.accounts.AccountsDatabase
-import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.transactions.Transaction
@@ -47,7 +44,6 @@ class HomeAdapter(val context: Context, val acts: List<Act>, val displayedAccoun
                 val position = adapterPosition
                 val act = acts[position]
                 if (act is Transaction) {
-                    //val transaction = acts[position]
                     val selectedCategoryNumber: Int = if (act.categoryNumber != null) {
                         act.categoryNumber!!
                     } else {-1}
@@ -153,25 +149,25 @@ class HomeAdapter(val context: Context, val acts: List<Act>, val displayedAccoun
             uiScope.launch {
                 val categoryNumber = act.categoryNumber
                 var categoryString = ""
-                if (categoryNumber != null) {
-                    categoryString = withContext(Dispatchers.IO) {
+                categoryString = if (categoryNumber != null) {
+                    withContext(Dispatchers.IO) {
                         categoriesDatabase.get(act.categoryNumber!!).name
                     }
                 } else {
-                    categoryString = if (act.oldCategoryName != null) {
+                    if (act.oldCategoryName != null) {
                         act.oldCategoryName!!
                     } else {
                         "None"
                     }
                 }
-                var subcategoryNumber: Int? = act.subcategory
+                val subcategoryNumber: Int? = act.subcategory
                 var subcategoryName = ""
-                if (subcategoryNumber != null) {
-                    subcategoryName = withContext(Dispatchers.IO) {
+                subcategoryName = if (subcategoryNumber != null) {
+                    withContext(Dispatchers.IO) {
                         subcategoriesDatabase.get(subcategoryNumber).name
                     }
                 } else {
-                    subcategoryName = if (act.oldSubcategoryName != null) {
+                    if (act.oldSubcategoryName != null) {
                         act.oldSubcategoryName!!
                     } else {
                         "None"
@@ -215,8 +211,8 @@ class HomeAdapter(val context: Context, val acts: List<Act>, val displayedAccoun
 
 
             uiScope.launch {
-                var accountSendingName: String = "Another"
-                var accountReceivingName: String = "Another"
+                var accountSendingName = "Another"
+                var accountReceivingName = "Another"
 
                 if (act.accountSendingNumber != null) {
                     accountSendingName = withContext(Dispatchers.IO) {

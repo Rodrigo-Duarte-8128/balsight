@@ -5,7 +5,6 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
-import android.text.format.DateFormat
 
 class AddTransferTimePicker(val minute: Int, val hour: Int, val fragment: AddTransferFragment): DialogFragment(), TimePickerDialog.OnTimeSetListener {
 

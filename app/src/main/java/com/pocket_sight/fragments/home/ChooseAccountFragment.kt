@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentChooseAccountBinding
-import com.pocket_sight.fragments.recurring_acts.EditRecurringTransferFragmentArgs
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
@@ -30,11 +29,11 @@ class ChooseAccountFragment: Fragment() {
 
 
     lateinit var accountsDatabase: AccountsDao
-    lateinit var displayedAccountDatabase: DisplayedAccountDao
+    private lateinit var displayedAccountDatabase: DisplayedAccountDao
 
 
-    lateinit var accountSpinner: Spinner
-    lateinit var accountsStringsArray: Array<String>
+    private lateinit var accountSpinner: Spinner
+    private lateinit var accountsStringsArray: Array<String>
 
     lateinit var args: ChooseAccountFragmentArgs
 
@@ -71,7 +70,7 @@ class ChooseAccountFragment: Fragment() {
             val accountsList: MutableList<Account> = withContext(Dispatchers.IO) {
                 accountsDatabase.getAllAccounts()
             }
-            var accountsStringsList = accountsList.map {
+            val accountsStringsList = accountsList.map {
                 "${it.number}. ${it.name}"
             }.toMutableList()
             accountsStringsList.add("None")
@@ -88,7 +87,7 @@ class ChooseAccountFragment: Fragment() {
             // set default selection for spinner
             var defaultSelectionPosition = 0
 
-            var mainAccountNumber: Int? = withContext(Dispatchers.IO) {
+            val mainAccountNumber: Int? = withContext(Dispatchers.IO) {
                 accountsDatabase.getMainAccountNumber()
             }
 

@@ -2,33 +2,24 @@ package com.pocket_sight.fragments.categories
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.Switch
 import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.databinding.FragmentEditAccountBinding
 import com.pocket_sight.databinding.FragmentEditCategoryBinding
-import com.pocket_sight.fragments.accounts.EditAccountFragmentArgs
-import com.pocket_sight.fragments.accounts.EditAccountMenuProvider
-import com.pocket_sight.fragments.accounts.RemoveAccountDialogFragment
-import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
@@ -137,25 +128,6 @@ class EditCategoryFragment: Fragment(), RemoveCategoryDialogFragment.RemoveCateg
         confirmEditCategoryButton.setOnClickListener {view: View ->
             confirmButtonClicked(view)
         }
-        //confirmEditCategoryButton.setOnClickListener {view: View ->
-        //    handleConfirmChanges(
-        //        view,
-        //        editNameEditText,
-        //        kindSpinner
-        //    )
-        //}
-
-//        val confirmEditAccountButton: Button = binding.confirmEditAccountButton
-//        confirmEditAccountButton.setOnClickListener { view: View ->
-//            handleConfirmChanges(
-//                editAccountNumberEditText,
-//                editNameEditText,
-//                editBalanceEditText,
-//                editSwitch,
-//                view
-//            )
-//        }
-
 
         return binding.root
     }

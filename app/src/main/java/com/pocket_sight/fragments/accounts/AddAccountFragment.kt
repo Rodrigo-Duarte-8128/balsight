@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.pocket_sight.R
 import com.pocket_sight.types.accounts.Account
-
 import com.pocket_sight.databinding.FragmentAddAccountBinding
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
@@ -26,9 +25,7 @@ class AddAccountFragment: Fragment() {
     private var _binding: FragmentAddAccountBinding? = null
     val binding get() = _binding!!
 
-    //val database = AccountsDao()
     lateinit var database: AccountsDao
-    var maxNumberInDatabase: Int = 0
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 

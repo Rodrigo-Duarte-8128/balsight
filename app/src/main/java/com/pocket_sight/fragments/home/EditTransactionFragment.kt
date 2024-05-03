@@ -18,9 +18,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.pocket_sight.databinding.FragmentAddExpenseBinding
 import com.pocket_sight.databinding.FragmentEditTransactionBinding
-import com.pocket_sight.fragments.categories.RemoveSubcategoriesDialogFragment
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
@@ -45,19 +43,19 @@ class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.Remov
     private var _binding: FragmentEditTransactionBinding? = null
     val binding get() = _binding!!
 
-    lateinit var categoriesDatabase: CategoriesDao
+    private lateinit var categoriesDatabase: CategoriesDao
     lateinit var subcategoriesDatabase: SubcategoriesDao
-    lateinit var transactionsDatabase: TransactionsDao
+    private lateinit var transactionsDatabase: TransactionsDao
     lateinit var accountsDatabase: AccountsDao
 
-    lateinit var categoriesAdapter: EditTransactionCategoriesAdapter
-    lateinit var subcategoriesAdapter: EditTransactionSubcategoriesAdapter
+    private lateinit var categoriesAdapter: EditTransactionCategoriesAdapter
+    private lateinit var subcategoriesAdapter: EditTransactionSubcategoriesAdapter
 
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
-    lateinit var chooseTextView: TextView
-    lateinit var categoryTextView: TextView
-    lateinit var subcategoryTextView: TextView
+    private lateinit var chooseTextView: TextView
+    private lateinit var categoryTextView: TextView
+    private lateinit var subcategoryTextView: TextView
     lateinit var valueEditText: EditText
 
     lateinit var args: EditTransactionFragmentArgs
@@ -110,10 +108,6 @@ class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.Remov
                 valueEditText
             )
         }
-//        val addExpenseButton: Button = binding.addExpenseButton
-//        addExpenseButton.setOnClickListener {view: View ->
-//            addExpense(this.requireContext(), view, valueEditText)
-//        }
 
 
         return binding.root
@@ -351,5 +345,4 @@ class EditTransactionFragment: Fragment(), RemoveTransactionDialogFragment.Remov
             EditTransactionFragmentDirections.actionEditTransactionFragmentToHomeFragment()
         )
     }
-
 }

@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import com.pocket_sight.types.categories.Subcategory
 import java.lang.IllegalStateException
 
 class RemoveSubcategoriesDialogFragment(val fragment: EditCategoryFragment): DialogFragment() {

@@ -14,7 +14,6 @@ class RemoveAccountDialogFragment(val fragment: EditAccountFragment): DialogFrag
     }
 
 
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)

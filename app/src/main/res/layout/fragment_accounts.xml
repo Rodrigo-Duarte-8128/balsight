@@ -11,39 +11,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="10dp"
+        android:baselineAligned="false">
 
-
-
-        <LinearLayout
-            android:id="@+id/accounts_fragment_second_linear_layout"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <TextView
+            android:id="@+id/total_wealth_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:text="Total Wealth" />
 
-            <TextView
-                android:id="@+id/total_wealth_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:text="Total Wealth" />
-
-            <TextView
-                android:id="@+id/total_wealth_value_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="N/A" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/total_wealth_value_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="N/A" />
     </LinearLayout>
 
     <LinearLayout

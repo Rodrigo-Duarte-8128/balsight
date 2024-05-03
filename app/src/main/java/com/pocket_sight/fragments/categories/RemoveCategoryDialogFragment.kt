@@ -1,6 +1,5 @@
 package com.pocket_sight.fragments.categories
 
-import com.pocket_sight.fragments.accounts.EditAccountFragment
 
 import android.app.AlertDialog
 import android.app.Dialog

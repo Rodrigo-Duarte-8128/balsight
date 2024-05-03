@@ -5,18 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.Switch
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.pocket_sight.R
-import com.pocket_sight.databinding.FragmentAddAccountBinding
 import com.pocket_sight.databinding.FragmentAddCategoryBinding
-import com.pocket_sight.types.accounts.Account
-import com.pocket_sight.types.accounts.AccountsDao
-import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.Category
@@ -25,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.math.RoundingMode
 
 
 class AddCategoryFragment: Fragment() {
@@ -82,9 +75,7 @@ class AddCategoryFragment: Fragment() {
             val categoryKind = kindSpinner.selectedItem.toString()
             val accountNumber = getMaxAccountNumber() + 1
 
-            var nameInDatabase: Boolean = false
-
-            nameInDatabase = withContext(Dispatchers.IO) {
+            val nameInDatabase: Boolean = withContext(Dispatchers.IO) {
                 database.nameInDatabase(categoryName)
             }
 

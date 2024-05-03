@@ -1,37 +1,15 @@
 package com.pocket_sight.fragments.home
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
-import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.pocket_sight.databinding.FragmentAddExpenseBinding
 import com.pocket_sight.databinding.FragmentMoreOptionsBinding
-import com.pocket_sight.fragments.accounts.AccountsAdapter
-import com.pocket_sight.fragments.categories.EditCategoryFragmentArgs
-import com.pocket_sight.types.categories.CategoriesDao
-import com.pocket_sight.types.categories.CategoriesDatabase
-import com.pocket_sight.types.categories.Category
-import com.pocket_sight.types.categories.SubcategoriesDao
-import com.pocket_sight.types.categories.SubcategoriesDatabase
-import com.pocket_sight.types.categories.Subcategory
-import com.pocket_sight.types.transactions.TransactionsDao
-import com.pocket_sight.types.transactions.TransactionsDatabase
 import com.pocket_sight.types.transactions.convertTimeMillisToLocalDateTime
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -46,8 +24,8 @@ class MoreOptionsFragment: Fragment() {
 
     lateinit var args: MoreOptionsFragmentArgs
 
-    lateinit var dateEditText: EditText
-    lateinit var timeEditText: EditText
+    private lateinit var dateEditText: EditText
+    private lateinit var timeEditText: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -198,9 +176,6 @@ class MoreOptionsFragment: Fragment() {
                 args.selectedSubcategoryNumber
             ))
         }
-
     }
-
-
 }
 

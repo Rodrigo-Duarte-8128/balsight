@@ -4,9 +4,7 @@ import android.content.Context
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
 import com.pocket_sight.R
 
 

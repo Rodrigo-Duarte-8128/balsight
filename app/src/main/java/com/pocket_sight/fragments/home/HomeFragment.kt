@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -13,23 +12,17 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.Toast
-import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentHomeBinding
-import com.pocket_sight.fragments.categories.CategoriesAdapter
 import com.pocket_sight.parseMonthYearArrayToText
-import com.pocket_sight.parseMonthYearText
 import com.pocket_sight.types.Act
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
-import com.pocket_sight.types.categories.CategoriesDao
-import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.SubcategoriesDao
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.displayed.DisplayedAccount
@@ -37,7 +30,6 @@ import com.pocket_sight.types.displayed.DisplayedAccountDao
 import com.pocket_sight.types.displayed.DisplayedAccountDatabase
 import com.pocket_sight.types.displayed.DisplayedMonthYearDao
 import com.pocket_sight.types.displayed.DisplayedMonthYearDatabase
-import com.pocket_sight.types.transactions.Transaction
 import com.pocket_sight.types.transactions.TransactionsDao
 import com.pocket_sight.types.transactions.TransactionsDatabase
 import com.pocket_sight.types.transfers.TransfersDao
@@ -56,11 +48,11 @@ class HomeFragment : Fragment() {
 
     var fabIsExpanded = false
 
-    lateinit var transactionsDatabase: TransactionsDao
-    lateinit var transfersDatabase: TransfersDao
-    lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
-    lateinit var accountsDatabase: AccountsDao
-    lateinit var displayedAccountDatabase: DisplayedAccountDao
+    private lateinit var transactionsDatabase: TransactionsDao
+    private lateinit var transfersDatabase: TransfersDao
+    private lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
+    private lateinit var accountsDatabase: AccountsDao
+    private lateinit var displayedAccountDatabase: DisplayedAccountDao
 
     lateinit var subcategoriesDatabase: SubcategoriesDao
 
@@ -68,7 +60,6 @@ class HomeFragment : Fragment() {
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
-    var displayedMonthYear: Array<Int>? = null
     var displayedAccountNumber: Int? = null
 
     private val fromBottomFabAnim: Animation by lazy {
@@ -82,12 +73,6 @@ class HomeFragment : Fragment() {
     }
     private val rotateAntiClockwiseFabAnim: Animation by lazy {
         AnimationUtils.loadAnimation(this.context, R.anim.rotate_anti_clockwise)
-    }
-    private val fromBottomBgAnim: Animation by lazy {
-        AnimationUtils.loadAnimation(this.context, R.anim.from_bottom_anim)
-    }
-    private val toBottomBgAnim: Animation by lazy {
-        AnimationUtils.loadAnimation(this.context, R.anim.to_bottom_anim)
     }
 
     private var touchCoordinates: Array<Float> = arrayOf(0.0f, 0.0f)
@@ -128,12 +113,6 @@ class HomeFragment : Fragment() {
         )
 
 
-        //val menuHost: MenuHost = requireActivity()
-        //val menuProvider = HomeMenuProvider(this.requireContext(), this)
-        //menuHost.addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
-
-
         // handle fab click
         binding.mainHomeFab.setOnClickListener {
             when (fabIsExpanded) {
@@ -171,10 +150,6 @@ class HomeFragment : Fragment() {
     ) {
         uiScope.launch {
 
-            //withContext(Dispatchers.IO) {
-            //    transactionsDatabase.clear()
-            //    subcategoriesDatabase.clear()
-            //}
 
             var displayedMonthYearArray = arrayOf(
                 LocalDateTime.now().monthValue,
@@ -192,13 +167,12 @@ class HomeFragment : Fragment() {
                 )
             }
 
-            //var displayedAccountNumber: Int? = null
 
-            var mainAccountNumber: Int? = withContext(Dispatchers.IO) {
+            val mainAccountNumber: Int? = withContext(Dispatchers.IO) {
                 accountsDatabase.getMainAccountNumber()
             }
 
-            var displayedAccountList: List<DisplayedAccount> = withContext(Dispatchers.IO) {
+            val displayedAccountList: List<DisplayedAccount> = withContext(Dispatchers.IO) {
                 displayedAccountDatabase.getAllDisplayedAccount()
             }
 
@@ -215,7 +189,6 @@ class HomeFragment : Fragment() {
             val accountNumber = displayedAccountNumber
             if (accountNumber == null) {
                 displayedAccountButton.text = "None"
-                //adapter = HomeAdapter(context, listOf())
                 return@launch
             }
 
@@ -329,7 +302,7 @@ class HomeFragment : Fragment() {
         fabIsExpanded = !fabIsExpanded
     }
 
-    fun expandFab() {
+    private fun expandFab() {
         binding.homeScreenGreyView.visibility = View.VISIBLE
         binding.mainHomeFab.startAnimation(rotateClockwiseFabAnim)
         binding.addExpenseFab.startAnimation(fromBottomFabAnim)

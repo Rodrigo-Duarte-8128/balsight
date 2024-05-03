@@ -46,12 +46,12 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
     val binding get() = _binding!!
 
     lateinit var accountsDatabase: AccountsDao
-    lateinit var transactionsDatabase: TransactionsDao
-    lateinit var transfersDatabase: TransfersDao
-    lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
-    lateinit var recurringTransfersDatabase: RecurringTransferDao
-    lateinit var displayedAccountDatabase: DisplayedAccountDao
-    lateinit var recurringDisplayedAccountDatabase: RecurringDisplayedAccountDao
+    private lateinit var transactionsDatabase: TransactionsDao
+    private lateinit var transfersDatabase: TransfersDao
+    private lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
+    private lateinit var recurringTransfersDatabase: RecurringTransferDao
+    private lateinit var displayedAccountDatabase: DisplayedAccountDao
+    private lateinit var recurringDisplayedAccountDatabase: RecurringDisplayedAccountDao
 
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
@@ -169,7 +169,7 @@ class EditAccountFragment: Fragment(), RemoveAccountDialogFragment.RemoveAccount
             }
 
             val oldAccountNumber: Int = account.number
-            var newAccountNumber: Int = 0
+            val newAccountNumber: Int
             val newAccountNumberString = editAccountNumberEditText.text.toString()
 
             try {

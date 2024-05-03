@@ -40,22 +40,22 @@ class AddRecurringExpenseFragment: Fragment() {
     private var _binding: FragmentAddRecurringExpenseBinding? = null
     val binding get() = _binding!!
 
-    lateinit var categoriesDatabase: CategoriesDao
+    private lateinit var categoriesDatabase: CategoriesDao
     lateinit var subcategoriesDatabase: SubcategoriesDao
-    lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
+    private lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
     lateinit var accountsDatabase: AccountsDao
 
-    lateinit var categoriesAdapter: AddRecurringExpenseCategoriesAdapter
-    lateinit var subcategoriesAdapter: AddRecurringExpenseSubcategoriesAdapter
+    private lateinit var categoriesAdapter: AddRecurringExpenseCategoriesAdapter
+    private lateinit var subcategoriesAdapter: AddRecurringExpenseSubcategoriesAdapter
 
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
     lateinit var nameEditText: EditText
-    lateinit var chooseTextView: TextView
-    lateinit var categoryTextView: TextView
-    lateinit var subcategoryTextView: TextView
+    private lateinit var chooseTextView: TextView
+    private lateinit var categoryTextView: TextView
+    private lateinit var subcategoryTextView: TextView
     lateinit var valueEditText: EditText
-    lateinit var monthDayEditText: EditText
+    private lateinit var monthDayEditText: EditText
 
     lateinit var args: AddRecurringExpenseFragmentArgs
 

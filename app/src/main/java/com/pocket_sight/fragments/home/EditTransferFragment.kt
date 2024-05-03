@@ -1,7 +1,6 @@
 package com.pocket_sight.fragments.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,26 +40,26 @@ class EditTransferFragment: Fragment(), RemoveTransferDialogFragment.RemoveTrans
     val binding get() = _binding!!
 
     lateinit var accountsDatabase: AccountsDao
-    lateinit var transfersDatabase: TransfersDao
+    private lateinit var transfersDatabase: TransfersDao
 
     lateinit var transfer: Transfer
 
-    var originalTimeMillis = 0L
-    var originalValue = 0.0
-    var originalAccountSendingNumber: Int? = null
-    var originalAccountReceivingNumber: Int? = null
+    private var originalTimeMillis = 0L
+    private var originalValue = 0.0
+    private var originalAccountSendingNumber: Int? = null
+    private var originalAccountReceivingNumber: Int? = null
 
 
-    lateinit var accountSendingSpinner: Spinner
-    lateinit var accountReceivingSpinner: Spinner
+    private lateinit var accountSendingSpinner: Spinner
+    private lateinit var accountReceivingSpinner: Spinner
     lateinit var valueEditText: EditText
-    lateinit var noteEditText: EditText
-    lateinit var dateEditText: EditText
-    lateinit var timeEditText: EditText
+    private lateinit var noteEditText: EditText
+    private lateinit var dateEditText: EditText
+    private lateinit var timeEditText: EditText
 
     lateinit var args: EditTransferFragmentArgs
 
-    lateinit var accountsStringsArray: Array<String>
+    private lateinit var accountsStringsArray: Array<String>
 
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
@@ -123,7 +122,7 @@ class EditTransferFragment: Fragment(), RemoveTransferDialogFragment.RemoveTrans
             val accountsList: MutableList<Account> = withContext(Dispatchers.IO) {
                 accountsDatabase.getAllAccounts()
             }
-            var accountsStringsList = accountsList.map {
+            val accountsStringsList = accountsList.map {
                 "${it.number}. ${it.name}"
             }.toMutableList()
             accountsStringsList.add("Another")
@@ -408,7 +407,5 @@ class EditTransferFragment: Fragment(), RemoveTransferDialogFragment.RemoveTrans
             EditTransferFragmentDirections.actionEditTransferFragmentToHomeFragment()
         )
     }
-
-
 }
 

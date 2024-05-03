@@ -1,8 +1,6 @@
 package com.pocket_sight.fragments.recurring_acts
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,41 +8,18 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.databinding.FragmentAddExpenseBinding
 import com.pocket_sight.databinding.FragmentAddRecurringTransferBinding
-import com.pocket_sight.databinding.FragmentAddTransferBinding
-import com.pocket_sight.fragments.accounts.AccountsAdapter
-import com.pocket_sight.fragments.categories.EditCategoryFragmentArgs
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
-import com.pocket_sight.types.categories.CategoriesDao
-import com.pocket_sight.types.categories.CategoriesDatabase
-import com.pocket_sight.types.categories.Category
-import com.pocket_sight.types.categories.SubcategoriesDao
-import com.pocket_sight.types.categories.SubcategoriesDatabase
-import com.pocket_sight.types.categories.Subcategory
-import com.pocket_sight.types.recurring.RecurringTransaction
 import com.pocket_sight.types.recurring.RecurringTransfer
 import com.pocket_sight.types.recurring.RecurringTransferDao
 import com.pocket_sight.types.recurring.RecurringTransferDatabase
-import com.pocket_sight.types.transactions.Transaction
-import com.pocket_sight.types.transactions.TransactionsDao
-import com.pocket_sight.types.transactions.TransactionsDatabase
 import com.pocket_sight.types.transactions.convertTimeMillisToLocalDateTime
-import com.pocket_sight.types.transfers.Transfer
-import com.pocket_sight.types.transfers.TransfersDao
-import com.pocket_sight.types.transfers.TransfersDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -54,28 +29,27 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneId
 
 class AddRecurringTransferFragment: Fragment() {
     private var _binding: FragmentAddRecurringTransferBinding? = null
     val binding get() = _binding!!
 
     lateinit var accountsDatabase: AccountsDao
-    lateinit var recurringTransfersDatabase: RecurringTransferDao
+    private lateinit var recurringTransfersDatabase: RecurringTransferDao
 
     var timeMillis = 0L
 
-    lateinit var accountSendingSpinner: Spinner
-    lateinit var accountReceivingSpinner: Spinner
+    private lateinit var accountSendingSpinner: Spinner
+    private lateinit var accountReceivingSpinner: Spinner
     lateinit var nameEditText: EditText
     lateinit var valueEditText: EditText
-    lateinit var noteEditText: EditText
-    lateinit var startDateEditText: EditText
-    lateinit var monthDayEditText: EditText
+    private lateinit var noteEditText: EditText
+    private lateinit var startDateEditText: EditText
+    private lateinit var monthDayEditText: EditText
 
     lateinit var args: AddRecurringTransferFragmentArgs
 
-    lateinit var accountsStringsArray: Array<String>
+    private lateinit var accountsStringsArray: Array<String>
 
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
@@ -266,7 +240,3 @@ class AddRecurringTransferFragment: Fragment() {
         }
     }
 }
-
-
-
-

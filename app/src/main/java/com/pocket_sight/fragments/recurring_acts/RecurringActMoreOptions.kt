@@ -24,8 +24,8 @@ class RecurringActMoreOptions: Fragment() {
 
     lateinit var args: RecurringActMoreOptionsArgs
 
-    lateinit var dateEditText: EditText
-    lateinit var noteEditText: EditText
+    private lateinit var dateEditText: EditText
+    private lateinit var noteEditText: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -133,4 +133,3 @@ class RecurringActMoreOptions: Fragment() {
         }
     }
 }
-

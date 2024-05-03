@@ -1,7 +1,6 @@
 package com.pocket_sight.fragments.stats
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.pocket_sight.databinding.FragmentStatsBinding
-import com.pocket_sight.dateAfter
 import com.pocket_sight.parseMonthYearArrayToText
 import com.pocket_sight.recurringActOccursThisMonthYear
 import com.pocket_sight.types.accounts.AccountsDao
@@ -48,29 +46,29 @@ class StatsFragment : Fragment() {
 
     private val binding get() = _binding!!
 
-    lateinit var displayedAccountDatabase: DisplayedAccountDao
-    lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
+    private lateinit var displayedAccountDatabase: DisplayedAccountDao
+    private lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
     lateinit var accountsDatabase: AccountsDao
-    lateinit var transactionsDatabase: TransactionsDao
-    lateinit var transfersDatabase: TransfersDao
-    lateinit var recurringTransfersDatabase: RecurringTransferDao
-    lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
+    private lateinit var transactionsDatabase: TransactionsDao
+    private lateinit var transfersDatabase: TransfersDao
+    private lateinit var recurringTransfersDatabase: RecurringTransferDao
+    private lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
 
     var displayedAccountNumber: Int? = null
-    var displayedMonthYearArray: Array<Int>? = null
+    private var displayedMonthYearArray: Array<Int>? = null
 
 
-    lateinit var initialBudgetTextView: TextView
-    lateinit var currentBudgetTextView: TextView
-    lateinit var recurringInTextView: TextView
-    lateinit var recurringOutTextView: TextView
-    lateinit var totalInTextView: TextView
-    lateinit var totalOutTextView: TextView
-    lateinit var progressBar: ProgressBar
-    lateinit var budgetRatioTextView: TextView
+    private lateinit var initialBudgetTextView: TextView
+    private lateinit var currentBudgetTextView: TextView
+    private lateinit var recurringInTextView: TextView
+    private lateinit var recurringOutTextView: TextView
+    private lateinit var totalInTextView: TextView
+    private lateinit var totalOutTextView: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var budgetRatioTextView: TextView
 
-    lateinit var displayedAccountStatsButton: Button
-    lateinit var displayedMonthYearStatsButton: Button
+    private lateinit var displayedAccountStatsButton: Button
+    private lateinit var displayedMonthYearStatsButton: Button
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -290,13 +288,6 @@ class StatsFragment : Fragment() {
 
             val budgetProgress = getProgressBarPercentage(recurringIn, recurringOut, totalIn, totalOut)
             progressBar.progress = budgetProgress
-
-            Log.i("TAG", recurringIn.toString())
-            Log.i("TAG", recurringOut.toString())
-            Log.i("TAG", totalIn.toString())
-            Log.i("TAG", totalOut.toString())
-            Log.i("TAG", budgetProgress.toString())
-            //progressBar.setProgress(budgetProgress)
         }
 
     }

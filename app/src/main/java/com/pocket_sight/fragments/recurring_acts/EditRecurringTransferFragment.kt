@@ -39,22 +39,22 @@ class EditRecurringTransferFragment: Fragment(), RemoveRecurringTransferDialogFr
     val binding get() = _binding!!
 
     lateinit var accountsDatabase: AccountsDao
-    lateinit var recurringTransfersDatabase: RecurringTransferDao
+    private lateinit var recurringTransfersDatabase: RecurringTransferDao
 
 
-    lateinit var accountSendingSpinner: Spinner
-    lateinit var accountReceivingSpinner: Spinner
+    private lateinit var accountSendingSpinner: Spinner
+    private lateinit var accountReceivingSpinner: Spinner
     lateinit var nameEditText: EditText
     lateinit var valueEditText: EditText
-    lateinit var noteEditText: EditText
-    lateinit var startDateEditText: EditText
-    lateinit var monthDayEditText: EditText
+    private lateinit var noteEditText: EditText
+    private lateinit var startDateEditText: EditText
+    private lateinit var monthDayEditText: EditText
 
     lateinit var args: EditRecurringTransferFragmentArgs
 
-    lateinit var accountsStringsArray: Array<String>
+    private lateinit var accountsStringsArray: Array<String>
 
-    lateinit var recurringTransfer: RecurringTransfer
+    private lateinit var recurringTransfer: RecurringTransfer
 
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
@@ -174,7 +174,7 @@ class EditRecurringTransferFragment: Fragment(), RemoveRecurringTransferDialogFr
     }
 
 
-    fun confirmChanges(view: View) {
+    private fun confirmChanges(view: View) {
         uiScope.launch {
             val accountSendingString = accountSendingSpinner.selectedItem.toString()
             val accountReceivingString = accountReceivingSpinner.selectedItem.toString()
@@ -210,7 +210,7 @@ class EditRecurringTransferFragment: Fragment(), RemoveRecurringTransferDialogFr
             }
 
             val monthDayString = monthDayEditText.text.toString()
-            var monthDayInt: Int
+            val monthDayInt: Int
             try {
                 monthDayInt = monthDayString.toInt()
             } catch (e: Exception) {
@@ -294,9 +294,4 @@ class EditRecurringTransferFragment: Fragment(), RemoveRecurringTransferDialogFr
             EditRecurringTransferFragmentDirections.actionEditRecurringTransferFragmentToRecurringActsFragment()
         )
     }
-
 }
-
-
-
-

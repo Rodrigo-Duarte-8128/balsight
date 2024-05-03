@@ -1,7 +1,6 @@
 package com.pocket_sight.fragments.categories
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.types.accounts.Account
-import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.Category
 import kotlinx.coroutines.CoroutineScope

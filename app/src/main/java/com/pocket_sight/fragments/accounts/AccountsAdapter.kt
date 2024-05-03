@@ -1,7 +1,6 @@
 package com.pocket_sight.fragments.accounts
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.types.accounts.Account
-import com.pocket_sight.types.accounts.AccountsDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -19,7 +17,6 @@ import kotlinx.coroutines.Job
 
 class AccountsAdapter(val context: Context, val accounts: List<Account>): RecyclerView.Adapter<AccountsAdapter.ViewHolder>() {
 
-    private val database = AccountsDatabase.getInstance(context).accountsDao
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
     private var accountNumber = 0
 
@@ -28,16 +25,7 @@ class AccountsAdapter(val context: Context, val accounts: List<Account>): Recycl
         val accountNameView: TextView = itemView.findViewById(R.id.row_account_name_text_view)
         val accountTotalView: TextView = itemView.findViewById(R.id.row_account_total_text_view)
         val rowLayout: LinearLayout = itemView.findViewById(R.id.accounts_rv_row_layout)
-        //val accountNumber: Int = numberView.text.toString().toInt()
 
-        //init {
-         //   rowLayout.setOnClickListener {
-                //Toast.makeText(context, "account clicked!", Toast.LENGTH_SHORT).show()
-                //itemView.findNavController().navigate(
-                //    AccountsFragmentDirections.actionAccountsFragmentToEditAccountFragment(accountNumber)
-                //)
-          //  }
-        //}
 
         init {
             rowLayout.setOnClickListener() {

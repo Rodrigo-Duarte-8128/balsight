@@ -28,11 +28,10 @@ class ChooseMonthFragment: Fragment() {
     lateinit var args: ChooseMonthFragmentArgs
 
 
-    lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
+    private lateinit var displayedMonthYearDatabase: DisplayedMonthYearDao
 
-    lateinit var monthSpinner: Spinner
-    lateinit var yearSpinner: Spinner
-    lateinit var yearStringsArray: Array<String>
+    private lateinit var monthSpinner: Spinner
+    private lateinit var yearSpinner: Spinner
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -173,8 +172,6 @@ class ChooseMonthFragment: Fragment() {
                     ChooseMonthFragmentDirections.actionChooseMonthFragmentToStatsFragment()
                 )
             }
-
         }
     }
-
 }

@@ -1,8 +1,6 @@
 package com.pocket_sight.fragments.home
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,32 +8,14 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.MenuHost
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.databinding.FragmentAddExpenseBinding
 import com.pocket_sight.databinding.FragmentAddTransferBinding
-import com.pocket_sight.fragments.accounts.AccountsAdapter
-import com.pocket_sight.fragments.categories.EditCategoryFragmentArgs
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
-import com.pocket_sight.types.categories.CategoriesDao
-import com.pocket_sight.types.categories.CategoriesDatabase
-import com.pocket_sight.types.categories.Category
-import com.pocket_sight.types.categories.SubcategoriesDao
-import com.pocket_sight.types.categories.SubcategoriesDatabase
-import com.pocket_sight.types.categories.Subcategory
-import com.pocket_sight.types.transactions.Transaction
-import com.pocket_sight.types.transactions.TransactionsDao
-import com.pocket_sight.types.transactions.TransactionsDatabase
 import com.pocket_sight.types.transactions.convertTimeMillisToLocalDateTime
 import com.pocket_sight.types.transfers.Transfer
 import com.pocket_sight.types.transfers.TransfersDao
@@ -56,20 +36,20 @@ class AddTransferFragment: Fragment() {
     val binding get() = _binding!!
 
     lateinit var accountsDatabase: AccountsDao
-    lateinit var transfersDatabase: TransfersDao
+    private lateinit var transfersDatabase: TransfersDao
 
     var timeMillis = 0L
 
-    lateinit var accountSendingSpinner: Spinner
-    lateinit var accountReceivingSpinner: Spinner
+    private lateinit var accountSendingSpinner: Spinner
+    private lateinit var accountReceivingSpinner: Spinner
     lateinit var valueEditText: EditText
-    lateinit var noteEditText: EditText
-    lateinit var dateEditText: EditText
-    lateinit var timeEditText: EditText
+    private lateinit var noteEditText: EditText
+    private lateinit var dateEditText: EditText
+    private lateinit var timeEditText: EditText
 
     lateinit var args: AddTransferFragmentArgs
 
-    lateinit var accountsStringsArray: Array<String>
+    private lateinit var accountsStringsArray: Array<String>
 
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
@@ -91,9 +71,7 @@ class AddTransferFragment: Fragment() {
         transfersDatabase = TransfersDatabase.getInstance(requireNotNull(this.activity).application).transfersDao
 
         accountSendingSpinner = binding.addTransferAccountSendingSpinner
-        //accountSendingSpinner.onItemSelectedListener = this
         accountReceivingSpinner = binding.addTransferAccountReceivingSpinner
-        //accountReceivingSpinner.onItemSelectedListener = this
         valueEditText = binding.addTransferValueEditText
         noteEditText = binding.addTransferNoteEditText
         dateEditText = binding.addTransferDateEditText
@@ -117,13 +95,12 @@ class AddTransferFragment: Fragment() {
             val accountsList: MutableList<Account> = withContext(Dispatchers.IO) {
                 accountsDatabase.getAllAccounts()
             }
-            var accountsStringsList = accountsList.map {
+            val accountsStringsList = accountsList.map {
                 "${it.number}. ${it.name}"
             }.toMutableList()
             accountsStringsList.add("Another")
             fragment.accountsStringsArray = accountsStringsList.toTypedArray()
 
-            //Log.i("TAG", accountsStringsArray.joinToString { ", " })
             val arrayAdapter: ArrayAdapter<*> = ArrayAdapter<Any?>(
                 fragment.requireContext(),
                 R.layout.category_kind_spinner,
@@ -134,17 +111,6 @@ class AddTransferFragment: Fragment() {
             accountReceivingSpinner.adapter = arrayAdapter
         }
 
-//        ArrayAdapter.createFromResource(
-//            this.requireContext(),
-//            R.array.kinds_array,
-//            R.layout.category_kind_spinner
-//        ).also { adapter ->
-//            // Specify the layout to use when the list of choices appears.
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//            // Apply the adapter to the spinner.
-//            accountSendingSpinner.adapter = adapter
-//            accountReceivingSpinner.adapter = adapter
-//        }
 
         val dateTime: LocalDateTime = convertTimeMillisToLocalDateTime(timeMillis)
         var dayString = dateTime.dayOfMonth.toString()
@@ -199,7 +165,7 @@ class AddTransferFragment: Fragment() {
         timeEditText.setText("${hourString}:${minuteString}")
     }
 
-    fun addTransfer(view: View) {
+    private fun addTransfer(view: View) {
         uiScope.launch {
             val accountSendingString = accountSendingSpinner.selectedItem.toString()
             val accountReceivingString = accountReceivingSpinner.selectedItem.toString()

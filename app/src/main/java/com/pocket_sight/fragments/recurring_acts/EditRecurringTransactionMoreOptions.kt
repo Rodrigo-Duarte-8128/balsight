@@ -19,13 +19,13 @@ class EditRecurringTransactionMoreOptions: Fragment() {
     private var _binding: FragmentEditRecurringTransactionMoreOptionsBinding? = null
     val binding get() = _binding!!
 
-    var startDateTimeMillis: Long = 0L
+    private var startDateTimeMillis: Long = 0L
     var accountNumber: Int = 0
 
     lateinit var args: EditRecurringTransactionMoreOptionsArgs
 
-    lateinit var dateEditText: EditText
-    lateinit var noteEditText: EditText
+    private lateinit var dateEditText: EditText
+    private lateinit var noteEditText: EditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -126,4 +126,3 @@ class EditRecurringTransactionMoreOptions: Fragment() {
         )
     }
 }
-

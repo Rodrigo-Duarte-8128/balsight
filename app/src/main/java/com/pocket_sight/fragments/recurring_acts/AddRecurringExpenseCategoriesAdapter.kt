@@ -1,18 +1,13 @@
 package com.pocket_sight.fragments.recurring_acts
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.types.accounts.Account
-import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.Category
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +17,6 @@ import kotlinx.coroutines.Job
 
 class AddRecurringExpenseCategoriesAdapter(val fragment: AddRecurringExpenseFragment, val context: Context, val categories: List<Category>): RecyclerView.Adapter<AddRecurringExpenseCategoriesAdapter.ViewHolder>() {
 
-    private val database = CategoriesDatabase.getInstance(context).categoriesDatabaseDao
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){

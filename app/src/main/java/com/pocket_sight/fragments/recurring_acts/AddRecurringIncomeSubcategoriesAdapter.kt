@@ -8,8 +8,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.types.categories.CategoriesDatabase
-import com.pocket_sight.types.categories.Category
 import com.pocket_sight.types.categories.SubcategoriesDatabase
 import com.pocket_sight.types.categories.Subcategory
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +17,6 @@ import kotlinx.coroutines.Job
 
 class AddRecurringIncomeSubcategoriesAdapter(val fragment: AddRecurringIncomeFragment, val context: Context, val subcategories: List<Subcategory>): RecyclerView.Adapter<AddRecurringIncomeSubcategoriesAdapter.ViewHolder>() {
 
-    private val database = SubcategoriesDatabase.getInstance(context).subcategoriesDatabaseDao
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){

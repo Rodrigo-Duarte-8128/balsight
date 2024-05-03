@@ -17,8 +17,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.databinding.FragmentAddIncomeBinding
-import com.pocket_sight.fragments.accounts.AccountsAdapter
-import com.pocket_sight.fragments.categories.EditCategoryFragmentArgs
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDao
@@ -42,19 +40,19 @@ class AddIncomeFragment: Fragment() {
     private var _binding: FragmentAddIncomeBinding? = null
     val binding get() = _binding!!
 
-    lateinit var categoriesDatabase: CategoriesDao
+    private lateinit var categoriesDatabase: CategoriesDao
     lateinit var subcategoriesDatabase: SubcategoriesDao
-    lateinit var transactionsDatabase: TransactionsDao
+    private lateinit var transactionsDatabase: TransactionsDao
     lateinit var accountsDatabase: AccountsDao
 
-    lateinit var categoriesAdapter: AddIncomeCategoriesAdapter
-    lateinit var subcategoriesAdapter: AddIncomeSubcategoriesAdapter
+    private lateinit var categoriesAdapter: AddIncomeCategoriesAdapter
+    private lateinit var subcategoriesAdapter: AddIncomeSubcategoriesAdapter
 
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
-    lateinit var chooseTextView: TextView
-    lateinit var categoryTextView: TextView
-    lateinit var subcategoryTextView: TextView
+    private lateinit var chooseTextView: TextView
+    private lateinit var categoryTextView: TextView
+    private lateinit var subcategoryTextView: TextView
     lateinit var valueEditText: EditText
 
     lateinit var args: AddIncomeFragmentArgs
@@ -217,7 +215,7 @@ class AddIncomeFragment: Fragment() {
         ))
     }
 
-    fun addIncome(context: Context, view: View, valueEditText: EditText) {
+    private fun addIncome(context: Context, view: View, valueEditText: EditText) {
         uiScope.launch {
             val valueString = valueEditText.text.toString()
             var value: Double

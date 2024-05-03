@@ -4,23 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import com.pocket_sight.R
-import com.pocket_sight.databinding.FragmentAddCategoryBinding
 import com.pocket_sight.databinding.FragmentAddSubcategoryBinding
-import com.pocket_sight.fragments.accounts.EditAccountFragmentArgs
-import com.pocket_sight.types.categories.CategoriesDao
-import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.ProvisionalSubcategoriesDao
 import com.pocket_sight.types.categories.ProvisionalSubcategoriesDatabase
 import com.pocket_sight.types.categories.ProvisionalSubcategory
-import com.pocket_sight.types.categories.SubcategoriesDao
-import com.pocket_sight.types.categories.SubcategoriesDatabase
-import com.pocket_sight.types.categories.Subcategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -65,7 +55,7 @@ class AddSubcategoryFragment: Fragment() {
 
     private fun addSubcategoryClicked(view: View, nameEditText: EditText, parentCategoryNumber: Int) {
         uiScope.launch {
-            var nameInDatabase = false
+            val nameInDatabase: Boolean
             withContext(Dispatchers.IO) {
                 nameInDatabase = database.nameInDatabase(nameEditText.text.toString())
             }

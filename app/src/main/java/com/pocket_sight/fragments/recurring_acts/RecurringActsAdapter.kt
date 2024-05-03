@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
-import com.pocket_sight.convertMonthIntToString
 import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.SubcategoriesDatabase
@@ -53,8 +52,6 @@ class RecurringActsAdapter(val context: Context, val recurringActs: List<Recurri
                     val selectedSubcategoryNumber: Int = if (act.subcategoryNumber!= null) {
                         act.subcategoryNumber!!
                     } else {-1}
-
-                    var valueString = act.value.toString()
 
                     val dateTime = LocalDateTime.of(LocalDate.of(act.year, act.month, act.monthDay), LocalTime.of(1, 1))
                     val startDateTimeMillis: Long = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -155,26 +152,25 @@ class RecurringActsAdapter(val context: Context, val recurringActs: List<Recurri
 
             uiScope.launch {
                 val categoryNumber = act.categoryNumber
-                var categoryString: String
-                if (categoryNumber != null) {
-                    categoryString = withContext(Dispatchers.IO) {
+                val categoryString: String = if (categoryNumber != null) {
+                    withContext(Dispatchers.IO) {
                         categoriesDatabase.get(act.categoryNumber!!).name
                     }
                 } else {
-                    categoryString = if (act.oldCategoryName != null) {
+                    if (act.oldCategoryName != null) {
                         act.oldCategoryName!!
                     } else {
                         "None"
                     }
                 }
-                var subcategoryNumber: Int? = act.subcategoryNumber
+                val subcategoryNumber: Int? = act.subcategoryNumber
                 var subcategoryName = ""
-                if (subcategoryNumber != null) {
-                    subcategoryName = withContext(Dispatchers.IO) {
+                subcategoryName = if (subcategoryNumber != null) {
+                    withContext(Dispatchers.IO) {
                         subcategoriesDatabase.get(subcategoryNumber).name
                     }
                 } else {
-                    subcategoryName = if (act.oldSubcategoryName != null) {
+                    if (act.oldSubcategoryName != null) {
                         act.oldSubcategoryName!!
                     } else {
                         "None"

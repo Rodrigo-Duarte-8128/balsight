@@ -12,9 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.pocket_sight.R
 import com.pocket_sight.databinding.FragmentCategoriesBinding
-import com.pocket_sight.fragments.accounts.AccountsAdapter
 import com.pocket_sight.types.categories.CategoriesDao
-import com.pocket_sight.types.accounts.AccountsDatabase
 import com.pocket_sight.types.categories.CategoriesDatabase
 import com.pocket_sight.types.categories.Category
 import kotlinx.coroutines.CoroutineScope

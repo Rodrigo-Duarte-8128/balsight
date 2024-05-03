@@ -2,7 +2,6 @@ package com.pocket_sight.fragments.recurring_acts
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.pocket_sight.databinding.FragmentAddRecurringExpenseBinding
 import com.pocket_sight.databinding.FragmentAddRecurringIncomeBinding
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
@@ -42,13 +40,13 @@ class AddRecurringIncomeFragment: Fragment() {
     private var _binding: FragmentAddRecurringIncomeBinding? = null
     val binding get() = _binding!!
 
-    lateinit var categoriesDatabase: CategoriesDao
+    private lateinit var categoriesDatabase: CategoriesDao
     lateinit var subcategoriesDatabase: SubcategoriesDao
-    lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
+    private lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
     lateinit var accountsDatabase: AccountsDao
 
-    lateinit var categoriesAdapter: AddRecurringIncomeCategoriesAdapter
-    lateinit var subcategoriesAdapter: AddRecurringIncomeSubcategoriesAdapter
+    private lateinit var categoriesAdapter: AddRecurringIncomeCategoriesAdapter
+    private lateinit var subcategoriesAdapter: AddRecurringIncomeSubcategoriesAdapter
 
     lateinit var recyclerView: RecyclerView
 

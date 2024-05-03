@@ -1,13 +1,9 @@
 package com.pocket_sight.types.transactions
 
-import com.pocket_sight.types.accounts.Account
-import com.pocket_sight.types.categories.Category
-import com.pocket_sight.types.categories.Subcategory
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.TimeZone
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -59,7 +55,6 @@ data class Transaction(
 fun convertTimeMillisToLocalDateTime(timeMillis: Long): LocalDateTime {
     val instant: Instant = Instant.ofEpochMilli(timeMillis)
     val zone: ZoneId = ZoneId.systemDefault()
-    //val zone: ZoneId = ZoneId.of("Europe/Lisbon")
     val dateTime: ZonedDateTime = instant.atZone(zone)
     return dateTime.toLocalDateTime()
 }

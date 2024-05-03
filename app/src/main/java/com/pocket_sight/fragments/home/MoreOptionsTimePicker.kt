@@ -5,7 +5,6 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
-import android.text.format.DateFormat
 
 class MoreOptionsTimePicker(val minute: Int, val hour: Int, val fragment: MoreOptionsFragment): DialogFragment(), TimePickerDialog.OnTimeSetListener {
 
@@ -15,7 +14,6 @@ class MoreOptionsTimePicker(val minute: Int, val hour: Int, val fragment: MoreOp
             this,
             hour,
             minute,
-            //DateFormat.is24HourFormat(activity),
             true,
         )
     }
