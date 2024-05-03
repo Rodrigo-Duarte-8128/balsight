@@ -7,6 +7,7 @@ spending.
 
 ![alt text](https://github.com/Rodrigo-Duarte-8128/pocket-sight/blob/master/app-image.jpg?raw=true)
 
+<img src="https://github.com/Rodrigo-Duarte-8128/pocket-sight/blob/master/app-image.jpg" width="48">
 
 ## Installation
 If you want to install the app on your Android devices you can simply download the file 
