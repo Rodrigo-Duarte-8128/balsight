@@ -15,6 +15,15 @@ import com.pocket_sight.types.Act
 import com.pocket_sight.types.accounts.Account
 import com.pocket_sight.types.accounts.AccountsDao
 import com.pocket_sight.types.accounts.AccountsDatabase
+import com.pocket_sight.types.categories.CategoriesDao
+import com.pocket_sight.types.categories.CategoriesDatabase
+import com.pocket_sight.types.categories.Category
+import com.pocket_sight.types.categories.SubcategoriesDao
+import com.pocket_sight.types.categories.SubcategoriesDatabase
+import com.pocket_sight.types.categories.Subcategory
+import com.pocket_sight.types.first_run_tracker.FirstRunTracker
+import com.pocket_sight.types.first_run_tracker.FirstRunTrackerDao
+import com.pocket_sight.types.first_run_tracker.FirstRunTrackerDatabase
 import com.pocket_sight.types.recurring.RecurringTransaction
 import com.pocket_sight.types.recurring.RecurringTransactionsDao
 import com.pocket_sight.types.recurring.RecurringTransactionsDatabase
@@ -48,6 +57,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recurringTransactionsDatabase: RecurringTransactionsDao
     private lateinit var recurringTransfersDatabase: RecurringTransferDao
     private lateinit var accountsDatabase: AccountsDao
+    private lateinit var categoriesDatabase: CategoriesDao
+    private lateinit var subcategoriesDatabase: SubcategoriesDao
+    private lateinit var firstRunTrackerDatabase: FirstRunTrackerDao
 
     val uiScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -82,8 +94,15 @@ class MainActivity : AppCompatActivity() {
         recurringTransactionsDatabase = RecurringTransactionsDatabase.getInstance(requireNotNull(this).application).recurringTransactionsDao
         recurringTransfersDatabase = RecurringTransferDatabase.getInstance(requireNotNull(this).application).recurringTransferDao
         accountsDatabase = AccountsDatabase.getInstance(requireNotNull(this).application).accountsDao
+        firstRunTrackerDatabase = FirstRunTrackerDatabase.getInstance(requireNotNull(this).application).firstRunTrackerDao
+        categoriesDatabase = CategoriesDatabase.getInstance(requireNotNull(this).application).categoriesDatabaseDao
+        subcategoriesDatabase = SubcategoriesDatabase.getInstance(requireNotNull(this).application).subcategoriesDatabaseDao
 
         buildMissingRecurringActs()
+
+        buildInitialAccountAndCategories()
+
+
     }
 
 
@@ -546,5 +565,514 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return millis
+    }
+
+    private fun buildInitialAccountAndCategories() {
+        uiScope.launch {
+            val trackersList = withContext(Dispatchers.IO) {
+                firstRunTrackerDatabase.getAllTrackers()
+            }
+
+            if (trackersList.isNotEmpty()) {
+                return@launch
+            }
+
+            // if this runs, then we are running the app for the first time
+            // create first run tracker and add to database
+            withContext(Dispatchers.IO) {
+                val firstRunTracker = FirstRunTracker(
+                    1,
+                    true
+                )
+                firstRunTrackerDatabase.insert(firstRunTracker)
+
+                // create default account
+                val currentAccount = Account(
+                    1,
+                    "Current",
+                    0.0,
+                    true
+                )
+                accountsDatabase.insert(currentAccount)
+
+                // create default categories and subcategories
+
+                val entertainmentCat = Category(
+                    1,
+                    "Entertainment",
+                    "Expense"
+                )
+                categoriesDatabase.insert(entertainmentCat)
+                val booksSubcat = Subcategory(
+                    1,
+                    "Books",
+                    1
+                )
+                subcategoriesDatabase.insert(booksSubcat)
+                val gamesSubcat = Subcategory(
+                    2,
+                    "Games",
+                    1
+                )
+                subcategoriesDatabase.insert(gamesSubcat)
+                val cinemaSubcat = Subcategory(
+                    3,
+                    "Cinema",
+                    1
+                )
+                subcategoriesDatabase.insert(cinemaSubcat)
+                val phonesSubcat = Subcategory(
+                    4,
+                    "Phones",
+                    1
+                )
+                subcategoriesDatabase.insert(phonesSubcat)
+                val socialSubcat = Subcategory(
+                    5,
+                    "Social Activities",
+                    1
+                )
+                subcategoriesDatabase.insert(socialSubcat)
+                val subscriptionsSubcat = Subcategory(
+                    6,
+                    "Subscriptions",
+                    1
+                )
+                subcategoriesDatabase.insert(subscriptionsSubcat)
+                val tvSubcat = Subcategory(
+                    7,
+                    "TV, Internet",
+                    1
+                )
+                subcategoriesDatabase.insert(tvSubcat)
+
+
+
+                val financialCat = Category(
+                    2,
+                    "Financial Expenses",
+                    "Expense"
+                )
+                categoriesDatabase.insert(financialCat)
+
+                val feesSubcat = Subcategory(
+                    8,
+                    "Fees",
+                    2
+                )
+                subcategoriesDatabase.insert(feesSubcat)
+
+                val finesSubcat = Subcategory(
+                    9,
+                    "Fines",
+                    2
+                )
+                subcategoriesDatabase.insert(finesSubcat)
+
+
+                val foodCat = Category(
+                    3,
+                    "Food",
+                    "Expense"
+                )
+                categoriesDatabase.insert(foodCat)
+
+                val barSubcat = Subcategory(
+                    10,
+                    "Bar, Cafe",
+                    3
+                )
+                subcategoriesDatabase.insert(barSubcat)
+
+                val outSubcat = Subcategory(
+                    11,
+                    "Eating Out",
+                    3
+                )
+                subcategoriesDatabase.insert(outSubcat)
+
+                val groceriesSubcat = Subcategory(
+                    12,
+                    "Groceries",
+                    3
+                )
+                subcategoriesDatabase.insert(groceriesSubcat)
+
+
+                val healthCat = Category(
+                    4,
+                    "Health",
+                    "Expense"
+                )
+                categoriesDatabase.insert(healthCat)
+
+                val dentistSubcat = Subcategory(
+                    13,
+                    "Dentist",
+                    4
+                )
+                subcategoriesDatabase.insert(dentistSubcat)
+
+                val doctorSubcat = Subcategory(
+                    14,
+                    "Healthcare, Doctor",
+                    4
+                )
+                subcategoriesDatabase.insert(doctorSubcat)
+
+                val insuranceSubcat = Subcategory(
+                    15,
+                    "Insurance",
+                    4
+                )
+                subcategoriesDatabase.insert(insuranceSubcat)
+
+                val pharmacySubcat = Subcategory(
+                    16,
+                    "Pharmacy",
+                    4
+                )
+                subcategoriesDatabase.insert(pharmacySubcat)
+
+
+                val houseCat = Category(
+                    5,
+                    "House",
+                    "Expense"
+                )
+                categoriesDatabase.insert(houseCat)
+
+                val condoSubcat = Subcategory(
+                    17,
+                    "Condo",
+                    5
+                )
+                subcategoriesDatabase.insert(condoSubcat)
+
+                val decorationSubcat = Subcategory(
+                    18,
+                    "Decoration, Furniture",
+                    5
+                )
+                subcategoriesDatabase.insert(decorationSubcat)
+
+                val electricitySubcat = Subcategory(
+                    19,
+                    "Electricity",
+                    5
+                )
+                subcategoriesDatabase.insert(electricitySubcat)
+
+                val imiSubcat= Subcategory(
+                    20,
+                    "IMI",
+                    5
+                )
+                subcategoriesDatabase.insert(imiSubcat)
+
+                val lifeInsuranceSubcat = Subcategory(
+                    21,
+                    "Life Insurance",
+                    5
+                )
+                subcategoriesDatabase.insert(lifeInsuranceSubcat)
+
+                val houseInsuranceSubcat = Subcategory(
+                    22,
+                    "House Insurance",
+                    5
+                )
+                subcategoriesDatabase.insert(houseInsuranceSubcat)
+
+                val maintenanceSubcat = Subcategory(
+                    23,
+                    "Maintenance",
+                    5
+                )
+                subcategoriesDatabase.insert(maintenanceSubcat)
+
+                val mortgageSubcat = Subcategory(
+                    24,
+                    "Mortgage",
+                    5
+                )
+                subcategoriesDatabase.insert(mortgageSubcat)
+
+                val waterSubcat = Subcategory(
+                    25,
+                    "Water",
+                    5
+                )
+                subcategoriesDatabase.insert(waterSubcat)
+
+
+                val lifestyleCat = Category(
+                    6,
+                    "Lifestyle",
+                    "Expense"
+                )
+                categoriesDatabase.insert(lifestyleCat)
+
+                val charitySubcat = Subcategory(
+                    26,
+                    "Charity",
+                    6
+                )
+                subcategoriesDatabase.insert(charitySubcat)
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        27,
+                        "Cultural Events",
+                        6
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        28,
+                        "Education",
+                        6
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        29,
+                        "Gym",
+                        6
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        30,
+                        "Hobbies",
+                        6
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        31,
+                        "Life Events",
+                        6
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        32,
+                        "Music",
+                        6
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        33,
+                        "Sports",
+                        6
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        34,
+                        "Trips, Hotels",
+                        6
+                    )
+                )
+
+
+                categoriesDatabase.insert(
+                    Category(
+                        7,
+                        "Shopping",
+                        "Expense"
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        35,
+                        "Clothes, Shoes",
+                        7
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        36,
+                        "Electronics",
+                        7
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        37,
+                        "Gifts",
+                        7
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        38,
+                        "Hair Cut",
+                        7
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        39,
+                        "Office",
+                        7
+                    )
+                )
+
+
+                categoriesDatabase.insert(
+                    Category(
+                        8,
+                        "Transportation",
+                        "Expense"
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        40,
+                        "Bus",
+                        8
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        41,
+                        "Ride Sharing",
+                        8
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        42,
+                        "Plane",
+                        8
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        43,
+                        "Public Transport",
+                        8
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        44,
+                        "Taxi",
+                        8
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        45,
+                        "Train",
+                        8
+                    )
+                )
+
+
+                categoriesDatabase.insert(
+                    Category(
+                        9,
+                        "Vehicle",
+                        "Expense"
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        46,
+                        "Fuel",
+                        9
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        47,
+                        "Insurance",
+                        9
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        48,
+                        "Maintenance",
+                        9
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        49,
+                        "Parking",
+                        9
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        50,
+                        "Tolls",
+                        9
+                    )
+                )
+
+                categoriesDatabase.insert(
+                    Category(
+                        10,
+                        "Other Expense",
+                        "Expense"
+                    )
+                )
+
+                categoriesDatabase.insert(
+                    Category(
+                        11,
+                        "Salary",
+                        "Income"
+                    )
+                )
+
+                subcategoriesDatabase.insert(
+                    Subcategory(
+                        51,
+                        "Company Name",
+                        11
+                    )
+                )
+
+                categoriesDatabase.insert(
+                    Category(
+                        12,
+                        "Other Income",
+                        "Income"
+                    )
+                )
+            }
+
+
+        }
     }
 }
