@@ -1,6 +1,6 @@
 # Pocket Sight
 
-Pocket Sight is an Android app to help you manage your personal finances. The app allows us to 
+Pocket Sight is an Android app to help you manage your personal finances. The app allows users to 
 fully create and edit accounts, categories, subcategories, transactions, transfers and 
 recurring transactions. The app also has a *stats* page to help you keep on track with your 
 spending.
@@ -8,7 +8,7 @@ spending.
 
 ## Installation
 If you want to install the app on your Android devices you can simply download the file 
-app-debug.apk and run it on your device. 
+**app-debug.apk** and run it on your device. 
 
 
 ## About
@@ -19,7 +19,7 @@ The following points are useful to keep in mind while using the app:
 - A transfer can include accounts which are not tracked by the app. In this case, the 
 app refers to these as *Another*.
 - An **act** is a transaction or a transfer.
-- The **main*+ account is the default account shown in the home screen when no other
+- The **main** account is the default account shown in the home screen when no other
 account has been displayed in the past.
 - A **recurring act** is an act that happens every month. Recurring acts have
 a **month day** attribute which represents the day in which the acts occurs.
@@ -42,7 +42,7 @@ the month.
 displayed month plus the amount to spend from recurring expenses in the remainder of
 the month.
 
-You will also find information regarding the *inital budget* and the *current budget*.
+You will also find information regarding the *initial budget* and the *current budget*.
 - The **initial budget** is equal to the recurring in minus the recurring out values.
 - The **current budget** is equal to the total in minus the total out values.
 
