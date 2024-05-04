@@ -155,7 +155,7 @@
                 android:gravity="left"
                 android:textStyle="bold"
                 android:layout_weight="0.5"
-                android:text="Select Start Date:" />
+                android:text="Start Date:" />
 
             <EditText
                 android:id="@+id/add_recurring_transfer_start_date_edit_text"

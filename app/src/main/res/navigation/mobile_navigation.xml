@@ -516,7 +516,7 @@
     <fragment
         android:id="@+id/edit_recurring_transaction_fragment"
         android:name="com.pocket_sight.fragments.recurring_acts.EditRecurringTransactionFragment"
-        android:label="Edit Recurring Transaction"
+        android:label="Edit Transaction"
         tools:layout="@layout/fragment_edit_recurring_transaction" >
         <action
             android:id="@+id/action_editRecurringTransactionFragment_to_recurring_acts_fragment"
