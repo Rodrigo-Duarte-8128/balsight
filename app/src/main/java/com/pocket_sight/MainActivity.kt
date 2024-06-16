@@ -207,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                     continue
                 }
 
-                if (!instantiated && currentDate.dayOfMonth < recurringTransaction.monthDay) {
+                if (currentDate.dayOfMonth < recurringTransaction.monthDay) {
                     continue
                 }
 
@@ -222,6 +222,9 @@ class MainActivity : AppCompatActivity() {
                 var monthYear = arrayOf(lastInstantiationDate.monthValue, lastInstantiationDate.year)
                 val currentMonthYear = arrayOf(currentDate.monthValue, currentDate.year)
 
+                if (monthYear.contentEquals(currentMonthYear)) {
+                    continue
+                }
 
                 while (!monthYear.contentEquals(currentMonthYear)) {
                     // we start by incrementing month year
@@ -231,7 +234,12 @@ class MainActivity : AppCompatActivity() {
                         arrayOf(monthYear[0] + 1, monthYear[1])
                     }
 
-                    if (monthYear.contentEquals(currentMonthYear) && currentDate.dayOfMonth >= recurringTransaction.monthDay) {
+                    // if monthYear is after currentMonthYear break
+                    if (monthYear[1] > currentMonthYear[1] || (monthYear[1] == currentMonthYear[1] && monthYear[0] > currentMonthYear[0])) {
+                        break
+                    }
+
+                    if (monthYear.contentEquals(currentMonthYear)) {
                         val transactionDate = LocalDate.of(
                             currentDate.year,
                             currentDate.monthValue,
@@ -394,7 +402,7 @@ class MainActivity : AppCompatActivity() {
                     continue
                 }
 
-                if (!instantiated && currentDate.dayOfMonth < recurringTransfer.monthDay) {
+                if (currentDate.dayOfMonth < recurringTransfer.monthDay) {
                     continue
                 }
 
@@ -418,7 +426,11 @@ class MainActivity : AppCompatActivity() {
                         arrayOf(monthYear[0] + 1, monthYear[1])
                     }
 
-                    if (monthYear.contentEquals(currentMonthYear) && currentDate.dayOfMonth >= recurringTransfer.monthDay) {
+                    if (monthYear[1] > currentMonthYear[1] ||(monthYear[1] == currentMonthYear[1] && monthYear[0] > currentMonthYear[0])){
+                        break
+                    }
+
+                    if (monthYear.contentEquals(currentMonthYear)) {
                         val transferDate = LocalDate.of(
                             currentDate.year,
                             currentDate.monthValue,
