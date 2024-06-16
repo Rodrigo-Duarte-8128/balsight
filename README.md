@@ -10,7 +10,7 @@ spending.
 
 ## Installation
 If you want to install the app on your Android device you can simply download the file 
-[pocket-sight.apk](https://github.com/Rodrigo-Duarte-8128/pocket-sight/releases/download/v1.0.0/pocket-sight.apk) and run it on your device. It will prompt you to install the apk 
+[pocket-sight.apk](https://github.com/Rodrigo-Duarte-8128/pocket-sight/releases/download/v1.0.1/pocket_sight.apk) and run it on your device. It will prompt you to install the apk 
 which should take only a few seconds. You might get a warning about installing apps from outside the app store
 which might require you change some settings to allow for this behaviour.
 
