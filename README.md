@@ -4,11 +4,15 @@ Pocket Sight is an Android app to help you manage your personal finances. The ap
 fully create and edit accounts, categories, subcategories, transactions, transfers and 
 recurring transactions. The app also has a *stats* page to help you keep on track with your 
 spending.
-
+<p align="center">
+  <img src="https://github.com/Rodrigo-Duarte-8128/pocket-sight/blob/master/app-image.jpg" width="250"/>
+</p>
 
 ## Installation
-If you want to install the app on your Android devices you can simply download the file 
-**app-debug.apk** and run it on your device. 
+If you want to install the app on your Android device you can simply download the file 
+[pocket-sight.apk](https://github.com/Rodrigo-Duarte-8128/pocket-sight/releases/download/v1.0.0/pocket-sight.apk) and run it on your device. It will prompt you to install the apk 
+which should take only a few seconds. You might get a warning about installing apps from outside the app store
+which might require you change some settings to allow for this behaviour.
 
 
 ## About

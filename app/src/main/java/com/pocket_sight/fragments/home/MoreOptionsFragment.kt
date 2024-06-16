@@ -62,7 +62,15 @@ class MoreOptionsFragment: Fragment() {
         noteEditText: EditText
     ) {
         val dateTime: LocalDateTime = convertTimeMillisToLocalDateTime(timeMillis)
-        dateEditText.setText("${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}")
+        var dayString = dateTime.dayOfMonth.toString()
+        var monthString = dateTime.monthValue.toString()
+        if (dayString.length == 1) {
+            dayString = "0$dayString"
+        }
+        if (monthString.length == 1) {
+            monthString = "0$monthString"
+        }
+        dateEditText.setText("$dayString/$monthString/${dateTime.year}")
         dateEditText.setOnClickListener {
             MoreOptionsDatePicker(dateTime.dayOfMonth, dateTime.monthValue - 1, dateTime.year, this).show(this.parentFragmentManager, "Pick Date")
         }
